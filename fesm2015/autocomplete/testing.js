@@ -51,12 +51,6 @@ class MatAutocompleteHarness extends ComponentHarness {
             return (yield this.host()).blur();
         });
     }
-    /** Whether the autocomplete input is focused. */
-    isFocused() {
-        return __awaiter(this, void 0, void 0, function* () {
-            return (yield this.host()).isFocused();
-        });
-    }
     /** Enters text into the autocomplete. */
     enterText(value) {
         return __awaiter(this, void 0, void 0, function* () {
@@ -110,14 +104,6 @@ class MatAutocompleteHarness extends ComponentHarness {
 }
 /** The selector for the host element of a `MatAutocomplete` instance. */
 MatAutocompleteHarness.hostSelector = '.mat-autocomplete-trigger';
-
-/**
- * @license
- * Copyright Google LLC All Rights Reserved.
- *
- * Use of this source code is governed by an MIT-style license that can be
- * found in the LICENSE file at https://angular.io/license
- */
 
 /**
  * @license

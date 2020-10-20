@@ -34,7 +34,7 @@ class MatSubheaderHarness extends ComponentHarness {
         });
     }
 }
-MatSubheaderHarness.hostSelector = '.mat-subheader';
+MatSubheaderHarness.hostSelector = '[mat-subheader], [matSubheader]';
 /**
  * Shared behavior among the harnesses for the various `MatListItem` flavors.
  * @docs-private
@@ -194,7 +194,7 @@ class MatActionListHarness extends MatListHarnessBase {
     }
 }
 /** The selector for the host element of a `MatActionList` instance. */
-MatActionListHarness.hostSelector = 'mat-action-list.mat-list';
+MatActionListHarness.hostSelector = 'mat-action-list';
 /** Harness for interacting with an action list item. */
 class MatActionListItemHarness extends MatListItemHarnessBase {
     /**
@@ -222,12 +222,6 @@ class MatActionListItemHarness extends MatListItemHarnessBase {
     blur() {
         return __awaiter(this, void 0, void 0, function* () {
             return (yield this.host()).blur();
-        });
-    }
-    /** Whether the action list item is focused. */
-    isFocused() {
-        return __awaiter(this, void 0, void 0, function* () {
-            return (yield this.host()).isFocused();
         });
     }
 }
@@ -260,7 +254,7 @@ class MatListHarness extends MatListHarnessBase {
     }
 }
 /** The selector for the host element of a `MatList` instance. */
-MatListHarness.hostSelector = '.mat-list:not(mat-action-list):not(mat-nav-list):not(mat-selection-list)';
+MatListHarness.hostSelector = 'mat-list';
 /** Harness for interacting with a list item. */
 class MatListItemHarness extends MatListItemHarnessBase {
     /**
@@ -277,14 +271,6 @@ class MatListItemHarness extends MatListItemHarnessBase {
 MatListItemHarness.hostSelector = ['mat-list-item', 'a[mat-list-item]', 'button[mat-list-item]']
     .map(selector => `${MatListHarness.hostSelector} ${selector}`)
     .join(',');
-
-/**
- * @license
- * Copyright Google LLC All Rights Reserved.
- *
- * Use of this source code is governed by an MIT-style license that can be
- * found in the LICENSE file at https://angular.io/license
- */
 
 /**
  * @license
@@ -310,7 +296,7 @@ class MatNavListHarness extends MatListHarnessBase {
     }
 }
 /** The selector for the host element of a `MatNavList` instance. */
-MatNavListHarness.hostSelector = '.mat-nav-list';
+MatNavListHarness.hostSelector = 'mat-nav-list';
 /** Harness for interacting with a nav list item. */
 class MatNavListItemHarness extends MatListItemHarnessBase {
     /**
@@ -345,12 +331,6 @@ class MatNavListItemHarness extends MatListItemHarnessBase {
     blur() {
         return __awaiter(this, void 0, void 0, function* () {
             return (yield this.host()).blur();
-        });
-    }
-    /** Whether the nav list item is focused. */
-    isFocused() {
-        return __awaiter(this, void 0, void 0, function* () {
-            return (yield this.host()).isFocused();
         });
     }
 }
@@ -418,7 +398,7 @@ class MatSelectionListHarness extends MatListHarnessBase {
     }
 }
 /** The selector for the host element of a `MatSelectionList` instance. */
-MatSelectionListHarness.hostSelector = '.mat-selection-list';
+MatSelectionListHarness.hostSelector = 'mat-selection-list';
 /** Harness for interacting with a list option. */
 class MatListOptionHarness extends MatListItemHarnessBase {
     constructor() {
@@ -466,12 +446,6 @@ class MatListOptionHarness extends MatListItemHarnessBase {
             return (yield this.host()).blur();
         });
     }
-    /** Whether the list option is focused. */
-    isFocused() {
-        return __awaiter(this, void 0, void 0, function* () {
-            return (yield this.host()).isFocused();
-        });
-    }
     /** Toggles the checked state of the checkbox. */
     toggle() {
         return __awaiter(this, void 0, void 0, function* () {
@@ -502,7 +476,7 @@ class MatListOptionHarness extends MatListItemHarnessBase {
     }
 }
 /** The selector for the host element of a `MatListOption` instance. */
-MatListOptionHarness.hostSelector = '.mat-list-option';
+MatListOptionHarness.hostSelector = 'mat-list-option';
 
 /**
  * @license

@@ -8,8 +8,7 @@
 import { AfterContentInit, ChangeDetectorRef, EventEmitter, OnDestroy } from '@angular/core';
 import { DateAdapter } from '@angular/material/core';
 import { Directionality } from '@angular/cdk/bidi';
-import { MatCalendarBody, MatCalendarCell, MatCalendarUserEvent, MatCalendarCellClassFunction } from './calendar-body';
-import { DateRange } from './date-selection-model';
+import { MatCalendarBody, MatCalendarCell } from './calendar-body';
 export declare const yearsPerPage = 24;
 export declare const yearsPerRow = 4;
 /**
@@ -26,8 +25,8 @@ export declare class MatMultiYearView<D> implements AfterContentInit, OnDestroy 
     set activeDate(value: D);
     private _activeDate;
     /** The currently selected date. */
-    get selected(): DateRange<D> | D | null;
-    set selected(value: DateRange<D> | D | null);
+    get selected(): D | null;
+    set selected(value: D | null);
     private _selected;
     /** The minimum selectable date. */
     get minDate(): D | null;
@@ -39,8 +38,6 @@ export declare class MatMultiYearView<D> implements AfterContentInit, OnDestroy 
     private _maxDate;
     /** A function used to filter which dates are selectable. */
     dateFilter: (date: D) => boolean;
-    /** Function that can be used to add custom CSS classes to date cells. */
-    dateClass: MatCalendarCellClassFunction<D>;
     /** Emits when a new year is selected. */
     readonly selectedChange: EventEmitter<D>;
     /** Emits the selected year. This doesn't imply a change on the selected date */
@@ -61,7 +58,7 @@ export declare class MatMultiYearView<D> implements AfterContentInit, OnDestroy 
     /** Initializes this multi-year view. */
     _init(): void;
     /** Handles when a new year is selected. */
-    _yearSelected(event: MatCalendarUserEvent<number>): void;
+    _yearSelected(year: number): void;
     /** Handles keydown events on the calendar body when calendar is in multi-year view. */
     _handleCalendarBodyKeydown(event: KeyboardEvent): void;
     _getActiveCell(): number;
@@ -71,10 +68,13 @@ export declare class MatMultiYearView<D> implements AfterContentInit, OnDestroy 
     private _createCellForYear;
     /** Whether the given year is enabled. */
     private _shouldEnableYear;
+    /**
+     * @param obj The object to check.
+     * @returns The given object if it is both a date instance and valid, otherwise null.
+     */
+    private _getValidDateOrNull;
     /** Determines whether the user has the RTL layout direction. */
     private _isRtl;
-    /** Sets the currently-highlighted year based on a model value. */
-    private _setSelectedYear;
 }
 export declare function isSameMultiYearView<D>(dateAdapter: DateAdapter<D>, date1: D, date2: D, minDate: D | null, maxDate: D | null): boolean;
 /**

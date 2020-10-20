@@ -32,5 +32,6 @@ export declare const EXPANSION_PANEL_ANIMATION_TIMING = "225ms cubic-bezier(0.4,
  */
 export declare const matExpansionAnimations: {
     readonly indicatorRotate: AnimationTriggerMetadata;
+    readonly expansionHeaderHeight: AnimationTriggerMetadata;
     readonly bodyExpansion: AnimationTriggerMetadata;
 };

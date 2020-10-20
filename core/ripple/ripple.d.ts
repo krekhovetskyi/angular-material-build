@@ -7,8 +7,8 @@
  */
 import { Platform } from '@angular/cdk/platform';
 import { ElementRef, InjectionToken, NgZone, OnDestroy, OnInit } from '@angular/core';
-import { RippleAnimationConfig, RippleConfig, RippleRef } from './ripple-ref';
-import { RippleTarget } from './ripple-renderer';
+import { RippleRef } from './ripple-ref';
+import { RippleAnimationConfig, RippleConfig, RippleTarget } from './ripple-renderer';
 /** Configurable options for `matRipple`. */
 export interface RippleGlobalOptions {
     /**

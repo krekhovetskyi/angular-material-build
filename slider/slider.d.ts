@@ -8,7 +8,7 @@
 import { FocusMonitor } from '@angular/cdk/a11y';
 import { Directionality } from '@angular/cdk/bidi';
 import { BooleanInput, NumberInput } from '@angular/cdk/coercion';
-import { ChangeDetectorRef, ElementRef, EventEmitter, OnDestroy, NgZone, AfterViewInit } from '@angular/core';
+import { ChangeDetectorRef, ElementRef, EventEmitter, OnDestroy, OnInit, NgZone } from '@angular/core';
 import { ControlValueAccessor } from '@angular/forms';
 import { CanColor, CanColorCtor, CanDisable, CanDisableCtor, HasTabIndex, HasTabIndexCtor } from '@angular/material/core';
 /**
@@ -34,12 +34,12 @@ declare const _MatSliderMixinBase: HasTabIndexCtor & CanColorCtor & CanDisableCt
  * Allows users to select from a range of values by moving the slider thumb. It is similar in
  * behavior to the native `<input type="range">` element.
  */
-export declare class MatSlider extends _MatSliderMixinBase implements ControlValueAccessor, OnDestroy, CanDisable, CanColor, AfterViewInit, HasTabIndex {
+export declare class MatSlider extends _MatSliderMixinBase implements ControlValueAccessor, OnDestroy, CanDisable, CanColor, OnInit, HasTabIndex {
     private _focusMonitor;
     private _changeDetectorRef;
     private _dir;
-    private _ngZone;
     _animationMode?: string | undefined;
+    private _ngZone?;
     /** Whether the slider is inverted. */
     get invert(): boolean;
     set invert(value: boolean);
@@ -116,31 +116,31 @@ export declare class MatSlider extends _MatSliderMixinBase implements ControlVal
      * Whether the axis of the slider is inverted.
      * (i.e. whether moving the thumb in the positive x or y direction decreases the slider's value).
      */
-    _shouldInvertAxis(): boolean;
+    get _invertAxis(): boolean;
     /** Whether the slider is at its minimum value. */
-    _isMinValue(): boolean;
+    get _isMinValue(): boolean;
     /**
      * The amount of space to leave between the slider thumb and the track fill & track background
      * elements.
      */
-    _getThumbGap(): 7 | 10 | 0;
+    get _thumbGap(): 7 | 10 | 0;
     /** CSS styles for the track background element. */
-    _getTrackBackgroundStyles(): {
+    get _trackBackgroundStyles(): {
         [key: string]: string;
     };
     /** CSS styles for the track fill element. */
-    _getTrackFillStyles(): {
+    get _trackFillStyles(): {
         [key: string]: string;
     };
     /** CSS styles for the ticks container element. */
-    _getTicksContainerStyles(): {
+    get _ticksContainerStyles(): {
         [key: string]: string;
     };
     /** CSS styles for the ticks element. */
-    _getTicksStyles(): {
+    get _ticksStyles(): {
         [key: string]: string;
     };
-    _getThumbContainerStyles(): {
+    get _thumbContainerStyles(): {
         [key: string]: string;
     };
     /** The size of a tick interval as a percentage of the size of the track. */
@@ -154,6 +154,8 @@ export declare class MatSlider extends _MatSliderMixinBase implements ControlVal
     private _dirChangeSubscription;
     /** The value of the slider when the slide start event fires. */
     private _valueOnSlideStart;
+    /** Position of the pointer when the dragging started. */
+    private _pointerPositionOnStart;
     /** Reference to the inner slider wrapper element. */
     private _sliderWrapper;
     /**
@@ -166,9 +168,11 @@ export declare class MatSlider extends _MatSliderMixinBase implements ControlVal
     /** Keeps track of the last pointer event that was captured by the slider. */
     private _lastPointerEvent;
     /** Used to subscribe to global move and end events */
-    protected _document: Document;
-    constructor(elementRef: ElementRef, _focusMonitor: FocusMonitor, _changeDetectorRef: ChangeDetectorRef, _dir: Directionality, tabIndex: string, _ngZone: NgZone, _document: any, _animationMode?: string | undefined);
-    ngAfterViewInit(): void;
+    protected _document?: Document;
+    constructor(elementRef: ElementRef, _focusMonitor: FocusMonitor, _changeDetectorRef: ChangeDetectorRef, _dir: Directionality, tabIndex: string, _animationMode?: string | undefined, _ngZone?: NgZone | undefined, 
+    /** @breaking-change 11.0.0 make document required */
+    document?: any);
+    ngOnInit(): void;
     ngOnDestroy(): void;
     _onMouseenter(): void;
     _onFocus(): void;
@@ -227,6 +231,10 @@ export declare class MatSlider extends _MatSliderMixinBase implements ControlVal
     private _focusHostElement;
     /** Blurs the native element. */
     private _blurHostElement;
+    /** Runs a callback inside of the NgZone, if possible. */
+    private _runInsideZone;
+    /** Runs a callback outside of the NgZone, if possible. */
+    private _runOutsizeZone;
     /**
      * Sets the model value. Implemented as part of ControlValueAccessor.
      * @param value
@@ -259,6 +267,5 @@ export declare class MatSlider extends _MatSliderMixinBase implements ControlVal
     static ngAcceptInputType_value: NumberInput;
     static ngAcceptInputType_vertical: BooleanInput;
     static ngAcceptInputType_disabled: BooleanInput;
-    static ngAcceptInputType_tabIndex: NumberInput;
 }
 export {};

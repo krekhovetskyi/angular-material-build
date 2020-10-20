@@ -57,12 +57,6 @@ class MatMenuHarness extends ComponentHarness {
             return (yield this.host()).blur();
         });
     }
-    /** Whether the menu is focused. */
-    isFocused() {
-        return __awaiter(this, void 0, void 0, function* () {
-            return (yield this.host()).isFocused();
-        });
-    }
     /** Opens the menu. */
     open() {
         return __awaiter(this, void 0, void 0, function* () {
@@ -173,12 +167,6 @@ class MatMenuItemHarness extends ComponentHarness {
             return (yield this.host()).blur();
         });
     }
-    /** Whether the menu item is focused. */
-    isFocused() {
-        return __awaiter(this, void 0, void 0, function* () {
-            return (yield this.host()).isFocused();
-        });
-    }
     /** Clicks the menu item. */
     click() {
         return __awaiter(this, void 0, void 0, function* () {
@@ -203,14 +191,6 @@ class MatMenuItemHarness extends ComponentHarness {
 }
 /** The selector for the host element of a `MatMenuItem` instance. */
 MatMenuItemHarness.hostSelector = '.mat-menu-item';
-
-/**
- * @license
- * Copyright Google LLC All Rights Reserved.
- *
- * Use of this source code is governed by an MIT-style license that can be
- * found in the LICENSE file at https://angular.io/license
- */
 
 /**
  * @license

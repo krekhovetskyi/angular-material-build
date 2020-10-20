@@ -5,16 +5,11 @@
  * Use of this source code is governed by an MIT-style license that can be
  * found in the LICENSE file at https://angular.io/license
  */
+import { ComponentRef, ElementRef, EmbeddedViewRef, EventEmitter, ChangeDetectorRef } from '@angular/core';
 import { AnimationEvent } from '@angular/animations';
-import { FocusMonitor, FocusOrigin, FocusTrapFactory } from '@angular/cdk/a11y';
-import { BasePortalOutlet, CdkPortalOutlet, ComponentPortal, DomPortal, TemplatePortal } from '@angular/cdk/portal';
-import { ChangeDetectorRef, ComponentRef, ElementRef, EmbeddedViewRef, EventEmitter } from '@angular/core';
+import { BasePortalOutlet, ComponentPortal, CdkPortalOutlet, TemplatePortal, DomPortal } from '@angular/cdk/portal';
+import { FocusTrapFactory } from '@angular/cdk/a11y';
 import { MatDialogConfig } from './dialog-config';
-/** Event that captures the state of dialog container animations. */
-interface DialogAnimationEvent {
-    state: 'opened' | 'opening' | 'closing' | 'closed';
-    totalTime: number;
-}
 /**
  * Throws an exception for the case when a ComponentPortal is
  * attached to a DomPortalOutlet without an origin.
@@ -22,42 +17,34 @@ interface DialogAnimationEvent {
  */
 export declare function throwMatDialogContentAlreadyAttachedError(): void;
 /**
- * Base class for the `MatDialogContainer`. The base class does not implement
- * animations as these are left to implementers of the dialog container.
+ * Internal component that wraps user-provided dialog content.
+ * Animation is based on https://material.io/guidelines/motion/choreography.html.
+ * @docs-private
  */
-export declare abstract class _MatDialogContainerBase extends BasePortalOutlet {
-    protected _elementRef: ElementRef;
-    protected _focusTrapFactory: FocusTrapFactory;
-    protected _changeDetectorRef: ChangeDetectorRef;
+export declare class MatDialogContainer extends BasePortalOutlet {
+    private _elementRef;
+    private _focusTrapFactory;
+    private _changeDetectorRef;
     /** The dialog configuration. */
     _config: MatDialogConfig;
-    private _focusMonitor?;
-    protected _document: Document;
+    private _document;
     /** The portal outlet inside of this container into which the dialog content will be loaded. */
     _portalOutlet: CdkPortalOutlet;
     /** The class that traps and manages focus within the dialog. */
     private _focusTrap;
-    /** Emits when an animation state changes. */
-    _animationStateChanged: EventEmitter<DialogAnimationEvent>;
     /** Element that was focused before the dialog was opened. Save this to restore upon close. */
     private _elementFocusedBeforeDialogWasOpened;
-    /**
-     * Type of interaction that led to the dialog being closed. This is used to determine
-     * whether the focus style will be applied when returning focus to its original location
-     * after the dialog is closed.
-     */
-    _closeInteractionType: FocusOrigin | null;
+    /** State of the dialog animation. */
+    _state: 'void' | 'enter' | 'exit';
+    /** Emits when an animation state changes. */
+    _animationStateChanged: EventEmitter<AnimationEvent>;
     /** ID of the element that should be considered as the dialog's label. */
     _ariaLabelledBy: string | null;
     /** ID for the container DOM element. */
     _id: string;
     constructor(_elementRef: ElementRef, _focusTrapFactory: FocusTrapFactory, _changeDetectorRef: ChangeDetectorRef, _document: any, 
     /** The dialog configuration. */
-    _config: MatDialogConfig, _focusMonitor?: FocusMonitor | undefined);
-    /** Starts the dialog exit animation. */
-    abstract _startExitAnimation(): void;
-    /** Initializes the dialog container with the attached content. */
-    _initializeWithAttachedContent(): void;
+    _config: MatDialogConfig);
     /**
      * Attach a ComponentPortal as content to this dialog container.
      * @param portal Portal to be attached as the dialog content.
@@ -74,35 +61,24 @@ export declare abstract class _MatDialogContainerBase extends BasePortalOutlet {
      * @deprecated To be turned into a method.
      * @breaking-change 10.0.0
      */
-    attachDomPortal: (portal: DomPortal) => void;
+    attachDomPortal: (portal: DomPortal<HTMLElement>) => void;
     /** Moves focus back into the dialog if it was moved out. */
     _recaptureFocus(): void;
     /** Moves the focus inside the focus trap. */
-    protected _trapFocus(): void;
+    private _trapFocus;
     /** Restores focus to the element that was focused before the dialog opened. */
-    protected _restoreFocus(): void;
-    /** Sets up the focus trap. */
+    private _restoreFocus;
+    /**
+     * Sets up the focus trand and saves a reference to the
+     * element that was focused before the dialog was opened.
+     */
     private _setupFocusTrap;
-    /** Captures the element that was focused before the dialog was opened. */
-    private _capturePreviouslyFocusedElement;
-    /** Focuses the dialog container. */
-    private _focusDialogContainer;
     /** Returns whether focus is inside the dialog. */
     private _containsFocus;
-}
-/**
- * Internal component that wraps user-provided dialog content.
- * Animation is based on https://material.io/guidelines/motion/choreography.html.
- * @docs-private
- */
-export declare class MatDialogContainer extends _MatDialogContainerBase {
-    /** State of the dialog animation. */
-    _state: 'void' | 'enter' | 'exit';
     /** Callback, invoked whenever an animation on the host completes. */
-    _onAnimationDone({ toState, totalTime }: AnimationEvent): void;
+    _onAnimationDone(event: AnimationEvent): void;
     /** Callback, invoked when an animation on the host starts. */
-    _onAnimationStart({ toState, totalTime }: AnimationEvent): void;
+    _onAnimationStart(event: AnimationEvent): void;
     /** Starts the dialog exit animation. */
     _startExitAnimation(): void;
 }
-export {};

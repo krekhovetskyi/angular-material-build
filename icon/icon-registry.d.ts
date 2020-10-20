@@ -37,8 +37,6 @@ export declare function getMatIconFailedToSanitizeLiteralError(literal: SafeHtml
 export interface IconOptions {
     /** View box to set on the icon. */
     viewBox?: string;
-    /** Whether or not to fetch the icon or icon set using HTTP credentials. */
-    withCredentials?: boolean;
 }
 /**
  * Service to register and display icons used by the `<mat-icon>` component.
@@ -50,7 +48,7 @@ export interface IconOptions {
 export declare class MatIconRegistry implements OnDestroy {
     private _httpClient;
     private _sanitizer;
-    private readonly _errorHandler;
+    private readonly _errorHandler?;
     private _document;
     /**
      * URLs and cached SVG elements for individual icons. Keys are of the format "[namespace]:[icon]".
@@ -73,7 +71,7 @@ export declare class MatIconRegistry implements OnDestroy {
      * described at http://google.github.io/material-design-icons/#icon-font-for-the-web
      */
     private _defaultFontSetClass;
-    constructor(_httpClient: HttpClient, _sanitizer: DomSanitizer, document: any, _errorHandler: ErrorHandler);
+    constructor(_httpClient: HttpClient, _sanitizer: DomSanitizer, document: any, _errorHandler?: ErrorHandler | undefined);
     /**
      * Registers an icon by URL in the default namespace.
      * @param iconName Name under which the icon should be registered.
@@ -192,10 +190,14 @@ export declare class MatIconRegistry implements OnDestroy {
      */
     private _loadSvgIconFromConfig;
     /**
-     * Loads the content of the icon set URL specified in the
-     * SvgIconConfig and attaches it to the config.
+     * Loads the content of the icon set URL specified in the SvgIconConfig and creates an SVG element
+     * from it.
      */
     private _loadSvgIconSetFromConfig;
+    /**
+     * Creates a DOM element from the given SVG string, and adds default attributes.
+     */
+    private _createSvgElementForSingleIcon;
     /**
      * Searches the cached element of the given SvgIconConfig for a nested icon element whose "id"
      * tag matches the specified name. If found, copies the nested element to a new SVG element and
@@ -215,10 +217,10 @@ export declare class MatIconRegistry implements OnDestroy {
      */
     private _setSvgAttributes;
     /**
-     * Returns an Observable which produces the string contents of the given icon. Results may be
+     * Returns an Observable which produces the string contents of the given URL. Results may be
      * cached, so future calls with the same URL may not cause another HTTP request.
      */
-    private _fetchIcon;
+    private _fetchUrl;
     /**
      * Registers an icon config by name in the specified namespace.
      * @param namespace Namespace in which to register the icon config.
@@ -232,14 +234,12 @@ export declare class MatIconRegistry implements OnDestroy {
      * @param config Config to be registered.
      */
     private _addSvgIconSetConfig;
-    /** Parses a config's text into an SVG element. */
-    private _svgElementFromConfig;
 }
 /** @docs-private */
-export declare function ICON_REGISTRY_PROVIDER_FACTORY(parentRegistry: MatIconRegistry, httpClient: HttpClient, sanitizer: DomSanitizer, errorHandler: ErrorHandler, document?: any): MatIconRegistry;
+export declare function ICON_REGISTRY_PROVIDER_FACTORY(parentRegistry: MatIconRegistry, httpClient: HttpClient, sanitizer: DomSanitizer, document?: any, errorHandler?: ErrorHandler): MatIconRegistry;
 /** @docs-private */
 export declare const ICON_REGISTRY_PROVIDER: {
     provide: typeof MatIconRegistry;
-    deps: (Optional[] | typeof DomSanitizer | typeof ErrorHandler)[];
+    deps: (Optional[] | typeof DomSanitizer)[];
     useFactory: typeof ICON_REGISTRY_PROVIDER_FACTORY;
 };

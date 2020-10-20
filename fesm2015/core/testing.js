@@ -68,14 +68,6 @@ MatOptionHarness.hostSelector = '.mat-option';
  * Use of this source code is governed by an MIT-style license that can be
  * found in the LICENSE file at https://angular.io/license
  */
-
-/**
- * @license
- * Copyright Google LLC All Rights Reserved.
- *
- * Use of this source code is governed by an MIT-style license that can be
- * found in the LICENSE file at https://angular.io/license
- */
 /** Harness for interacting with a `mat-optgroup` in tests. */
 class MatOptgroupHarness extends ComponentHarness {
     constructor() {
@@ -116,14 +108,6 @@ class MatOptgroupHarness extends ComponentHarness {
 }
 /** Selector used to locate option group instances. */
 MatOptgroupHarness.hostSelector = '.mat-optgroup';
-
-/**
- * @license
- * Copyright Google LLC All Rights Reserved.
- *
- * Use of this source code is governed by an MIT-style license that can be
- * found in the LICENSE file at https://angular.io/license
- */
 
 /**
  * @license

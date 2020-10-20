@@ -8,8 +8,7 @@
 import { AfterContentInit, ChangeDetectorRef, EventEmitter, OnDestroy } from '@angular/core';
 import { DateAdapter, MatDateFormats } from '@angular/material/core';
 import { Directionality } from '@angular/cdk/bidi';
-import { MatCalendarBody, MatCalendarCell, MatCalendarUserEvent, MatCalendarCellClassFunction } from './calendar-body';
-import { DateRange } from './date-selection-model';
+import { MatCalendarBody, MatCalendarCell } from './calendar-body';
 /**
  * An internal component used to display a single year in the datepicker.
  * @docs-private
@@ -25,8 +24,8 @@ export declare class MatYearView<D> implements AfterContentInit, OnDestroy {
     set activeDate(value: D);
     private _activeDate;
     /** The currently selected date. */
-    get selected(): DateRange<D> | D | null;
-    set selected(value: DateRange<D> | D | null);
+    get selected(): D | null;
+    set selected(value: D | null);
     private _selected;
     /** The minimum selectable date. */
     get minDate(): D | null;
@@ -38,8 +37,6 @@ export declare class MatYearView<D> implements AfterContentInit, OnDestroy {
     private _maxDate;
     /** A function used to filter which dates are selectable. */
     dateFilter: (date: D) => boolean;
-    /** Function that can be used to add custom CSS classes to date cells. */
-    dateClass: MatCalendarCellClassFunction<D>;
     /** Emits when a new month is selected. */
     readonly selectedChange: EventEmitter<D>;
     /** Emits the selected month. This doesn't imply a change on the selected date */
@@ -63,7 +60,7 @@ export declare class MatYearView<D> implements AfterContentInit, OnDestroy {
     ngAfterContentInit(): void;
     ngOnDestroy(): void;
     /** Handles when a new month is selected. */
-    _monthSelected(event: MatCalendarUserEvent<number>): void;
+    _monthSelected(month: number): void;
     /** Handles keydown events on the calendar body when calendar is in year view. */
     _handleCalendarBodyKeydown(event: KeyboardEvent): void;
     /** Initializes this year view. */
@@ -89,8 +86,11 @@ export declare class MatYearView<D> implements AfterContentInit, OnDestroy {
      * just the month and year of this.minDate
      */
     private _isYearAndMonthBeforeMinDate;
+    /**
+     * @param obj The object to check.
+     * @returns The given object if it is both a date instance and valid, otherwise null.
+     */
+    private _getValidDateOrNull;
     /** Determines whether the user has the RTL layout direction. */
     private _isRtl;
-    /** Sets the currently-selected month based on a model value. */
-    private _setSelectedMonth;
 }

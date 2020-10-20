@@ -1,16 +1,14 @@
 @import '../core/theming/theming';
 @import '../core/style/elevation';
 @import '../core/typography/typography-utils';
-@import '../core/theming/check-duplicate-styles';
 
 $_mat-button-ripple-opacity: 0.1;
 
 // Applies a focus style to an mat-button element for each of the supported palettes.
-@mixin _mat-button-focus-overlay-color($config-or-theme) {
-  $config: mat-get-color-config($config-or-theme);
-  $primary: map-get($config, primary);
-  $accent: map-get($config, accent);
-  $warn: map-get($config, warn);
+@mixin _mat-button-focus-overlay-color($theme) {
+  $primary: map-get($theme, primary);
+  $accent: map-get($theme, accent);
+  $warn: map-get($theme, warn);
 
   &.mat-primary .mat-button-focus-overlay {
     background-color: mat-color($primary);
@@ -24,7 +22,7 @@ $_mat-button-ripple-opacity: 0.1;
     background-color: mat-color($warn);
   }
 
-  &.mat-button-disabled .mat-button-focus-overlay {
+  &[disabled] .mat-button-focus-overlay {
     background-color: transparent;
   }
 }
@@ -76,21 +74,20 @@ $_mat-button-ripple-opacity: 0.1;
     #{$property}: mat-color($warn, $hue);
   }
 
-  &.mat-primary, &.mat-accent, &.mat-warn, &.mat-button-disabled {
-    &.mat-button-disabled {
+  &.mat-primary, &.mat-accent, &.mat-warn, &[disabled] {
+    &[disabled] {
       $palette: if($property == 'color', $foreground, $background);
       #{$property}: mat-color($palette, disabled-button);
     }
   }
 }
 
-@mixin mat-button-color($config-or-theme) {
-  $config: mat-get-color-config($config-or-theme);
-  $primary: map-get($config, primary);
-  $accent: map-get($config, accent);
-  $warn: map-get($config, warn);
-  $background: map-get($config, background);
-  $foreground: map-get($config, foreground);
+@mixin mat-button-theme($theme) {
+  $primary: map-get($theme, primary);
+  $accent: map-get($theme, accent);
+  $warn: map-get($theme, warn);
+  $background: map-get($theme, background);
+  $foreground: map-get($theme, foreground);
 
   .mat-button, .mat-icon-button, .mat-stroked-button {
     // Buttons without a background color should inherit the font color. This is necessary to
@@ -100,8 +97,8 @@ $_mat-button-ripple-opacity: 0.1;
     color: inherit;
     background: transparent;
 
-    @include _mat-button-theme-property($config, 'color', text);
-    @include _mat-button-focus-overlay-color($config);
+    @include _mat-button-theme-property($theme, 'color', text);
+    @include _mat-button-focus-overlay-color($theme);
 
     // Setup the ripple color to be based on the text color. This ensures that the ripples
     // are matching with the current theme palette and are in contrast to the background color
@@ -118,7 +115,7 @@ $_mat-button-ripple-opacity: 0.1;
 
   // Note: this needs a bit extra specificity, because we're not guaranteed the inclusion
   // order of the theme styles and the button reset may end up resetting this as well.
-  .mat-stroked-button:not(.mat-button-disabled) {
+  .mat-stroked-button:not([disabled]) {
     border-color: mat-color($foreground, divider);
   }
 
@@ -127,69 +124,47 @@ $_mat-button-ripple-opacity: 0.1;
     color: mat-color($foreground, text);
     background-color: mat-color($background, raised-button);
 
-    @include _mat-button-theme-property($config, 'color', default-contrast);
-    @include _mat-button-theme-property($config, 'background-color', default);
-    @include _mat-button-ripple-color($config, default-contrast);
+    @include _mat-button-theme-property($theme, 'color', default-contrast);
+    @include _mat-button-theme-property($theme, 'background-color', default);
+    @include _mat-button-ripple-color($theme, default-contrast);
   }
 
   .mat-stroked-button, .mat-flat-button {
-    @include _mat-theme-overridable-elevation(0, $config);
+    @include _mat-theme-overridable-elevation(0, $theme);
   }
 
   .mat-raised-button {
-    @include _mat-theme-overridable-elevation(2, $config);
+    @include _mat-theme-overridable-elevation(2, $theme);
 
-    &:not(.mat-button-disabled):active {
-      @include _mat-theme-overridable-elevation(8, $config);
+    &:not([disabled]):active {
+      @include _mat-theme-overridable-elevation(8, $theme);
     }
 
-    &.mat-button-disabled {
-      @include _mat-theme-overridable-elevation(0, $config);
+    &[disabled] {
+      @include _mat-theme-overridable-elevation(0, $theme);
     }
   }
 
   .mat-fab, .mat-mini-fab {
-    @include _mat-theme-overridable-elevation(6, $config);
+    @include _mat-theme-overridable-elevation(6, $theme);
 
-    &:not(.mat-button-disabled):active {
-      @include _mat-theme-overridable-elevation(12, $config);
+    &:not([disabled]):active {
+      @include _mat-theme-overridable-elevation(12, $theme);
     }
 
-    &.mat-button-disabled {
-      @include _mat-theme-overridable-elevation(0, $config);
+    &[disabled] {
+      @include _mat-theme-overridable-elevation(0, $theme);
     }
   }
 }
 
-@mixin mat-button-typography($config-or-theme) {
-  $config: mat-get-typography-config($config-or-theme);
+@mixin mat-button-typography($config) {
   .mat-button, .mat-raised-button, .mat-icon-button, .mat-stroked-button,
   .mat-flat-button, .mat-fab, .mat-mini-fab {
     font: {
       family: mat-font-family($config, button);
       size: mat-font-size($config, button);
       weight: mat-font-weight($config, button);
-    }
-  }
-}
-
-@mixin _mat-button-density($config-or-theme) {}
-
-@mixin mat-button-theme($theme-or-color-config) {
-  $theme: _mat-legacy-get-theme($theme-or-color-config);
-  @include _mat-check-duplicate-theme-styles($theme, 'mat-button') {
-    $color: mat-get-color-config($theme);
-    $density: mat-get-density-config($theme);
-    $typography: mat-get-typography-config($theme);
-
-    @if $color != null {
-      @include mat-button-color($color);
-    }
-    @if $density != null {
-      @include _mat-button-density($density);
-    }
-    @if $typography != null {
-      @include mat-button-typography($typography);
     }
   }
 }

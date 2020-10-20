@@ -5,50 +5,49 @@
 }(this, (function (exports, overlay, common, core, core$1, formField, scrolling, a11y, bidi, coercion, collections, keycodes, forms, rxjs, operators, animations) { 'use strict';
 
     /*! *****************************************************************************
-    Copyright (c) Microsoft Corporation.
+    Copyright (c) Microsoft Corporation. All rights reserved.
+    Licensed under the Apache License, Version 2.0 (the "License"); you may not use
+    this file except in compliance with the License. You may obtain a copy of the
+    License at http://www.apache.org/licenses/LICENSE-2.0
 
-    Permission to use, copy, modify, and/or distribute this software for any
-    purpose with or without fee is hereby granted.
+    THIS CODE IS PROVIDED ON AN *AS IS* BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+    KIND, EITHER EXPRESS OR IMPLIED, INCLUDING WITHOUT LIMITATION ANY IMPLIED
+    WARRANTIES OR CONDITIONS OF TITLE, FITNESS FOR A PARTICULAR PURPOSE,
+    MERCHANTABLITY OR NON-INFRINGEMENT.
 
-    THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES WITH
-    REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF MERCHANTABILITY
-    AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR ANY SPECIAL, DIRECT,
-    INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES WHATSOEVER RESULTING FROM
-    LOSS OF USE, DATA OR PROFITS, WHETHER IN AN ACTION OF CONTRACT, NEGLIGENCE OR
-    OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR
-    PERFORMANCE OF THIS SOFTWARE.
+    See the Apache Version 2.0 License for specific language governing permissions
+    and limitations under the License.
     ***************************************************************************** */
     /* global Reflect, Promise */
-    var extendStatics = function (d, b) {
+
+    var extendStatics = function(d, b) {
         extendStatics = Object.setPrototypeOf ||
             ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
-            function (d, b) { for (var p in b)
-                if (b.hasOwnProperty(p))
-                    d[p] = b[p]; };
+            function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
         return extendStatics(d, b);
     };
+
     function __extends(d, b) {
         extendStatics(d, b);
         function __() { this.constructor = d; }
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     }
-    var __assign = function () {
+
+    var __assign = function() {
         __assign = Object.assign || function __assign(t) {
             for (var s, i = 1, n = arguments.length; i < n; i++) {
                 s = arguments[i];
-                for (var p in s)
-                    if (Object.prototype.hasOwnProperty.call(s, p))
-                        t[p] = s[p];
+                for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
             }
             return t;
         };
         return __assign.apply(this, arguments);
     };
+
     function __rest(s, e) {
         var t = {};
-        for (var p in s)
-            if (Object.prototype.hasOwnProperty.call(s, p) && e.indexOf(p) < 0)
-                t[p] = s[p];
+        for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p) && e.indexOf(p) < 0)
+            t[p] = s[p];
         if (s != null && typeof Object.getOwnPropertySymbols === "function")
             for (var i = 0, p = Object.getOwnPropertySymbols(s); i < p.length; i++) {
                 if (e.indexOf(p[i]) < 0 && Object.prototype.propertyIsEnumerable.call(s, p[i]))
@@ -56,253 +55,150 @@
             }
         return t;
     }
+
     function __decorate(decorators, target, key, desc) {
         var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
-        if (typeof Reflect === "object" && typeof Reflect.decorate === "function")
-            r = Reflect.decorate(decorators, target, key, desc);
-        else
-            for (var i = decorators.length - 1; i >= 0; i--)
-                if (d = decorators[i])
-                    r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+        if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+        else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
         return c > 3 && r && Object.defineProperty(target, key, r), r;
     }
+
     function __param(paramIndex, decorator) {
-        return function (target, key) { decorator(target, key, paramIndex); };
+        return function (target, key) { decorator(target, key, paramIndex); }
     }
+
     function __metadata(metadataKey, metadataValue) {
-        if (typeof Reflect === "object" && typeof Reflect.metadata === "function")
-            return Reflect.metadata(metadataKey, metadataValue);
+        if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(metadataKey, metadataValue);
     }
+
     function __awaiter(thisArg, _arguments, P, generator) {
-        function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
         return new (P || (P = Promise))(function (resolve, reject) {
-            function fulfilled(value) { try {
-                step(generator.next(value));
-            }
-            catch (e) {
-                reject(e);
-            } }
-            function rejected(value) { try {
-                step(generator["throw"](value));
-            }
-            catch (e) {
-                reject(e);
-            } }
-            function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+            function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+            function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+            function step(result) { result.done ? resolve(result.value) : new P(function (resolve) { resolve(result.value); }).then(fulfilled, rejected); }
             step((generator = generator.apply(thisArg, _arguments || [])).next());
         });
     }
+
     function __generator(thisArg, body) {
-        var _ = { label: 0, sent: function () { if (t[0] & 1)
-                throw t[1]; return t[1]; }, trys: [], ops: [] }, f, y, t, g;
-        return g = { next: verb(0), "throw": verb(1), "return": verb(2) }, typeof Symbol === "function" && (g[Symbol.iterator] = function () { return this; }), g;
+        var _ = { label: 0, sent: function() { if (t[0] & 1) throw t[1]; return t[1]; }, trys: [], ops: [] }, f, y, t, g;
+        return g = { next: verb(0), "throw": verb(1), "return": verb(2) }, typeof Symbol === "function" && (g[Symbol.iterator] = function() { return this; }), g;
         function verb(n) { return function (v) { return step([n, v]); }; }
         function step(op) {
-            if (f)
-                throw new TypeError("Generator is already executing.");
-            while (_)
-                try {
-                    if (f = 1, y && (t = op[0] & 2 ? y["return"] : op[0] ? y["throw"] || ((t = y["return"]) && t.call(y), 0) : y.next) && !(t = t.call(y, op[1])).done)
-                        return t;
-                    if (y = 0, t)
-                        op = [op[0] & 2, t.value];
-                    switch (op[0]) {
-                        case 0:
-                        case 1:
-                            t = op;
-                            break;
-                        case 4:
-                            _.label++;
-                            return { value: op[1], done: false };
-                        case 5:
-                            _.label++;
-                            y = op[1];
-                            op = [0];
-                            continue;
-                        case 7:
-                            op = _.ops.pop();
-                            _.trys.pop();
-                            continue;
-                        default:
-                            if (!(t = _.trys, t = t.length > 0 && t[t.length - 1]) && (op[0] === 6 || op[0] === 2)) {
-                                _ = 0;
-                                continue;
-                            }
-                            if (op[0] === 3 && (!t || (op[1] > t[0] && op[1] < t[3]))) {
-                                _.label = op[1];
-                                break;
-                            }
-                            if (op[0] === 6 && _.label < t[1]) {
-                                _.label = t[1];
-                                t = op;
-                                break;
-                            }
-                            if (t && _.label < t[2]) {
-                                _.label = t[2];
-                                _.ops.push(op);
-                                break;
-                            }
-                            if (t[2])
-                                _.ops.pop();
-                            _.trys.pop();
-                            continue;
-                    }
-                    op = body.call(thisArg, _);
+            if (f) throw new TypeError("Generator is already executing.");
+            while (_) try {
+                if (f = 1, y && (t = op[0] & 2 ? y["return"] : op[0] ? y["throw"] || ((t = y["return"]) && t.call(y), 0) : y.next) && !(t = t.call(y, op[1])).done) return t;
+                if (y = 0, t) op = [op[0] & 2, t.value];
+                switch (op[0]) {
+                    case 0: case 1: t = op; break;
+                    case 4: _.label++; return { value: op[1], done: false };
+                    case 5: _.label++; y = op[1]; op = [0]; continue;
+                    case 7: op = _.ops.pop(); _.trys.pop(); continue;
+                    default:
+                        if (!(t = _.trys, t = t.length > 0 && t[t.length - 1]) && (op[0] === 6 || op[0] === 2)) { _ = 0; continue; }
+                        if (op[0] === 3 && (!t || (op[1] > t[0] && op[1] < t[3]))) { _.label = op[1]; break; }
+                        if (op[0] === 6 && _.label < t[1]) { _.label = t[1]; t = op; break; }
+                        if (t && _.label < t[2]) { _.label = t[2]; _.ops.push(op); break; }
+                        if (t[2]) _.ops.pop();
+                        _.trys.pop(); continue;
                 }
-                catch (e) {
-                    op = [6, e];
-                    y = 0;
-                }
-                finally {
-                    f = t = 0;
-                }
-            if (op[0] & 5)
-                throw op[1];
-            return { value: op[0] ? op[1] : void 0, done: true };
+                op = body.call(thisArg, _);
+            } catch (e) { op = [6, e]; y = 0; } finally { f = t = 0; }
+            if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
         }
     }
-    var __createBinding = Object.create ? (function (o, m, k, k2) {
-        if (k2 === undefined)
-            k2 = k;
-        Object.defineProperty(o, k2, { enumerable: true, get: function () { return m[k]; } });
-    }) : (function (o, m, k, k2) {
-        if (k2 === undefined)
-            k2 = k;
-        o[k2] = m[k];
-    });
+
     function __exportStar(m, exports) {
-        for (var p in m)
-            if (p !== "default" && !exports.hasOwnProperty(p))
-                __createBinding(exports, m, p);
+        for (var p in m) if (!exports.hasOwnProperty(p)) exports[p] = m[p];
     }
+
     function __values(o) {
-        var s = typeof Symbol === "function" && Symbol.iterator, m = s && o[s], i = 0;
-        if (m)
-            return m.call(o);
-        if (o && typeof o.length === "number")
-            return {
-                next: function () {
-                    if (o && i >= o.length)
-                        o = void 0;
-                    return { value: o && o[i++], done: !o };
-                }
-            };
-        throw new TypeError(s ? "Object is not iterable." : "Symbol.iterator is not defined.");
+        var m = typeof Symbol === "function" && o[Symbol.iterator], i = 0;
+        if (m) return m.call(o);
+        return {
+            next: function () {
+                if (o && i >= o.length) o = void 0;
+                return { value: o && o[i++], done: !o };
+            }
+        };
     }
+
     function __read(o, n) {
         var m = typeof Symbol === "function" && o[Symbol.iterator];
-        if (!m)
-            return o;
+        if (!m) return o;
         var i = m.call(o), r, ar = [], e;
         try {
-            while ((n === void 0 || n-- > 0) && !(r = i.next()).done)
-                ar.push(r.value);
+            while ((n === void 0 || n-- > 0) && !(r = i.next()).done) ar.push(r.value);
         }
-        catch (error) {
-            e = { error: error };
-        }
+        catch (error) { e = { error: error }; }
         finally {
             try {
-                if (r && !r.done && (m = i["return"]))
-                    m.call(i);
+                if (r && !r.done && (m = i["return"])) m.call(i);
             }
-            finally {
-                if (e)
-                    throw e.error;
-            }
+            finally { if (e) throw e.error; }
         }
         return ar;
     }
+
     function __spread() {
         for (var ar = [], i = 0; i < arguments.length; i++)
             ar = ar.concat(__read(arguments[i]));
         return ar;
     }
+
     function __spreadArrays() {
-        for (var s = 0, i = 0, il = arguments.length; i < il; i++)
-            s += arguments[i].length;
+        for (var s = 0, i = 0, il = arguments.length; i < il; i++) s += arguments[i].length;
         for (var r = Array(s), k = 0, i = 0; i < il; i++)
             for (var a = arguments[i], j = 0, jl = a.length; j < jl; j++, k++)
                 r[k] = a[j];
         return r;
-    }
-    ;
+    };
+
     function __await(v) {
         return this instanceof __await ? (this.v = v, this) : new __await(v);
     }
+
     function __asyncGenerator(thisArg, _arguments, generator) {
-        if (!Symbol.asyncIterator)
-            throw new TypeError("Symbol.asyncIterator is not defined.");
+        if (!Symbol.asyncIterator) throw new TypeError("Symbol.asyncIterator is not defined.");
         var g = generator.apply(thisArg, _arguments || []), i, q = [];
         return i = {}, verb("next"), verb("throw"), verb("return"), i[Symbol.asyncIterator] = function () { return this; }, i;
-        function verb(n) { if (g[n])
-            i[n] = function (v) { return new Promise(function (a, b) { q.push([n, v, a, b]) > 1 || resume(n, v); }); }; }
-        function resume(n, v) { try {
-            step(g[n](v));
-        }
-        catch (e) {
-            settle(q[0][3], e);
-        } }
+        function verb(n) { if (g[n]) i[n] = function (v) { return new Promise(function (a, b) { q.push([n, v, a, b]) > 1 || resume(n, v); }); }; }
+        function resume(n, v) { try { step(g[n](v)); } catch (e) { settle(q[0][3], e); } }
         function step(r) { r.value instanceof __await ? Promise.resolve(r.value.v).then(fulfill, reject) : settle(q[0][2], r); }
         function fulfill(value) { resume("next", value); }
         function reject(value) { resume("throw", value); }
-        function settle(f, v) { if (f(v), q.shift(), q.length)
-            resume(q[0][0], q[0][1]); }
+        function settle(f, v) { if (f(v), q.shift(), q.length) resume(q[0][0], q[0][1]); }
     }
+
     function __asyncDelegator(o) {
         var i, p;
         return i = {}, verb("next"), verb("throw", function (e) { throw e; }), verb("return"), i[Symbol.iterator] = function () { return this; }, i;
         function verb(n, f) { i[n] = o[n] ? function (v) { return (p = !p) ? { value: __await(o[n](v)), done: n === "return" } : f ? f(v) : v; } : f; }
     }
+
     function __asyncValues(o) {
-        if (!Symbol.asyncIterator)
-            throw new TypeError("Symbol.asyncIterator is not defined.");
+        if (!Symbol.asyncIterator) throw new TypeError("Symbol.asyncIterator is not defined.");
         var m = o[Symbol.asyncIterator], i;
         return m ? m.call(o) : (o = typeof __values === "function" ? __values(o) : o[Symbol.iterator](), i = {}, verb("next"), verb("throw"), verb("return"), i[Symbol.asyncIterator] = function () { return this; }, i);
         function verb(n) { i[n] = o[n] && function (v) { return new Promise(function (resolve, reject) { v = o[n](v), settle(resolve, reject, v.done, v.value); }); }; }
-        function settle(resolve, reject, d, v) { Promise.resolve(v).then(function (v) { resolve({ value: v, done: d }); }, reject); }
+        function settle(resolve, reject, d, v) { Promise.resolve(v).then(function(v) { resolve({ value: v, done: d }); }, reject); }
     }
+
     function __makeTemplateObject(cooked, raw) {
-        if (Object.defineProperty) {
-            Object.defineProperty(cooked, "raw", { value: raw });
-        }
-        else {
-            cooked.raw = raw;
-        }
+        if (Object.defineProperty) { Object.defineProperty(cooked, "raw", { value: raw }); } else { cooked.raw = raw; }
         return cooked;
-    }
-    ;
-    var __setModuleDefault = Object.create ? (function (o, v) {
-        Object.defineProperty(o, "default", { enumerable: true, value: v });
-    }) : function (o, v) {
-        o["default"] = v;
     };
+
     function __importStar(mod) {
-        if (mod && mod.__esModule)
-            return mod;
+        if (mod && mod.__esModule) return mod;
         var result = {};
-        if (mod != null)
-            for (var k in mod)
-                if (Object.hasOwnProperty.call(mod, k))
-                    __createBinding(result, mod, k);
-        __setModuleDefault(result, mod);
+        if (mod != null) for (var k in mod) if (Object.hasOwnProperty.call(mod, k)) result[k] = mod[k];
+        result.default = mod;
         return result;
     }
+
     function __importDefault(mod) {
         return (mod && mod.__esModule) ? mod : { default: mod };
-    }
-    function __classPrivateFieldGet(receiver, privateMap) {
-        if (!privateMap.has(receiver)) {
-            throw new TypeError("attempted to get private field on non-instance");
-        }
-        return privateMap.get(receiver);
-    }
-    function __classPrivateFieldSet(receiver, privateMap, value) {
-        if (!privateMap.has(receiver)) {
-            throw new TypeError("attempted to set private field on non-instance");
-        }
-        privateMap.set(receiver, value);
-        return value;
     }
 
     /**
@@ -391,6 +287,13 @@
         return Error('`compareWith` must be a function.');
     }
 
+    /**
+     * @license
+     * Copyright Google LLC All Rights Reserved.
+     *
+     * Use of this source code is governed by an MIT-style license that can be
+     * found in the LICENSE file at https://angular.io/license
+     */
     var nextUniqueId = 0;
     /**
      * The following style constants are necessary to save here in order
@@ -461,25 +364,18 @@
     }());
     var _MatSelectMixinBase = core$1.mixinDisableRipple(core$1.mixinTabIndex(core$1.mixinDisabled(core$1.mixinErrorState(MatSelectBase))));
     /**
-     * Injection token that can be used to reference instances of `MatSelectTrigger`. It serves as
-     * alternative token to the actual `MatSelectTrigger` class which could cause unnecessary
-     * retention of the class and its directive metadata.
-     */
-    var MAT_SELECT_TRIGGER = new core.InjectionToken('MatSelectTrigger');
-    /**
      * Allows the user to customize the trigger that is displayed when the select has a value.
      */
     var MatSelectTrigger = /** @class */ (function () {
         function MatSelectTrigger() {
         }
+        MatSelectTrigger.decorators = [
+            { type: core.Directive, args: [{
+                        selector: 'mat-select-trigger'
+                    },] }
+        ];
         return MatSelectTrigger;
     }());
-    MatSelectTrigger.decorators = [
-        { type: core.Directive, args: [{
-                    selector: 'mat-select-trigger',
-                    providers: [{ provide: MAT_SELECT_TRIGGER, useExisting: MatSelectTrigger }],
-                },] }
-    ];
     var MatSelect = /** @class */ (function (_super) {
         __extends(MatSelect, _super);
         function MatSelect(_viewportRuler, _changeDetectorRef, _ngZone, _defaultErrorStateMatcher, elementRef, _dir, _parentForm, _parentFormGroup, _parentFormField, ngControl, tabIndex, scrollStrategyFactory, _liveAnnouncer, defaults) {
@@ -557,6 +453,7 @@
                     return options.changes.pipe(operators.startWith(options), operators.switchMap(function () { return rxjs.merge.apply(void 0, __spread(options.map(function (option) { return option.onSelectionChange; }))); }));
                 }
                 return _this._ngZone.onStable
+                    .asObservable()
                     .pipe(operators.take(1), operators.switchMap(function () { return _this.optionSelectionChanges; }));
             });
             /** Event emitted when the select panel has been toggled. */
@@ -598,7 +495,7 @@
             get: function () {
                 return this._focused || this._panelOpen;
             },
-            enumerable: false,
+            enumerable: true,
             configurable: true
         });
         Object.defineProperty(MatSelect.prototype, "placeholder", {
@@ -608,7 +505,7 @@
                 this._placeholder = value;
                 this.stateChanges.next();
             },
-            enumerable: false,
+            enumerable: true,
             configurable: true
         });
         Object.defineProperty(MatSelect.prototype, "required", {
@@ -618,19 +515,19 @@
                 this._required = coercion.coerceBooleanProperty(value);
                 this.stateChanges.next();
             },
-            enumerable: false,
+            enumerable: true,
             configurable: true
         });
         Object.defineProperty(MatSelect.prototype, "multiple", {
             /** Whether the user should be allowed to select multiple options. */
             get: function () { return this._multiple; },
             set: function (value) {
-                if (this._selectionModel && (typeof ngDevMode === 'undefined' || ngDevMode)) {
+                if (this._selectionModel) {
                     throw getMatSelectDynamicMultipleError();
                 }
                 this._multiple = coercion.coerceBooleanProperty(value);
             },
-            enumerable: false,
+            enumerable: true,
             configurable: true
         });
         Object.defineProperty(MatSelect.prototype, "disableOptionCentering", {
@@ -639,7 +536,7 @@
             set: function (value) {
                 this._disableOptionCentering = coercion.coerceBooleanProperty(value);
             },
-            enumerable: false,
+            enumerable: true,
             configurable: true
         });
         Object.defineProperty(MatSelect.prototype, "compareWith", {
@@ -650,7 +547,7 @@
              */
             get: function () { return this._compareWith; },
             set: function (fn) {
-                if (typeof fn !== 'function' && (typeof ngDevMode === 'undefined' || ngDevMode)) {
+                if (typeof fn !== 'function') {
                     throw getMatSelectNonFunctionValueError();
                 }
                 this._compareWith = fn;
@@ -659,7 +556,7 @@
                     this._initializeSelection();
                 }
             },
-            enumerable: false,
+            enumerable: true,
             configurable: true
         });
         Object.defineProperty(MatSelect.prototype, "value", {
@@ -667,13 +564,11 @@
             get: function () { return this._value; },
             set: function (newValue) {
                 if (newValue !== this._value) {
-                    if (this.options) {
-                        this._setSelectionByValue(newValue);
-                    }
+                    this.writeValue(newValue);
                     this._value = newValue;
                 }
             },
-            enumerable: false,
+            enumerable: true,
             configurable: true
         });
         Object.defineProperty(MatSelect.prototype, "typeaheadDebounceInterval", {
@@ -682,7 +577,7 @@
             set: function (value) {
                 this._typeaheadDebounceInterval = coercion.coerceNumberProperty(value);
             },
-            enumerable: false,
+            enumerable: true,
             configurable: true
         });
         Object.defineProperty(MatSelect.prototype, "id", {
@@ -692,7 +587,7 @@
                 this._id = value || this._uid;
                 this.stateChanges.next();
             },
-            enumerable: false,
+            enumerable: true,
             configurable: true
         });
         MatSelect.prototype.ngOnInit = function () {
@@ -776,7 +671,7 @@
             this._highlightCorrectOption();
             this._changeDetectorRef.markForCheck();
             // Set the font size on the panel element once it exists.
-            this._ngZone.onStable.pipe(operators.take(1)).subscribe(function () {
+            this._ngZone.onStable.asObservable().pipe(operators.take(1)).subscribe(function () {
                 if (_this._triggerFontSize && _this.overlayDir.overlayRef &&
                     _this.overlayDir.overlayRef.overlayElement) {
                     _this.overlayDir.overlayRef.overlayElement.style.fontSize = _this._triggerFontSize + "px";
@@ -799,7 +694,9 @@
          * @param value New value to be written to the model.
          */
         MatSelect.prototype.writeValue = function (value) {
-            this.value = value;
+            if (this.options) {
+                this._setSelectionByValue(value);
+            }
         };
         /**
          * Saves a callback function to be invoked when the select's value
@@ -837,7 +734,7 @@
             get: function () {
                 return this._panelOpen;
             },
-            enumerable: false,
+            enumerable: true,
             configurable: true
         });
         Object.defineProperty(MatSelect.prototype, "selected", {
@@ -845,7 +742,7 @@
             get: function () {
                 return this.multiple ? this._selectionModel.selected : this._selectionModel.selected[0];
             },
-            enumerable: false,
+            enumerable: true,
             configurable: true
         });
         Object.defineProperty(MatSelect.prototype, "triggerValue", {
@@ -864,7 +761,7 @@
                 }
                 return this._selectionModel.selected[0].viewValue;
             },
-            enumerable: false,
+            enumerable: true,
             configurable: true
         });
         /** Whether the element is in RTL mode. */
@@ -892,7 +789,13 @@
             }
             else if (!this.multiple) {
                 var previouslySelectedOption = this.selected;
-                manager.onKeydown(event);
+                if (keyCode === keycodes.HOME || keyCode === keycodes.END) {
+                    keyCode === keycodes.HOME ? manager.setFirstItemActive() : manager.setLastItemActive();
+                    event.preventDefault();
+                }
+                else {
+                    manager.onKeydown(event);
+                }
                 var selectedOption = this.selected;
                 // Since the value has changed, we need to announce it ourselves.
                 if (selectedOption && previouslySelectedOption !== selectedOption) {
@@ -908,7 +811,11 @@
             var keyCode = event.keyCode;
             var isArrowKey = keyCode === keycodes.DOWN_ARROW || keyCode === keycodes.UP_ARROW;
             var isTyping = manager.isTyping();
-            if (isArrowKey && event.altKey) {
+            if (keyCode === keycodes.HOME || keyCode === keycodes.END) {
+                event.preventDefault();
+                keyCode === keycodes.HOME ? manager.setFirstItemActive() : manager.setLastItemActive();
+            }
+            else if (isArrowKey && event.altKey) {
                 // Close the select on ALT + arrow key to match the native <select>
                 event.preventDefault();
                 this.close();
@@ -976,7 +883,7 @@
             get: function () {
                 return !this._selectionModel || this._selectionModel.isEmpty();
             },
-            enumerable: false,
+            enumerable: true,
             configurable: true
         });
         MatSelect.prototype._initializeSelection = function () {
@@ -995,7 +902,7 @@
         MatSelect.prototype._setSelectionByValue = function (value) {
             var _this = this;
             if (this.multiple && value) {
-                if (!Array.isArray(value) && (typeof ngDevMode === 'undefined' || ngDevMode)) {
+                if (!Array.isArray(value)) {
                     throw getMatSelectNonArrayValueError();
                 }
                 this._selectionModel.clear();
@@ -1008,12 +915,12 @@
                 // Shift focus to the active item. Note that we shouldn't do this in multiple
                 // mode, because we don't know what option the user interacted with last.
                 if (correspondingOption) {
-                    this._keyManager.updateActiveItem(correspondingOption);
+                    this._keyManager.setActiveItem(correspondingOption);
                 }
                 else if (!this.panelOpen) {
                     // Otherwise reset the highlighted option. Note that we only want to do this while
                     // closed, because doing it while open can shift the user's focus unnecessarily.
-                    this._keyManager.updateActiveItem(-1);
+                    this._keyManager.setActiveItem(-1);
                 }
             }
             this._changeDetectorRef.markForCheck();
@@ -1030,7 +937,7 @@
                     return option.value != null && _this._compareWith(option.value, value);
                 }
                 catch (error) {
-                    if (typeof ngDevMode === 'undefined' || ngDevMode) {
+                    if (core.isDevMode()) {
                         // Notify developers of errors in their comparator.
                         console.warn(error);
                     }
@@ -1049,7 +956,6 @@
                 .withTypeAhead(this._typeaheadDebounceInterval)
                 .withVerticalOrientation()
                 .withHorizontalOrientation(this._isRtl() ? 'rtl' : 'ltr')
-                .withHomeAndEnd()
                 .withAllowedModifierKeys(['shiftKey']);
             this._keyManager.tabOut.pipe(operators.takeUntil(this._destroy)).subscribe(function () {
                 if (_this.panelOpen) {
@@ -1099,9 +1005,7 @@
             if (option.value == null && !this._multiple) {
                 option.deselect();
                 this._selectionModel.clear();
-                if (this.value != null) {
-                    this._propagateChanges(option.value);
-                }
+                this._propagateChanges(option.value);
             }
             else {
                 if (wasSelected !== option.selected) {
@@ -1176,8 +1080,7 @@
         MatSelect.prototype._scrollActiveOptionIntoView = function () {
             var activeOptionIndex = this._keyManager.activeItemIndex || 0;
             var labelCount = core$1._countGroupLabelsBeforeOption(activeOptionIndex, this.options, this.optionGroups);
-            var itemHeight = this._getItemHeight();
-            this.panel.nativeElement.scrollTop = core$1._getOptionScrollPosition((activeOptionIndex + labelCount) * itemHeight, itemHeight, this.panel.nativeElement.scrollTop, SELECT_PANEL_MAX_HEIGHT);
+            this.panel.nativeElement.scrollTop = core$1._getOptionScrollPosition(activeOptionIndex + labelCount, this._getItemHeight(), this.panel.nativeElement.scrollTop, SELECT_PANEL_MAX_HEIGHT);
         };
         /** Focuses the select element. */
         MatSelect.prototype.focus = function (options) {
@@ -1245,7 +1148,7 @@
                 this._getAriaLabel()) {
                 return null;
             }
-            return this._parentFormField.getLabelId();
+            return this._parentFormField._labelId || null;
         };
         /** Determines the `aria-activedescendant` to be set on the host. */
         MatSelect.prototype._getAriaActiveDescendant = function () {
@@ -1436,94 +1339,95 @@
             get: function () {
                 return this._panelOpen || !this.empty;
             },
-            enumerable: false,
+            enumerable: true,
             configurable: true
         });
+        MatSelect.decorators = [
+            { type: core.Component, args: [{
+                        selector: 'mat-select',
+                        exportAs: 'matSelect',
+                        template: "<div cdk-overlay-origin\n     class=\"mat-select-trigger\"\n     aria-hidden=\"true\"\n     (click)=\"toggle()\"\n     #origin=\"cdkOverlayOrigin\"\n     #trigger>\n  <div class=\"mat-select-value\" [ngSwitch]=\"empty\">\n    <span class=\"mat-select-placeholder\" *ngSwitchCase=\"true\">{{placeholder || '\\u00A0'}}</span>\n    <span class=\"mat-select-value-text\" *ngSwitchCase=\"false\" [ngSwitch]=\"!!customTrigger\">\n      <span *ngSwitchDefault>{{triggerValue || '\\u00A0'}}</span>\n      <ng-content select=\"mat-select-trigger\" *ngSwitchCase=\"true\"></ng-content>\n    </span>\n  </div>\n\n  <div class=\"mat-select-arrow-wrapper\"><div class=\"mat-select-arrow\"></div></div>\n</div>\n\n<ng-template\n  cdk-connected-overlay\n  cdkConnectedOverlayLockPosition\n  cdkConnectedOverlayHasBackdrop\n  cdkConnectedOverlayBackdropClass=\"cdk-overlay-transparent-backdrop\"\n  [cdkConnectedOverlayScrollStrategy]=\"_scrollStrategy\"\n  [cdkConnectedOverlayOrigin]=\"origin\"\n  [cdkConnectedOverlayOpen]=\"panelOpen\"\n  [cdkConnectedOverlayPositions]=\"_positions\"\n  [cdkConnectedOverlayMinWidth]=\"_triggerRect?.width\"\n  [cdkConnectedOverlayOffsetY]=\"_offsetY\"\n  (backdropClick)=\"close()\"\n  (attach)=\"_onAttached()\"\n  (detach)=\"close()\">\n  <div class=\"mat-select-panel-wrap\" [@transformPanelWrap]>\n    <div\n      #panel\n      [attr.id]=\"id + '-panel'\"\n      class=\"mat-select-panel {{ _getPanelTheme() }}\"\n      [ngClass]=\"panelClass\"\n      [@transformPanel]=\"multiple ? 'showing-multiple' : 'showing'\"\n      (@transformPanel.done)=\"_panelDoneAnimatingStream.next($event.toState)\"\n      [style.transformOrigin]=\"_transformOrigin\"\n      [style.font-size.px]=\"_triggerFontSize\"\n      (keydown)=\"_handleKeydown($event)\">\n      <ng-content></ng-content>\n    </div>\n  </div>\n</ng-template>\n",
+                        inputs: ['disabled', 'disableRipple', 'tabIndex'],
+                        encapsulation: core.ViewEncapsulation.None,
+                        changeDetection: core.ChangeDetectionStrategy.OnPush,
+                        host: {
+                            'role': 'listbox',
+                            '[attr.id]': 'id',
+                            '[attr.tabindex]': 'tabIndex',
+                            '[attr.aria-label]': '_getAriaLabel()',
+                            '[attr.aria-labelledby]': '_getAriaLabelledby()',
+                            '[attr.aria-required]': 'required.toString()',
+                            '[attr.aria-disabled]': 'disabled.toString()',
+                            '[attr.aria-invalid]': 'errorState',
+                            '[attr.aria-owns]': 'panelOpen ? _optionIds : null',
+                            '[attr.aria-multiselectable]': 'multiple',
+                            '[attr.aria-describedby]': '_ariaDescribedby || null',
+                            '[attr.aria-activedescendant]': '_getAriaActiveDescendant()',
+                            '[class.mat-select-disabled]': 'disabled',
+                            '[class.mat-select-invalid]': 'errorState',
+                            '[class.mat-select-required]': 'required',
+                            '[class.mat-select-empty]': 'empty',
+                            'class': 'mat-select',
+                            '(keydown)': '_handleKeydown($event)',
+                            '(focus)': '_onFocus()',
+                            '(blur)': '_onBlur()',
+                        },
+                        animations: [
+                            matSelectAnimations.transformPanelWrap,
+                            matSelectAnimations.transformPanel
+                        ],
+                        providers: [
+                            { provide: formField.MatFormFieldControl, useExisting: MatSelect },
+                            { provide: core$1.MAT_OPTION_PARENT_COMPONENT, useExisting: MatSelect }
+                        ],
+                        styles: [".mat-select{display:inline-block;width:100%;outline:none}.mat-select-trigger{display:inline-table;cursor:pointer;position:relative;box-sizing:border-box}.mat-select-disabled .mat-select-trigger{-webkit-user-select:none;-moz-user-select:none;-ms-user-select:none;user-select:none;cursor:default}.mat-select-value{display:table-cell;max-width:0;width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.mat-select-value-text{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.mat-select-arrow-wrapper{display:table-cell;vertical-align:middle}.mat-form-field-appearance-fill .mat-select-arrow-wrapper{transform:translateY(-50%)}.mat-form-field-appearance-outline .mat-select-arrow-wrapper{transform:translateY(-25%)}.mat-form-field-appearance-standard.mat-form-field-has-label .mat-select:not(.mat-select-empty) .mat-select-arrow-wrapper{transform:translateY(-50%)}.mat-form-field-appearance-standard .mat-select.mat-select-empty .mat-select-arrow-wrapper{transition:transform 400ms cubic-bezier(0.25, 0.8, 0.25, 1)}._mat-animation-noopable.mat-form-field-appearance-standard .mat-select.mat-select-empty .mat-select-arrow-wrapper{transition:none}.mat-select-arrow{width:0;height:0;border-left:5px solid transparent;border-right:5px solid transparent;border-top:5px solid;margin:0 4px}.mat-select-panel-wrap{flex-basis:100%}.mat-select-panel{min-width:112px;max-width:280px;overflow:auto;-webkit-overflow-scrolling:touch;padding-top:0;padding-bottom:0;max-height:256px;min-width:100%;border-radius:4px}.cdk-high-contrast-active .mat-select-panel{outline:solid 1px}.mat-select-panel .mat-optgroup-label,.mat-select-panel .mat-option{font-size:inherit;line-height:3em;height:3em}.mat-form-field-type-mat-select:not(.mat-form-field-disabled) .mat-form-field-flex{cursor:pointer}.mat-form-field-type-mat-select .mat-form-field-label{width:calc(100% - 18px)}.mat-select-placeholder{transition:color 400ms 133.3333333333ms cubic-bezier(0.25, 0.8, 0.25, 1)}._mat-animation-noopable .mat-select-placeholder{transition:none}.mat-form-field-hide-placeholder .mat-select-placeholder{color:transparent;-webkit-text-fill-color:transparent;transition:none;display:block}\n"]
+                    }] }
+        ];
+        /** @nocollapse */
+        MatSelect.ctorParameters = function () { return [
+            { type: scrolling.ViewportRuler },
+            { type: core.ChangeDetectorRef },
+            { type: core.NgZone },
+            { type: core$1.ErrorStateMatcher },
+            { type: core.ElementRef },
+            { type: bidi.Directionality, decorators: [{ type: core.Optional }] },
+            { type: forms.NgForm, decorators: [{ type: core.Optional }] },
+            { type: forms.FormGroupDirective, decorators: [{ type: core.Optional }] },
+            { type: formField.MatFormField, decorators: [{ type: core.Optional }, { type: core.Inject, args: [formField.MAT_FORM_FIELD,] }] },
+            { type: forms.NgControl, decorators: [{ type: core.Self }, { type: core.Optional }] },
+            { type: String, decorators: [{ type: core.Attribute, args: ['tabindex',] }] },
+            { type: undefined, decorators: [{ type: core.Inject, args: [MAT_SELECT_SCROLL_STRATEGY,] }] },
+            { type: a11y.LiveAnnouncer },
+            { type: undefined, decorators: [{ type: core.Optional }, { type: core.Inject, args: [MAT_SELECT_CONFIG,] }] }
+        ]; };
+        MatSelect.propDecorators = {
+            trigger: [{ type: core.ViewChild, args: ['trigger',] }],
+            panel: [{ type: core.ViewChild, args: ['panel',] }],
+            overlayDir: [{ type: core.ViewChild, args: [overlay.CdkConnectedOverlay,] }],
+            options: [{ type: core.ContentChildren, args: [core$1.MatOption, { descendants: true },] }],
+            optionGroups: [{ type: core.ContentChildren, args: [core$1.MatOptgroup, { descendants: true },] }],
+            panelClass: [{ type: core.Input }],
+            customTrigger: [{ type: core.ContentChild, args: [MatSelectTrigger,] }],
+            placeholder: [{ type: core.Input }],
+            required: [{ type: core.Input }],
+            multiple: [{ type: core.Input }],
+            disableOptionCentering: [{ type: core.Input }],
+            compareWith: [{ type: core.Input }],
+            value: [{ type: core.Input }],
+            ariaLabel: [{ type: core.Input, args: ['aria-label',] }],
+            ariaLabelledby: [{ type: core.Input, args: ['aria-labelledby',] }],
+            errorStateMatcher: [{ type: core.Input }],
+            typeaheadDebounceInterval: [{ type: core.Input }],
+            sortComparator: [{ type: core.Input }],
+            id: [{ type: core.Input }],
+            openedChange: [{ type: core.Output }],
+            _openedStream: [{ type: core.Output, args: ['opened',] }],
+            _closedStream: [{ type: core.Output, args: ['closed',] }],
+            selectionChange: [{ type: core.Output }],
+            valueChange: [{ type: core.Output }]
+        };
         return MatSelect;
     }(_MatSelectMixinBase));
-    MatSelect.decorators = [
-        { type: core.Component, args: [{
-                    selector: 'mat-select',
-                    exportAs: 'matSelect',
-                    template: "<div cdk-overlay-origin\n     class=\"mat-select-trigger\"\n     aria-hidden=\"true\"\n     (click)=\"toggle()\"\n     #origin=\"cdkOverlayOrigin\"\n     #trigger>\n  <div class=\"mat-select-value\" [ngSwitch]=\"empty\">\n    <span class=\"mat-select-placeholder\" *ngSwitchCase=\"true\">{{placeholder || '\\u00A0'}}</span>\n    <span class=\"mat-select-value-text\" *ngSwitchCase=\"false\" [ngSwitch]=\"!!customTrigger\">\n      <span *ngSwitchDefault>{{triggerValue || '\\u00A0'}}</span>\n      <ng-content select=\"mat-select-trigger\" *ngSwitchCase=\"true\"></ng-content>\n    </span>\n  </div>\n\n  <div class=\"mat-select-arrow-wrapper\"><div class=\"mat-select-arrow\"></div></div>\n</div>\n\n<ng-template\n  cdk-connected-overlay\n  cdkConnectedOverlayLockPosition\n  cdkConnectedOverlayHasBackdrop\n  cdkConnectedOverlayBackdropClass=\"cdk-overlay-transparent-backdrop\"\n  [cdkConnectedOverlayScrollStrategy]=\"_scrollStrategy\"\n  [cdkConnectedOverlayOrigin]=\"origin\"\n  [cdkConnectedOverlayOpen]=\"panelOpen\"\n  [cdkConnectedOverlayPositions]=\"_positions\"\n  [cdkConnectedOverlayMinWidth]=\"_triggerRect?.width!\"\n  [cdkConnectedOverlayOffsetY]=\"_offsetY\"\n  (backdropClick)=\"close()\"\n  (attach)=\"_onAttached()\"\n  (detach)=\"close()\">\n  <div class=\"mat-select-panel-wrap\" [@transformPanelWrap]>\n    <div\n      #panel\n      [attr.id]=\"id + '-panel'\"\n      class=\"mat-select-panel {{ _getPanelTheme() }}\"\n      [ngClass]=\"panelClass\"\n      [@transformPanel]=\"multiple ? 'showing-multiple' : 'showing'\"\n      (@transformPanel.done)=\"_panelDoneAnimatingStream.next($event.toState)\"\n      [style.transformOrigin]=\"_transformOrigin\"\n      [style.font-size.px]=\"_triggerFontSize\"\n      (keydown)=\"_handleKeydown($event)\">\n      <ng-content></ng-content>\n    </div>\n  </div>\n</ng-template>\n",
-                    inputs: ['disabled', 'disableRipple', 'tabIndex'],
-                    encapsulation: core.ViewEncapsulation.None,
-                    changeDetection: core.ChangeDetectionStrategy.OnPush,
-                    host: {
-                        'role': 'listbox',
-                        '[attr.id]': 'id',
-                        '[attr.tabindex]': 'tabIndex',
-                        '[attr.aria-label]': '_getAriaLabel()',
-                        '[attr.aria-labelledby]': '_getAriaLabelledby()',
-                        '[attr.aria-required]': 'required.toString()',
-                        '[attr.aria-disabled]': 'disabled.toString()',
-                        '[attr.aria-invalid]': 'errorState',
-                        '[attr.aria-owns]': 'panelOpen ? _optionIds : null',
-                        '[attr.aria-multiselectable]': 'multiple',
-                        '[attr.aria-describedby]': '_ariaDescribedby || null',
-                        '[attr.aria-activedescendant]': '_getAriaActiveDescendant()',
-                        '[class.mat-select-disabled]': 'disabled',
-                        '[class.mat-select-invalid]': 'errorState',
-                        '[class.mat-select-required]': 'required',
-                        '[class.mat-select-empty]': 'empty',
-                        'class': 'mat-select',
-                        '(keydown)': '_handleKeydown($event)',
-                        '(focus)': '_onFocus()',
-                        '(blur)': '_onBlur()',
-                    },
-                    animations: [
-                        matSelectAnimations.transformPanelWrap,
-                        matSelectAnimations.transformPanel
-                    ],
-                    providers: [
-                        { provide: formField.MatFormFieldControl, useExisting: MatSelect },
-                        { provide: core$1.MAT_OPTION_PARENT_COMPONENT, useExisting: MatSelect }
-                    ],
-                    styles: [".mat-select{display:inline-block;width:100%;outline:none}.mat-select-trigger{display:inline-table;cursor:pointer;position:relative;box-sizing:border-box}.mat-select-disabled .mat-select-trigger{-webkit-user-select:none;-moz-user-select:none;-ms-user-select:none;user-select:none;cursor:default}.mat-select-value{display:table-cell;max-width:0;width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.mat-select-value-text{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.mat-select-arrow-wrapper{display:table-cell;vertical-align:middle}.mat-form-field-appearance-fill .mat-select-arrow-wrapper{transform:translateY(-50%)}.mat-form-field-appearance-outline .mat-select-arrow-wrapper{transform:translateY(-25%)}.mat-form-field-appearance-standard.mat-form-field-has-label .mat-select:not(.mat-select-empty) .mat-select-arrow-wrapper{transform:translateY(-50%)}.mat-form-field-appearance-standard .mat-select.mat-select-empty .mat-select-arrow-wrapper{transition:transform 400ms cubic-bezier(0.25, 0.8, 0.25, 1)}._mat-animation-noopable.mat-form-field-appearance-standard .mat-select.mat-select-empty .mat-select-arrow-wrapper{transition:none}.mat-select-arrow{width:0;height:0;border-left:5px solid transparent;border-right:5px solid transparent;border-top:5px solid;margin:0 4px}.mat-select-panel-wrap{flex-basis:100%}.mat-select-panel{min-width:112px;max-width:280px;overflow:auto;-webkit-overflow-scrolling:touch;padding-top:0;padding-bottom:0;max-height:256px;min-width:100%;border-radius:4px}.cdk-high-contrast-active .mat-select-panel{outline:solid 1px}.mat-select-panel .mat-optgroup-label,.mat-select-panel .mat-option{font-size:inherit;line-height:3em;height:3em}.mat-form-field-type-mat-select:not(.mat-form-field-disabled) .mat-form-field-flex{cursor:pointer}.mat-form-field-type-mat-select .mat-form-field-label{width:calc(100% - 18px)}.mat-select-placeholder{transition:color 400ms 133.3333333333ms cubic-bezier(0.25, 0.8, 0.25, 1)}._mat-animation-noopable .mat-select-placeholder{transition:none}.mat-form-field-hide-placeholder .mat-select-placeholder{color:transparent;-webkit-text-fill-color:transparent;transition:none;display:block}\n"]
-                },] }
-    ];
-    MatSelect.ctorParameters = function () { return [
-        { type: scrolling.ViewportRuler },
-        { type: core.ChangeDetectorRef },
-        { type: core.NgZone },
-        { type: core$1.ErrorStateMatcher },
-        { type: core.ElementRef },
-        { type: bidi.Directionality, decorators: [{ type: core.Optional }] },
-        { type: forms.NgForm, decorators: [{ type: core.Optional }] },
-        { type: forms.FormGroupDirective, decorators: [{ type: core.Optional }] },
-        { type: formField.MatFormField, decorators: [{ type: core.Optional }, { type: core.Inject, args: [formField.MAT_FORM_FIELD,] }] },
-        { type: forms.NgControl, decorators: [{ type: core.Self }, { type: core.Optional }] },
-        { type: String, decorators: [{ type: core.Attribute, args: ['tabindex',] }] },
-        { type: undefined, decorators: [{ type: core.Inject, args: [MAT_SELECT_SCROLL_STRATEGY,] }] },
-        { type: a11y.LiveAnnouncer },
-        { type: undefined, decorators: [{ type: core.Optional }, { type: core.Inject, args: [MAT_SELECT_CONFIG,] }] }
-    ]; };
-    MatSelect.propDecorators = {
-        trigger: [{ type: core.ViewChild, args: ['trigger',] }],
-        panel: [{ type: core.ViewChild, args: ['panel',] }],
-        overlayDir: [{ type: core.ViewChild, args: [overlay.CdkConnectedOverlay,] }],
-        options: [{ type: core.ContentChildren, args: [core$1.MatOption, { descendants: true },] }],
-        optionGroups: [{ type: core.ContentChildren, args: [core$1.MAT_OPTGROUP, { descendants: true },] }],
-        panelClass: [{ type: core.Input }],
-        customTrigger: [{ type: core.ContentChild, args: [MAT_SELECT_TRIGGER,] }],
-        placeholder: [{ type: core.Input }],
-        required: [{ type: core.Input }],
-        multiple: [{ type: core.Input }],
-        disableOptionCentering: [{ type: core.Input }],
-        compareWith: [{ type: core.Input }],
-        value: [{ type: core.Input }],
-        ariaLabel: [{ type: core.Input, args: ['aria-label',] }],
-        ariaLabelledby: [{ type: core.Input, args: ['aria-labelledby',] }],
-        errorStateMatcher: [{ type: core.Input }],
-        typeaheadDebounceInterval: [{ type: core.Input }],
-        sortComparator: [{ type: core.Input }],
-        id: [{ type: core.Input }],
-        openedChange: [{ type: core.Output }],
-        _openedStream: [{ type: core.Output, args: ['opened',] }],
-        _closedStream: [{ type: core.Output, args: ['closed',] }],
-        selectionChange: [{ type: core.Output }],
-        valueChange: [{ type: core.Output }]
-    };
 
     /**
      * @license
@@ -1535,28 +1439,28 @@
     var MatSelectModule = /** @class */ (function () {
         function MatSelectModule() {
         }
+        MatSelectModule.decorators = [
+            { type: core.NgModule, args: [{
+                        imports: [
+                            common.CommonModule,
+                            overlay.OverlayModule,
+                            core$1.MatOptionModule,
+                            core$1.MatCommonModule,
+                        ],
+                        exports: [
+                            scrolling.CdkScrollableModule,
+                            formField.MatFormFieldModule,
+                            MatSelect,
+                            MatSelectTrigger,
+                            core$1.MatOptionModule,
+                            core$1.MatCommonModule
+                        ],
+                        declarations: [MatSelect, MatSelectTrigger],
+                        providers: [MAT_SELECT_SCROLL_STRATEGY_PROVIDER]
+                    },] }
+        ];
         return MatSelectModule;
     }());
-    MatSelectModule.decorators = [
-        { type: core.NgModule, args: [{
-                    imports: [
-                        common.CommonModule,
-                        overlay.OverlayModule,
-                        core$1.MatOptionModule,
-                        core$1.MatCommonModule,
-                    ],
-                    exports: [
-                        scrolling.CdkScrollableModule,
-                        formField.MatFormFieldModule,
-                        MatSelect,
-                        MatSelectTrigger,
-                        core$1.MatOptionModule,
-                        core$1.MatCommonModule
-                    ],
-                    declarations: [MatSelect, MatSelectTrigger],
-                    providers: [MAT_SELECT_SCROLL_STRATEGY_PROVIDER]
-                },] }
-    ];
 
     /**
      * @license
@@ -1574,7 +1478,6 @@
     exports.MAT_SELECT_SCROLL_STRATEGY = MAT_SELECT_SCROLL_STRATEGY;
     exports.MAT_SELECT_SCROLL_STRATEGY_PROVIDER = MAT_SELECT_SCROLL_STRATEGY_PROVIDER;
     exports.MAT_SELECT_SCROLL_STRATEGY_PROVIDER_FACTORY = MAT_SELECT_SCROLL_STRATEGY_PROVIDER_FACTORY;
-    exports.MAT_SELECT_TRIGGER = MAT_SELECT_TRIGGER;
     exports.MatSelect = MatSelect;
     exports.MatSelectChange = MatSelectChange;
     exports.MatSelectModule = MatSelectModule;

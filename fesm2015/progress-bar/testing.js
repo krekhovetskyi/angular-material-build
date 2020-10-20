@@ -36,15 +36,7 @@ class MatProgressBarHarness extends ComponentHarness {
     }
 }
 /** The selector for the host element of a `MatProgressBar` instance. */
-MatProgressBarHarness.hostSelector = '.mat-progress-bar';
-
-/**
- * @license
- * Copyright Google LLC All Rights Reserved.
- *
- * Use of this source code is governed by an MIT-style license that can be
- * found in the LICENSE file at https://angular.io/license
- */
+MatProgressBarHarness.hostSelector = 'mat-progress-bar';
 
 /**
  * @license
