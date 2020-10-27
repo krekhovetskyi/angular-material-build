@@ -5,21 +5,25 @@
  * Use of this source code is governed by an MIT-style license that can be
  * found in the LICENSE file at https://angular.io/license
  */
-import { FocusableOption, FocusMonitor, FocusOrigin } from '@angular/cdk/a11y';
-import { AfterViewInit, ChangeDetectorRef, ElementRef, OnDestroy } from '@angular/core';
-import { MatAccordionTogglePosition } from './accordion-base';
+import { FocusMonitor, FocusableOption, FocusOrigin } from '@angular/cdk/a11y';
+import { ChangeDetectorRef, ElementRef, OnDestroy } from '@angular/core';
 import { MatExpansionPanel, MatExpansionPanelDefaultOptions } from './expansion-panel';
+import { MatAccordionTogglePosition } from './accordion-base';
 /**
- * Header element of a `<mat-expansion-panel>`.
+ * `<mat-expansion-panel-header>`
+ *
+ * This component corresponds to the header element of an `<mat-expansion-panel>`.
  */
-export declare class MatExpansionPanelHeader implements AfterViewInit, OnDestroy, FocusableOption {
+export declare class MatExpansionPanelHeader implements OnDestroy, FocusableOption {
     panel: MatExpansionPanel;
     private _element;
     private _focusMonitor;
     private _changeDetectorRef;
-    _animationMode?: string | undefined;
     private _parentChangeSubscription;
-    constructor(panel: MatExpansionPanel, _element: ElementRef, _focusMonitor: FocusMonitor, _changeDetectorRef: ChangeDetectorRef, defaultOptions?: MatExpansionPanelDefaultOptions, _animationMode?: string | undefined);
+    /** Whether Angular animations in the panel header should be disabled. */
+    _animationsDisabled: boolean;
+    constructor(panel: MatExpansionPanel, _element: ElementRef, _focusMonitor: FocusMonitor, _changeDetectorRef: ChangeDetectorRef, defaultOptions?: MatExpansionPanelDefaultOptions);
+    _animationStarted(): void;
     /** Height of the header while the panel is expanded. */
     expandedHeight: string;
     /** Height of the header while the panel is collapsed. */
@@ -41,11 +45,6 @@ export declare class MatExpansionPanelHeader implements AfterViewInit, OnDestroy
     _getTogglePosition(): MatAccordionTogglePosition;
     /** Gets whether the expand indicator should be shown. */
     _showToggle(): boolean;
-    /**
-     * Gets the current height of the header. Null if no custom height has been
-     * specified, and if the default height from the stylesheet should be used.
-     */
-    _getHeaderHeight(): string | null;
     /** Handle keydown event calling to toggle() if appropriate. */
     _keydown(event: KeyboardEvent): void;
     /**
@@ -54,16 +53,19 @@ export declare class MatExpansionPanelHeader implements AfterViewInit, OnDestroy
      * @docs-private
      */
     focus(origin?: FocusOrigin, options?: FocusOptions): void;
-    ngAfterViewInit(): void;
     ngOnDestroy(): void;
 }
 /**
- * Description element of a `<mat-expansion-panel-header>`.
+ * `<mat-panel-description>`
+ *
+ * This directive is to be used inside of the MatExpansionPanelHeader component.
  */
 export declare class MatExpansionPanelDescription {
 }
 /**
- * Title element of a `<mat-expansion-panel-header>`.
+ * `<mat-panel-title>`
+ *
+ * This directive is to be used inside of the MatExpansionPanelHeader component.
  */
 export declare class MatExpansionPanelTitle {
 }

@@ -5,16 +5,18 @@
  * Use of this source code is governed by an MIT-style license that can be
  * found in the LICENSE file at https://angular.io/license
  */
-import { FocusableOption, FocusKeyManager, FocusMonitor } from '@angular/cdk/a11y';
+import { FocusableOption, FocusKeyManager } from '@angular/cdk/a11y';
 import { BooleanInput } from '@angular/cdk/coercion';
 import { SelectionModel } from '@angular/cdk/collections';
 import { AfterContentInit, ChangeDetectorRef, ElementRef, EventEmitter, OnChanges, OnDestroy, OnInit, QueryList, SimpleChanges } from '@angular/core';
 import { ControlValueAccessor } from '@angular/forms';
 import { CanDisableRipple, CanDisableRippleCtor, MatLine, ThemePalette } from '@angular/material/core';
 import { MatListAvatarCssMatStyler, MatListIconCssMatStyler } from './list';
+/** @docs-private */
 declare class MatSelectionListBase {
 }
 declare const _MatSelectionListMixinBase: CanDisableRippleCtor & typeof MatSelectionListBase;
+/** @docs-private */
 declare class MatListOptionBase {
 }
 declare const _MatListOptionMixinBase: CanDisableRippleCtor & typeof MatListOptionBase;
@@ -24,25 +26,13 @@ export declare const MAT_SELECTION_LIST_VALUE_ACCESSOR: any;
 export declare class MatSelectionListChange {
     /** Reference to the selection list that emitted the event. */
     source: MatSelectionList;
-    /**
-     * Reference to the option that has been changed.
-     * @deprecated Use `options` instead, because some events may change more than one option.
-     * @breaking-change 12.0.0
-     */
+    /** Reference to the option that has been changed. */
     option: MatListOption;
-    /** Reference to the options that have been changed. */
-    options: MatListOption[];
     constructor(
     /** Reference to the selection list that emitted the event. */
     source: MatSelectionList, 
-    /**
-     * Reference to the option that has been changed.
-     * @deprecated Use `options` instead, because some events may change more than one option.
-     * @breaking-change 12.0.0
-     */
-    option: MatListOption, 
-    /** Reference to the options that have been changed. */
-    options: MatListOption[]);
+    /** Reference to the option that has been changed. */
+    option: MatListOption);
 }
 /**
  * Component for list-options of selection-list. Each list-option can automatically
@@ -123,7 +113,6 @@ export declare class MatListOption extends _MatListOptionMixinBase implements Af
 export declare class MatSelectionList extends _MatSelectionListMixinBase implements CanDisableRipple, AfterContentInit, ControlValueAccessor, OnDestroy, OnChanges {
     private _element;
     private _changeDetector;
-    private _focusMonitor?;
     private _multiple;
     private _contentInitialized;
     /** The FocusKeyManager which handles focus. */
@@ -166,7 +155,7 @@ export declare class MatSelectionList extends _MatSelectionListMixinBase impleme
     _onTouched: () => void;
     /** Whether the list has been destroyed. */
     private _isDestroyed;
-    constructor(_element: ElementRef<HTMLElement>, tabIndex: string, _changeDetector: ChangeDetectorRef, _focusMonitor?: FocusMonitor | undefined);
+    constructor(_element: ElementRef<HTMLElement>, tabIndex: string, _changeDetector: ChangeDetectorRef);
     ngAfterContentInit(): void;
     ngOnChanges(changes: SimpleChanges): void;
     ngOnDestroy(): void;
@@ -188,7 +177,12 @@ export declare class MatSelectionList extends _MatSelectionListMixinBase impleme
     /** Reports a value change to the ControlValueAccessor */
     _reportValueChange(): void;
     /** Emits a change event if the selected state of an option changed. */
-    _emitChangeEvent(options: MatListOption[]): void;
+    _emitChangeEvent(option: MatListOption): void;
+    /**
+     * When the selection list is focused, we want to move focus to an option within the list. Do this
+     * by setting the appropriate option to be active.
+     */
+    _onFocus(): void;
     /** Implemented as part of ControlValueAccessor. */
     writeValue(values: string[]): void;
     /** Implemented as a part of ControlValueAccessor. */

@@ -6,9 +6,9 @@
  * found in the LICENSE file at https://angular.io/license
  */
 import { FocusableOption } from '@angular/cdk/a11y';
-import { BooleanInput, NumberInput } from '@angular/cdk/coercion';
+import { BooleanInput } from '@angular/cdk/coercion';
 import { Platform } from '@angular/cdk/platform';
-import { ChangeDetectorRef, ElementRef, EventEmitter, InjectionToken, NgZone, OnDestroy } from '@angular/core';
+import { ElementRef, EventEmitter, NgZone, OnDestroy, ChangeDetectorRef } from '@angular/core';
 import { CanColor, CanColorCtor, CanDisableRipple, CanDisableRippleCtor, HasTabIndex, HasTabIndexCtor, RippleConfig, RippleGlobalOptions, RippleTarget } from '@angular/material/core';
 import { Subject } from 'rxjs';
 /** Represents an event fired on an individual `mat-chip`. */
@@ -32,28 +32,10 @@ export declare class MatChipSelectionChange {
     /** Whether the selection change was a result of a user interaction. */
     isUserInput?: boolean);
 }
-/**
- * Injection token that can be used to reference instances of `MatChipRemove`. It serves as
- * alternative token to the actual `MatChipRemove` class which could cause unnecessary
- * retention of the class and its directive metadata.
- */
-export declare const MAT_CHIP_REMOVE: InjectionToken<MatChipRemove>;
-/**
- * Injection token that can be used to reference instances of `MatChipAvatar`. It serves as
- * alternative token to the actual `MatChipAvatar` class which could cause unnecessary
- * retention of the class and its directive metadata.
- */
-export declare const MAT_CHIP_AVATAR: InjectionToken<MatChipAvatar>;
-/**
- * Injection token that can be used to reference instances of `MatChipTrailingIcon`. It serves as
- * alternative token to the actual `MatChipTrailingIcon` class which could cause unnecessary
- * retention of the class and its directive metadata.
- */
-export declare const MAT_CHIP_TRAILING_ICON: InjectionToken<MatChipTrailingIcon>;
 /** @docs-private */
-declare abstract class MatChipBase {
+declare class MatChipBase {
     _elementRef: ElementRef;
-    abstract disabled: boolean;
+    disabled: boolean;
     constructor(_elementRef: ElementRef);
 }
 declare const _MatChipMixinBase: CanColorCtor & CanDisableRippleCtor & HasTabIndexCtor & typeof MatChipBase;
@@ -75,7 +57,7 @@ export declare class MatChipTrailingIcon {
 export declare class MatChip extends _MatChipMixinBase implements FocusableOption, OnDestroy, CanColor, CanDisableRipple, RippleTarget, HasTabIndex {
     _elementRef: ElementRef<HTMLElement>;
     private _ngZone;
-    private _changeDetectorRef;
+    private _changeDetectorRef?;
     /** Reference to the RippleRenderer for the chip. */
     private _chipRipple;
     /**
@@ -151,7 +133,7 @@ export declare class MatChip extends _MatChipMixinBase implements FocusableOptio
     readonly removed: EventEmitter<MatChipEvent>;
     /** The ARIA selected applied to the chip. */
     get ariaSelected(): string | null;
-    constructor(_elementRef: ElementRef<HTMLElement>, _ngZone: NgZone, platform: Platform, globalRippleOptions: RippleGlobalOptions | null, _changeDetectorRef: ChangeDetectorRef, _document: any, animationMode?: string, tabIndex?: string);
+    constructor(_elementRef: ElementRef<HTMLElement>, _ngZone: NgZone, platform: Platform, globalRippleOptions: RippleGlobalOptions | null, animationMode?: string, _changeDetectorRef?: ChangeDetectorRef | undefined, tabIndex?: string, _document?: any);
     _addHostClassName(): void;
     ngOnDestroy(): void;
     /** Selects the chip. */
@@ -177,12 +159,12 @@ export declare class MatChip extends _MatChipMixinBase implements FocusableOptio
     _handleKeydown(event: KeyboardEvent): void;
     _blur(): void;
     private _dispatchSelectionChange;
+    private _markForCheck;
     static ngAcceptInputType_selected: BooleanInput;
     static ngAcceptInputType_selectable: BooleanInput;
     static ngAcceptInputType_removable: BooleanInput;
     static ngAcceptInputType_disabled: BooleanInput;
     static ngAcceptInputType_disableRipple: BooleanInput;
-    static ngAcceptInputType_tabIndex: NumberInput;
 }
 /**
  * Applies proper (click) support and adds styling for use with the Material Design "cancel" icon
@@ -199,7 +181,7 @@ export declare class MatChip extends _MatChipMixinBase implements FocusableOptio
  */
 export declare class MatChipRemove {
     protected _parentChip: MatChip;
-    constructor(_parentChip: MatChip, elementRef: ElementRef<HTMLElement>);
+    constructor(_parentChip: MatChip, elementRef?: ElementRef<HTMLElement>);
     /** Calls the parent chip's public `remove()` method if applicable. */
     _handleClick(event: Event): void;
 }

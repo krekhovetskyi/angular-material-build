@@ -6,7 +6,7 @@
  * found in the LICENSE file at https://angular.io/license
  */
 import { FocusMonitor } from '@angular/cdk/a11y';
-import { BooleanInput, NumberInput } from '@angular/cdk/coercion';
+import { BooleanInput } from '@angular/cdk/coercion';
 import { UniqueSelectionDispatcher } from '@angular/cdk/collections';
 import { AfterContentInit, AfterViewInit, ChangeDetectorRef, ElementRef, EventEmitter, InjectionToken, OnDestroy, OnInit, QueryList } from '@angular/core';
 import { ControlValueAccessor } from '@angular/forms';
@@ -25,26 +25,19 @@ export declare const MAT_RADIO_GROUP_CONTROL_VALUE_ACCESSOR: any;
 /** Change event object emitted by MatRadio and MatRadioGroup. */
 export declare class MatRadioChange {
     /** The MatRadioButton that emits the change event. */
-    source: _MatRadioButtonBase;
+    source: MatRadioButton;
     /** The value of the MatRadioButton. */
     value: any;
     constructor(
     /** The MatRadioButton that emits the change event. */
-    source: _MatRadioButtonBase, 
+    source: MatRadioButton, 
     /** The value of the MatRadioButton. */
     value: any);
 }
 /**
- * Injection token that can be used to inject instances of `MatRadioGroup`. It serves as
- * alternative token to the actual `MatRadioGroup` class which could cause unnecessary
- * retention of the class and its component metadata.
+ * A group of radio buttons. May contain one or more `<mat-radio-button>` elements.
  */
-export declare const MAT_RADIO_GROUP: InjectionToken<_MatRadioGroupBase<_MatRadioButtonBase>>;
-/**
- * Base class with all of the `MatRadioGroup` functionality.
- * @docs-private
- */
-export declare abstract class _MatRadioGroupBase<T extends _MatRadioButtonBase> implements AfterContentInit, ControlValueAccessor {
+export declare class MatRadioGroup implements AfterContentInit, ControlValueAccessor {
     private _changeDetector;
     /** Selected value for the radio group. */
     private _value;
@@ -74,7 +67,7 @@ export declare abstract class _MatRadioGroupBase<T extends _MatRadioButtonBase> 
      */
     readonly change: EventEmitter<MatRadioChange>;
     /** Child radio buttons. */
-    abstract _radios: QueryList<T>;
+    _radios: QueryList<MatRadioButton>;
     /** Theme color for all of the radio buttons in the group. */
     color: ThemePalette;
     /** Name of the radio button group. All radio buttons inside this group will use this name. */
@@ -96,8 +89,8 @@ export declare abstract class _MatRadioGroupBase<T extends _MatRadioButtonBase> 
      * The currently selected radio button. If set to a new radio button, the radio group value
      * will be updated to match the new selected button.
      */
-    get selected(): T | null;
-    set selected(selected: T | null);
+    get selected(): MatRadioButton | null;
+    set selected(selected: MatRadioButton | null);
     /** Whether the radio group is disabled */
     get disabled(): boolean;
     set disabled(value: boolean);
@@ -146,16 +139,10 @@ export declare abstract class _MatRadioGroupBase<T extends _MatRadioButtonBase> 
     static ngAcceptInputType_disabled: BooleanInput;
     static ngAcceptInputType_required: BooleanInput;
 }
-/**
- * A group of radio buttons. May contain one or more `<mat-radio-button>` elements.
- */
-export declare class MatRadioGroup extends _MatRadioGroupBase<MatRadioButton> {
-    _radios: QueryList<MatRadioButton>;
-}
 /** @docs-private */
-declare abstract class MatRadioButtonBase {
+declare class MatRadioButtonBase {
     _elementRef: ElementRef;
-    abstract disabled: boolean;
+    disabled: boolean;
     constructor(_elementRef: ElementRef);
 }
 declare const _MatRadioButtonMixinBase: CanDisableRippleCtor & HasTabIndexCtor & typeof MatRadioButtonBase;
@@ -207,7 +194,7 @@ export declare abstract class _MatRadioButtonBase extends _MatRadioButtonMixinBa
      */
     readonly change: EventEmitter<MatRadioChange>;
     /** The parent radio group. May or may not be present. */
-    radioGroup: _MatRadioGroupBase<_MatRadioButtonBase>;
+    radioGroup: MatRadioGroup;
     /** ID of the native input element inside `<mat-radio-button>` */
     get inputId(): string;
     /** Whether this radio is checked. */
@@ -222,7 +209,7 @@ export declare abstract class _MatRadioButtonBase extends _MatRadioButtonMixinBa
     private _removeUniqueSelectionListener;
     /** The native `<input type=radio>` element */
     _inputElement: ElementRef<HTMLInputElement>;
-    constructor(radioGroup: _MatRadioGroupBase<_MatRadioButtonBase>, elementRef: ElementRef, _changeDetector: ChangeDetectorRef, _focusMonitor: FocusMonitor, _radioDispatcher: UniqueSelectionDispatcher, _animationMode?: string | undefined, _providerOverride?: MatRadioDefaultOptions | undefined, tabIndex?: string);
+    constructor(radioGroup: MatRadioGroup, elementRef: ElementRef, _changeDetector: ChangeDetectorRef, _focusMonitor: FocusMonitor, _radioDispatcher: UniqueSelectionDispatcher, _animationMode?: string | undefined, _providerOverride?: MatRadioDefaultOptions | undefined);
     /** Focuses the radio button. */
     focus(options?: FocusOptions): void;
     /**
@@ -249,12 +236,10 @@ export declare abstract class _MatRadioButtonBase extends _MatRadioButtonMixinBa
     static ngAcceptInputType_disabled: BooleanInput;
     static ngAcceptInputType_required: BooleanInput;
     static ngAcceptInputType_disableRipple: BooleanInput;
-    static ngAcceptInputType_tabIndex: NumberInput;
 }
 /**
  * A Material design radio-button. Typically placed inside of `<mat-radio-group>` elements.
  */
 export declare class MatRadioButton extends _MatRadioButtonBase {
-    constructor(radioGroup: MatRadioGroup, elementRef: ElementRef, changeDetector: ChangeDetectorRef, focusMonitor: FocusMonitor, radioDispatcher: UniqueSelectionDispatcher, animationMode?: string, providerOverride?: MatRadioDefaultOptions, tabIndex?: string);
 }
 export {};

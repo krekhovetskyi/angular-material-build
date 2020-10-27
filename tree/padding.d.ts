@@ -11,9 +11,7 @@ import { CdkTreeNodePadding } from '@angular/cdk/tree';
  */
 export declare class MatTreeNodePadding<T> extends CdkTreeNodePadding<T> {
     /** The level of depth of the tree node. The padding will be `level * indent` pixels. */
-    get level(): number;
-    set level(value: number);
+    level: number;
     /** The indent for each level. Default number 40px from material design menu sub-menu spec. */
-    get indent(): number | string;
-    set indent(indent: number | string);
+    indent: number;
 }

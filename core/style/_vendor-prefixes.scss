@@ -38,9 +38,4 @@
   -webkit-backface-visibility: $value;
   backface-visibility: $value;
 }
-
-@mixin position-sticky {
-  position: -webkit-sticky;
-  position: sticky;
-}
 /* stylelint-enable */

@@ -58,8 +58,6 @@ export declare class MatProgressSpinner extends _MatProgressSpinnerMixinBase imp
     private static _diameters;
     /** Whether the _mat-animation-noopable class should be applied, disabling animations.  */
     _noopAnimations: boolean;
-    /** A string that is used for setting the spinner animation-name CSS property */
-    _spinnerAnimationLabel: string;
     /** The diameter of the progress spinner (will set width and height of svg). */
     get diameter(): number;
     set diameter(size: number);
@@ -74,21 +72,19 @@ export declare class MatProgressSpinner extends _MatProgressSpinnerMixinBase imp
     constructor(_elementRef: ElementRef<HTMLElement>, platform: Platform, _document: any, animationMode: string, defaults?: MatProgressSpinnerDefaultOptions);
     ngOnInit(): void;
     /** The radius of the spinner, adjusted for stroke width. */
-    _getCircleRadius(): number;
+    get _circleRadius(): number;
     /** The view box of the spinner's svg element. */
-    _getViewBox(): string;
+    get _viewBox(): string;
     /** The stroke circumference of the svg circle. */
-    _getStrokeCircumference(): number;
+    get _strokeCircumference(): number;
     /** The dash offset of the svg circle. */
-    _getStrokeDashOffset(): number | null;
+    get _strokeDashOffset(): number | null;
     /** Stroke width of the circle in percent. */
-    _getCircleStrokeWidth(): number;
+    get _circleStrokeWidth(): number;
     /** Dynamically generates a style tag containing the correct animation for this diameter. */
     private _attachStyleNode;
     /** Generates animation styles adjusted for the spinner's diameter. */
     private _getAnimationText;
-    /** Returns the circle diameter formatted for use with the animation-name CSS property. */
-    private _getSpinnerAnimationLabel;
     static ngAcceptInputType_diameter: NumberInput;
     static ngAcceptInputType_strokeWidth: NumberInput;
     static ngAcceptInputType_value: NumberInput;

@@ -1,5 +1,5 @@
 import { __awaiter } from 'tslib';
-import { ContentContainerComponentHarness, HarnessPredicate, TestKey } from '@angular/cdk/testing';
+import { ComponentHarness, HarnessPredicate, TestKey } from '@angular/cdk/testing';
 
 /**
  * @license
@@ -8,8 +8,11 @@ import { ContentContainerComponentHarness, HarnessPredicate, TestKey } from '@an
  * Use of this source code is governed by an MIT-style license that can be
  * found in the LICENSE file at https://angular.io/license
  */
-/** Harness for interacting with a standard MatBottomSheet in tests. */
-class MatBottomSheetHarness extends ContentContainerComponentHarness {
+/**
+ * Harness for interacting with a standard MatBottomSheet in tests.
+ * @dynamic
+ */
+class MatBottomSheetHarness extends ComponentHarness {
     /**
      * Gets a `HarnessPredicate` that can be used to search for a bottom sheet with
      * specific attributes.
@@ -38,14 +41,6 @@ class MatBottomSheetHarness extends ContentContainerComponentHarness {
 // Developers can provide a custom component or template for the
 // bottom sheet. The canonical parent is the ".mat-bottom-sheet-container".
 MatBottomSheetHarness.hostSelector = '.mat-bottom-sheet-container';
-
-/**
- * @license
- * Copyright Google LLC All Rights Reserved.
- *
- * Use of this source code is governed by an MIT-style license that can be
- * found in the LICENSE file at https://angular.io/license
- */
 
 /**
  * @license

@@ -5,22 +5,19 @@
  * Use of this source code is governed by an MIT-style license that can be
  * found in the LICENSE file at https://angular.io/license
  */
-import { AfterContentInit, ChangeDetectorRef, EventEmitter, OnDestroy, SimpleChanges, OnChanges } from '@angular/core';
+import { AfterContentInit, ChangeDetectorRef, EventEmitter, OnDestroy } from '@angular/core';
 import { DateAdapter, MatDateFormats } from '@angular/material/core';
 import { Directionality } from '@angular/cdk/bidi';
-import { MatCalendarBody, MatCalendarCell, MatCalendarUserEvent, MatCalendarCellClassFunction } from './calendar-body';
-import { DateRange } from './date-selection-model';
-import { MatDateRangeSelectionStrategy } from './date-range-selection-strategy';
+import { MatCalendarBody, MatCalendarCell, MatCalendarCellCssClasses } from './calendar-body';
 /**
  * An internal component used to display a single month in the datepicker.
  * @docs-private
  */
-export declare class MatMonthView<D> implements AfterContentInit, OnChanges, OnDestroy {
+export declare class MatMonthView<D> implements AfterContentInit, OnDestroy {
     private _changeDetectorRef;
     private _dateFormats;
     _dateAdapter: DateAdapter<D>;
     private _dir?;
-    private _rangeStrategy?;
     private _rerenderSubscription;
     /**
      * The date to display in this month view (everything other than the month and year is ignored).
@@ -29,8 +26,8 @@ export declare class MatMonthView<D> implements AfterContentInit, OnChanges, OnD
     set activeDate(value: D);
     private _activeDate;
     /** The currently selected date. */
-    get selected(): DateRange<D> | D | null;
-    set selected(value: DateRange<D> | D | null);
+    get selected(): D | null;
+    set selected(value: D | null);
     private _selected;
     /** The minimum selectable date. */
     get minDate(): D | null;
@@ -43,15 +40,11 @@ export declare class MatMonthView<D> implements AfterContentInit, OnChanges, OnD
     /** Function used to filter which dates are selectable. */
     dateFilter: (date: D) => boolean;
     /** Function that can be used to add custom CSS classes to dates. */
-    dateClass: MatCalendarCellClassFunction<D>;
-    /** Start of the comparison range. */
-    comparisonStart: D | null;
-    /** End of the comparison range. */
-    comparisonEnd: D | null;
+    dateClass: (date: D) => MatCalendarCellCssClasses;
     /** Emits when a new date is selected. */
     readonly selectedChange: EventEmitter<D | null>;
     /** Emits when any date is selected. */
-    readonly _userSelection: EventEmitter<MatCalendarUserEvent<D | null>>;
+    readonly _userSelection: EventEmitter<void>;
     /** Emits when any date is activated. */
     readonly activeDateChange: EventEmitter<D>;
     /** The body of calendar table */
@@ -62,20 +55,11 @@ export declare class MatMonthView<D> implements AfterContentInit, OnChanges, OnD
     _weeks: MatCalendarCell[][];
     /** The number of blank cells in the first row before the 1st of the month. */
     _firstWeekOffset: number;
-    /** Start value of the currently-shown date range. */
-    _rangeStart: number | null;
-    /** End value of the currently-shown date range. */
-    _rangeEnd: number | null;
-    /** Start value of the currently-shown comparison date range. */
-    _comparisonRangeStart: number | null;
-    /** End value of the currently-shown comparison date range. */
-    _comparisonRangeEnd: number | null;
-    /** Start of the preview range. */
-    _previewStart: number | null;
-    /** End of the preview range. */
-    _previewEnd: number | null;
-    /** Whether the user is currently selecting a range of dates. */
-    _isRange: boolean;
+    /**
+     * The date of the month that the currently selected Date falls on.
+     * Null if the currently selected Date is in another month.
+     */
+    _selectedDate: number | null;
     /** The date of the month that today falls on. Null if today is in another month. */
     _todayDate: number | null;
     /** The names of the weekdays. */
@@ -83,20 +67,17 @@ export declare class MatMonthView<D> implements AfterContentInit, OnChanges, OnD
         long: string;
         narrow: string;
     }[];
-    constructor(_changeDetectorRef: ChangeDetectorRef, _dateFormats: MatDateFormats, _dateAdapter: DateAdapter<D>, _dir?: Directionality | undefined, _rangeStrategy?: MatDateRangeSelectionStrategy<D> | undefined);
+    constructor(_changeDetectorRef: ChangeDetectorRef, _dateFormats: MatDateFormats, _dateAdapter: DateAdapter<D>, _dir?: Directionality | undefined);
     ngAfterContentInit(): void;
-    ngOnChanges(changes: SimpleChanges): void;
     ngOnDestroy(): void;
     /** Handles when a new date is selected. */
-    _dateSelected(event: MatCalendarUserEvent<number>): void;
+    _dateSelected(date: number): void;
     /** Handles keydown events on the calendar body when calendar is in month view. */
     _handleCalendarBodyKeydown(event: KeyboardEvent): void;
     /** Initializes this month view. */
     _init(): void;
     /** Focuses the active cell after the microtask queue is empty. */
-    _focusActiveCell(movePreview?: boolean): void;
-    /** Called when the user has activated a new cell and the preview needs to be updated. */
-    _previewChanged({ event, value: cell }: MatCalendarUserEvent<MatCalendarCell<D> | null>): void;
+    _focusActiveCell(): void;
     /** Initializes the weekdays. */
     private _initWeekdays;
     /** Creates MatCalendarCells for the dates in this month. */
@@ -110,10 +91,11 @@ export declare class MatMonthView<D> implements AfterContentInit, OnChanges, OnD
     private _getDateInCurrentMonth;
     /** Checks whether the 2 dates are non-null and fall within the same month of the same year. */
     private _hasSameMonthAndYear;
-    /** Gets the value that will be used to one cell to another. */
-    private _getCellCompareValue;
+    /**
+     * @param obj The object to check.
+     * @returns The given object if it is both a date instance and valid, otherwise null.
+     */
+    private _getValidDateOrNull;
     /** Determines whether the user has the RTL layout direction. */
     private _isRtl;
-    /** Sets the current range based on a model value. */
-    private _setRanges;
 }

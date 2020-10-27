@@ -1,5 +1,5 @@
 import { __awaiter } from 'tslib';
-import { ComponentHarness, HarnessPredicate, ContentContainerComponentHarness } from '@angular/cdk/testing';
+import { ComponentHarness, HarnessPredicate } from '@angular/cdk/testing';
 
 /**
  * @license
@@ -72,8 +72,7 @@ class MatFooterCellHarness extends MatCellHarness {
 MatFooterCellHarness.hostSelector = '.mat-footer-cell';
 function getCellPredicate(type, options) {
     return new HarnessPredicate(type, options)
-        .addOption('text', options.text, (harness, text) => HarnessPredicate.stringMatches(harness.getText(), text))
-        .addOption('columnName', options.columnName, (harness, name) => HarnessPredicate.stringMatches(harness.getColumnName(), name));
+        .addOption('text', options.text, (harness, text) => HarnessPredicate.stringMatches(harness.getText(), text));
 }
 
 /**
@@ -204,7 +203,7 @@ function getCellTextByColumnName(harness) {
  * found in the LICENSE file at https://angular.io/license
  */
 /** Harness for interacting with a standard mat-table in tests. */
-class MatTableHarness extends ContentContainerComponentHarness {
+class MatTableHarness extends ComponentHarness {
     /**
      * Gets a `HarnessPredicate` that can be used to search for a table with specific attributes.
      * @param options Options for narrowing the search

@@ -5,13 +5,13 @@
  * Use of this source code is governed by an MIT-style license that can be
  * found in the LICENSE file at https://angular.io/license
  */
-import { FocusableOption, FocusMonitor } from '@angular/cdk/a11y';
 import { Directionality } from '@angular/cdk/bidi';
-import { BooleanInput, NumberInput } from '@angular/cdk/coercion';
 import { Platform } from '@angular/cdk/platform';
 import { ViewportRuler } from '@angular/cdk/scrolling';
-import { AfterContentChecked, AfterContentInit, AfterViewInit, ChangeDetectorRef, ElementRef, NgZone, OnDestroy, QueryList } from '@angular/core';
+import { AfterContentChecked, AfterContentInit, ChangeDetectorRef, ElementRef, NgZone, OnDestroy, QueryList } from '@angular/core';
 import { CanDisable, CanDisableCtor, CanDisableRipple, CanDisableRippleCtor, HasTabIndex, HasTabIndexCtor, RippleConfig, RippleGlobalOptions, RippleTarget, ThemePalette } from '@angular/material/core';
+import { BooleanInput } from '@angular/cdk/coercion';
+import { FocusMonitor, FocusableOption } from '@angular/cdk/a11y';
 import { MatInkBar } from '../ink-bar';
 import { MatPaginatedTabHeader, MatPaginatedTabHeaderItem } from '../paginated-tab-header';
 /**
@@ -33,11 +33,18 @@ export declare abstract class _MatTabNavBase extends MatPaginatedTabHeader imple
     private _disableRipple;
     /** Theme color of the nav bar. */
     color: ThemePalette;
-    constructor(elementRef: ElementRef, dir: Directionality, ngZone: NgZone, changeDetectorRef: ChangeDetectorRef, viewportRuler: ViewportRuler, platform: Platform, animationMode?: string);
+    constructor(elementRef: ElementRef, dir: Directionality, ngZone: NgZone, changeDetectorRef: ChangeDetectorRef, viewportRuler: ViewportRuler, 
+    /**
+     * @deprecated @breaking-change 9.0.0 `platform` parameter to become required.
+     */
+    platform?: Platform, animationMode?: string);
     protected _itemSelected(): void;
     ngAfterContentInit(): void;
-    /** Notifies the component that the active link has been changed. */
-    updateActiveLink(): void;
+    /**
+     * Notifies the component that the active link has been changed.
+     * @breaking-change 8.0.0 `element` parameter to be removed.
+     */
+    updateActiveLink(_element?: ElementRef): void;
 }
 /**
  * Navigation component matching the styles of the tab group header.
@@ -50,16 +57,20 @@ export declare class MatTabNav extends _MatTabNavBase {
     _tabList: ElementRef;
     _nextPaginator: ElementRef<HTMLElement>;
     _previousPaginator: ElementRef<HTMLElement>;
-    constructor(elementRef: ElementRef, dir: Directionality, ngZone: NgZone, changeDetectorRef: ChangeDetectorRef, viewportRuler: ViewportRuler, platform: Platform, animationMode?: string);
+    constructor(elementRef: ElementRef, dir: Directionality, ngZone: NgZone, changeDetectorRef: ChangeDetectorRef, viewportRuler: ViewportRuler, 
+    /**
+     * @deprecated @breaking-change 9.0.0 `platform` parameter to become required.
+     */
+    platform?: Platform, animationMode?: string);
     static ngAcceptInputType_disableRipple: BooleanInput;
 }
 declare class MatTabLinkMixinBase {
 }
 declare const _MatTabLinkMixinBase: HasTabIndexCtor & CanDisableRippleCtor & CanDisableCtor & typeof MatTabLinkMixinBase;
 /** Base class with all of the `MatTabLink` functionality. */
-export declare class _MatTabLinkBase extends _MatTabLinkMixinBase implements AfterViewInit, OnDestroy, CanDisable, CanDisableRipple, HasTabIndex, RippleTarget, FocusableOption {
+export declare class _MatTabLinkBase extends _MatTabLinkMixinBase implements OnDestroy, CanDisable, CanDisableRipple, HasTabIndex, RippleTarget, FocusableOption {
     private _tabNavBar;
-    /** @docs-private */ elementRef: ElementRef;
+    elementRef: ElementRef;
     private _focusMonitor;
     /** Whether the tab link is active or not. */
     protected _isActive: boolean;
@@ -78,16 +89,11 @@ export declare class _MatTabLinkBase extends _MatTabLinkMixinBase implements Aft
      * @docs-private
      */
     get rippleDisabled(): boolean;
-    constructor(_tabNavBar: _MatTabNavBase, 
-    /** @docs-private */ elementRef: ElementRef, globalRippleOptions: RippleGlobalOptions | null, tabIndex: string, _focusMonitor: FocusMonitor, animationMode?: string);
-    /** Focuses the tab link. */
+    constructor(_tabNavBar: _MatTabNavBase, elementRef: ElementRef, globalRippleOptions: RippleGlobalOptions | null, tabIndex: string, _focusMonitor: FocusMonitor, animationMode?: string);
     focus(): void;
-    ngAfterViewInit(): void;
     ngOnDestroy(): void;
-    static ngAcceptInputType_active: BooleanInput;
     static ngAcceptInputType_disabled: BooleanInput;
     static ngAcceptInputType_disableRipple: BooleanInput;
-    static ngAcceptInputType_tabIndex: NumberInput;
 }
 /**
  * Link inside of a `mat-tab-nav-bar`.

@@ -95,12 +95,6 @@ class MatSlideToggleHarness extends ComponentHarness {
             return (yield this._input()).blur();
         });
     }
-    /** Whether the slide-toggle is focused. */
-    isFocused() {
-        return __awaiter(this, void 0, void 0, function* () {
-            return (yield this._input()).isFocused();
-        });
-    }
     /** Toggle the checked state of the slide-toggle. */
     toggle() {
         return __awaiter(this, void 0, void 0, function* () {
@@ -131,15 +125,7 @@ class MatSlideToggleHarness extends ComponentHarness {
     }
 }
 /** The selector for the host element of a `MatSlideToggle` instance. */
-MatSlideToggleHarness.hostSelector = '.mat-slide-toggle';
-
-/**
- * @license
- * Copyright Google LLC All Rights Reserved.
- *
- * Use of this source code is governed by an MIT-style license that can be
- * found in the LICENSE file at https://angular.io/license
- */
+MatSlideToggleHarness.hostSelector = 'mat-slide-toggle';
 
 /**
  * @license

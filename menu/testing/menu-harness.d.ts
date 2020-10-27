@@ -5,10 +5,10 @@
  * Use of this source code is governed by an MIT-style license that can be
  * found in the LICENSE file at https://angular.io/license
  */
-import { ContentContainerComponentHarness, HarnessLoader, HarnessPredicate } from '@angular/cdk/testing';
+import { ComponentHarness, HarnessPredicate } from '@angular/cdk/testing';
 import { MenuHarnessFilters, MenuItemHarnessFilters } from './menu-harness-filters';
 /** Harness for interacting with a standard mat-menu in tests. */
-export declare class MatMenuHarness extends ContentContainerComponentHarness<string> {
+export declare class MatMenuHarness extends ComponentHarness {
     /** The selector for the host element of a `MatMenu` instance. */
     static hostSelector: string;
     private _documentRootLocator;
@@ -29,8 +29,6 @@ export declare class MatMenuHarness extends ContentContainerComponentHarness<str
     focus(): Promise<void>;
     /** Blurs the menu. */
     blur(): Promise<void>;
-    /** Whether the menu is focused. */
-    isFocused(): Promise<boolean>;
     /** Opens the menu. */
     open(): Promise<void>;
     /** Closes the menu. */
@@ -49,14 +47,13 @@ export declare class MatMenuHarness extends ContentContainerComponentHarness<str
      *     `subItemFilters` will be clicked.
      */
     clickItem(itemFilter: Omit<MenuItemHarnessFilters, 'ancestor'>, ...subItemFilters: Omit<MenuItemHarnessFilters, 'ancestor'>[]): Promise<void>;
-    protected getRootHarnessLoader(): Promise<HarnessLoader>;
     /** Gets the menu panel associated with this menu. */
     private _getMenuPanel;
     /** Gets the id of the menu panel associated with this menu. */
     private _getPanelId;
 }
 /** Harness for interacting with a standard mat-menu-item in tests. */
-export declare class MatMenuItemHarness extends ContentContainerComponentHarness<string> {
+export declare class MatMenuItemHarness extends ComponentHarness {
     /** The selector for the host element of a `MatMenuItem` instance. */
     static hostSelector: string;
     /**
@@ -74,8 +71,6 @@ export declare class MatMenuItemHarness extends ContentContainerComponentHarness
     focus(): Promise<void>;
     /** Blurs the menu item. */
     blur(): Promise<void>;
-    /** Whether the menu item is focused. */
-    isFocused(): Promise<boolean>;
     /** Clicks the menu item. */
     click(): Promise<void>;
     /** Whether this item has a submenu. */

@@ -8,7 +8,10 @@ import { ComponentHarness, HarnessPredicate } from '@angular/cdk/testing';
  * Use of this source code is governed by an MIT-style license that can be
  * found in the LICENSE file at https://angular.io/license
  */
-/** Harness for interacting with a standard Material badge in tests. */
+/**
+ * Harness for interacting with a standard Material badge in tests.
+ * @dynamic
+ */
 class MatBadgeHarness extends ComponentHarness {
     constructor() {
         super(...arguments);
@@ -83,14 +86,6 @@ class MatBadgeHarness extends ComponentHarness {
     }
 }
 MatBadgeHarness.hostSelector = '.mat-badge';
-
-/**
- * @license
- * Copyright Google LLC All Rights Reserved.
- *
- * Use of this source code is governed by an MIT-style license that can be
- * found in the LICENSE file at https://angular.io/license
- */
 
 /**
  * @license

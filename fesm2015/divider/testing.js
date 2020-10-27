@@ -8,7 +8,10 @@ import { ComponentHarness, HarnessPredicate } from '@angular/cdk/testing';
  * Use of this source code is governed by an MIT-style license that can be
  * found in the LICENSE file at https://angular.io/license
  */
-/** Harness for interacting with a `mat-divider`. */
+/**
+ * Harness for interacting with a `mat-divider`.
+ * @dynamic
+ */
 class MatDividerHarness extends ComponentHarness {
     static with(options = {}) {
         return new HarnessPredicate(MatDividerHarness, options);
@@ -24,15 +27,7 @@ class MatDividerHarness extends ComponentHarness {
         });
     }
 }
-MatDividerHarness.hostSelector = '.mat-divider';
-
-/**
- * @license
- * Copyright Google LLC All Rights Reserved.
- *
- * Use of this source code is governed by an MIT-style license that can be
- * found in the LICENSE file at https://angular.io/license
- */
+MatDividerHarness.hostSelector = 'mat-divider';
 
 /**
  * @license

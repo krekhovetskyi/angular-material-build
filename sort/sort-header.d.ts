@@ -6,7 +6,7 @@
  * found in the LICENSE file at https://angular.io/license
  */
 import { BooleanInput } from '@angular/cdk/coercion';
-import { ChangeDetectorRef, OnDestroy, OnInit, ElementRef, AfterViewInit } from '@angular/core';
+import { ChangeDetectorRef, OnDestroy, OnInit, ElementRef } from '@angular/core';
 import { CanDisable, CanDisableCtor } from '@angular/material/core';
 import { FocusMonitor } from '@angular/cdk/a11y';
 import { MatSort, MatSortable } from './sort';
@@ -47,12 +47,16 @@ interface MatSortHeaderColumnDef {
  * If used on header cells in a CdkTable, it will automatically default its id from its containing
  * column definition.
  */
-export declare class MatSortHeader extends _MatSortHeaderMixinBase implements CanDisable, MatSortable, OnDestroy, OnInit, AfterViewInit {
+export declare class MatSortHeader extends _MatSortHeaderMixinBase implements CanDisable, MatSortable, OnDestroy, OnInit {
     _intl: MatSortHeaderIntl;
     _sort: MatSort;
     _columnDef: MatSortHeaderColumnDef;
-    private _focusMonitor;
-    private _elementRef;
+    /**
+     * @deprecated _focusMonitor and _elementRef to become required parameters.
+     * @breaking-change 10.0.0
+     */
+    private _focusMonitor?;
+    private _elementRef?;
     private _rerenderSubscription;
     /**
      * Flag set to true when the indicator should be displayed while the sort is not active. Used to
@@ -84,9 +88,13 @@ export declare class MatSortHeader extends _MatSortHeaderMixinBase implements Ca
     get disableClear(): boolean;
     set disableClear(v: boolean);
     private _disableClear;
-    constructor(_intl: MatSortHeaderIntl, changeDetectorRef: ChangeDetectorRef, _sort: MatSort, _columnDef: MatSortHeaderColumnDef, _focusMonitor: FocusMonitor, _elementRef: ElementRef<HTMLElement>);
+    constructor(_intl: MatSortHeaderIntl, changeDetectorRef: ChangeDetectorRef, _sort: MatSort, _columnDef: MatSortHeaderColumnDef, 
+    /**
+     * @deprecated _focusMonitor and _elementRef to become required parameters.
+     * @breaking-change 10.0.0
+     */
+    _focusMonitor?: FocusMonitor | undefined, _elementRef?: ElementRef<HTMLElement> | undefined);
     ngOnInit(): void;
-    ngAfterViewInit(): void;
     ngOnDestroy(): void;
     /**
      * Sets the "hint" state such that the arrow will be semi-transparently displayed as a hint to the
@@ -100,9 +108,7 @@ export declare class MatSortHeader extends _MatSortHeaderMixinBase implements Ca
      */
     _setAnimationTransitionState(viewState: ArrowViewStateTransition): void;
     /** Triggers the sort on this sort header and removes the indicator hint. */
-    _toggleOnInteraction(): void;
     _handleClick(): void;
-    _handleKeydown(event: KeyboardEvent): void;
     /** Whether this MatSortHeader is currently sorted in either ascending or descending order. */
     _isSorted(): boolean;
     /** Returns the animation state for the arrow direction (indicator and pointers). */
@@ -127,7 +133,7 @@ export declare class MatSortHeader extends _MatSortHeaderMixinBase implements Ca
      * says that the aria-sort property should only be present on one header at a time, so removing
      * ensures this is true.
      */
-    _getAriaSortAttribute(): "none" | "ascending" | "descending";
+    _getAriaSortAttribute(): "ascending" | "descending" | null;
     /** Whether the arrow inside the sort header should be rendered. */
     _renderArrow(): boolean;
     static ngAcceptInputType_disableClear: BooleanInput;

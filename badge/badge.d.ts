@@ -40,7 +40,7 @@ export declare class MatBadge extends _MatBadgeMixinBase implements OnDestroy, O
      */
     position: MatBadgePosition;
     /** The content for the badge */
-    content: string | number | undefined | null;
+    content: string;
     /** Message used to describe the decorated element via aria-describedby */
     get description(): string;
     set description(newDescription: string);
@@ -76,8 +76,6 @@ export declare class MatBadge extends _MatBadgeMixinBase implements OnDestroy, O
     private _setColor;
     /** Clears any existing badges that might be left over from server-side rendering. */
     private _clearExistingBadges;
-    /** Gets the string representation of the badge content. */
-    private _stringifyContent;
     static ngAcceptInputType_disabled: BooleanInput;
     static ngAcceptInputType_hidden: BooleanInput;
     static ngAcceptInputType_overlap: BooleanInput;
