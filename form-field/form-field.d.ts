@@ -8,7 +8,7 @@
 import { Directionality } from '@angular/cdk/bidi';
 import { BooleanInput } from '@angular/cdk/coercion';
 import { AfterContentChecked, AfterContentInit, AfterViewInit, ChangeDetectorRef, ElementRef, InjectionToken, NgZone, QueryList, OnDestroy } from '@angular/core';
-import { CanColor, CanColorCtor, LabelOptions } from '@angular/material/core';
+import { CanColor, CanColorCtor } from '@angular/material/core';
 import { MatError } from './error';
 import { MatFormFieldControl } from './form-field-control';
 import { MatHint } from './hint';
@@ -67,7 +67,6 @@ export declare class MatFormField extends _MatFormFieldMixinBase implements Afte
     private _defaults;
     private _platform;
     private _ngZone;
-    private _labelOptions;
     /**
      * Whether the outline gap needs to be calculated
      * immediately on the next change detection run.
@@ -87,17 +86,17 @@ export declare class MatFormField extends _MatFormFieldMixinBase implements Afte
     /** Override for the logic that disables the label animation in certain cases. */
     private _showAlwaysAnimate;
     /** Whether the floating label should always float or not. */
-    get _shouldAlwaysFloat(): boolean;
+    _shouldAlwaysFloat(): boolean;
     /** Whether the label can float or not. */
-    get _canLabelFloat(): boolean;
+    _canLabelFloat(): boolean;
     /** State of the mat-hint and mat-error animations. */
     _subscriptAnimationState: string;
     /** Text for the form field hint. */
     get hintLabel(): string;
     set hintLabel(value: string);
     private _hintLabel;
-    _hintLabelId: string;
-    _labelId: string;
+    readonly _hintLabelId: string;
+    readonly _labelId: string;
     /**
      * Whether the label should always float, never float or float as the user types.
      *
@@ -126,13 +125,21 @@ export declare class MatFormField extends _MatFormFieldMixinBase implements Afte
     private _explicitFormFieldControl;
     _labelChildNonStatic: MatLabel;
     _labelChildStatic: MatLabel;
-    get _labelChild(): MatLabel;
     _placeholderChild: MatPlaceholder;
     _errorChildren: QueryList<MatError>;
     _hintChildren: QueryList<MatHint>;
     _prefixChildren: QueryList<MatPrefix>;
     _suffixChildren: QueryList<MatSuffix>;
-    constructor(_elementRef: ElementRef, _changeDetectorRef: ChangeDetectorRef, labelOptions: LabelOptions, _dir: Directionality, _defaults: MatFormFieldDefaultOptions, _platform: Platform, _ngZone: NgZone, _animationMode: string);
+    constructor(_elementRef: ElementRef, _changeDetectorRef: ChangeDetectorRef, 
+    /**
+     * @deprecated `_labelOptions` parameter no longer being used. To be removed.
+     * @breaking-change 12.0.0
+     */
+    _labelOptions: any, _dir: Directionality, _defaults: MatFormFieldDefaultOptions, _platform: Platform, _ngZone: NgZone, _animationMode: string);
+    /**
+     * Gets the id of the label element. If no label is present, returns `null`.
+     */
+    getLabelId(): string | null;
     /**
      * Gets an ElementRef for the element that a overlay attached to the form-field should be
      * positioned relative to.

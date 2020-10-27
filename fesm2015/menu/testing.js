@@ -1,5 +1,5 @@
 import { __awaiter } from 'tslib';
-import { ComponentHarness, HarnessPredicate, TestKey } from '@angular/cdk/testing';
+import { ContentContainerComponentHarness, HarnessPredicate, TestKey } from '@angular/cdk/testing';
 import { coerceBooleanProperty } from '@angular/cdk/coercion';
 
 /**
@@ -10,7 +10,7 @@ import { coerceBooleanProperty } from '@angular/cdk/coercion';
  * found in the LICENSE file at https://angular.io/license
  */
 /** Harness for interacting with a standard mat-menu in tests. */
-class MatMenuHarness extends ComponentHarness {
+class MatMenuHarness extends ContentContainerComponentHarness {
     constructor() {
         super(...arguments);
         this._documentRootLocator = this.documentRootLocatorFactory();
@@ -55,6 +55,12 @@ class MatMenuHarness extends ComponentHarness {
     blur() {
         return __awaiter(this, void 0, void 0, function* () {
             return (yield this.host()).blur();
+        });
+    }
+    /** Whether the menu is focused. */
+    isFocused() {
+        return __awaiter(this, void 0, void 0, function* () {
+            return (yield this.host()).isFocused();
         });
     }
     /** Opens the menu. */
@@ -112,6 +118,12 @@ class MatMenuHarness extends ComponentHarness {
             return menu.clickItem(...subItemFilters);
         });
     }
+    getRootHarnessLoader() {
+        return __awaiter(this, void 0, void 0, function* () {
+            const panelId = yield this._getPanelId();
+            return this.documentRootLocatorFactory().harnessLoaderFor(`#${panelId}`);
+        });
+    }
     /** Gets the menu panel associated with this menu. */
     _getMenuPanel() {
         return __awaiter(this, void 0, void 0, function* () {
@@ -130,7 +142,7 @@ class MatMenuHarness extends ComponentHarness {
 /** The selector for the host element of a `MatMenu` instance. */
 MatMenuHarness.hostSelector = '.mat-menu-trigger';
 /** Harness for interacting with a standard mat-menu-item in tests. */
-class MatMenuItemHarness extends ComponentHarness {
+class MatMenuItemHarness extends ContentContainerComponentHarness {
     /**
      * Gets a `HarnessPredicate` that can be used to search for a `MatMenuItemHarness` that meets
      * certain criteria.
@@ -167,6 +179,12 @@ class MatMenuItemHarness extends ComponentHarness {
             return (yield this.host()).blur();
         });
     }
+    /** Whether the menu item is focused. */
+    isFocused() {
+        return __awaiter(this, void 0, void 0, function* () {
+            return (yield this.host()).isFocused();
+        });
+    }
     /** Clicks the menu item. */
     click() {
         return __awaiter(this, void 0, void 0, function* () {
@@ -191,6 +209,14 @@ class MatMenuItemHarness extends ComponentHarness {
 }
 /** The selector for the host element of a `MatMenuItem` instance. */
 MatMenuItemHarness.hostSelector = '.mat-menu-item';
+
+/**
+ * @license
+ * Copyright Google LLC All Rights Reserved.
+ *
+ * Use of this source code is governed by an MIT-style license that can be
+ * found in the LICENSE file at https://angular.io/license
+ */
 
 /**
  * @license

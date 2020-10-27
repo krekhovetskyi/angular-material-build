@@ -9,11 +9,12 @@ import { ComponentType, Portal } from '@angular/cdk/portal';
 import { AfterContentInit, AfterViewChecked, ChangeDetectorRef, EventEmitter, OnChanges, OnDestroy, SimpleChanges } from '@angular/core';
 import { DateAdapter, MatDateFormats } from '@angular/material/core';
 import { Subject } from 'rxjs';
-import { MatCalendarCellCssClasses } from './calendar-body';
+import { MatCalendarUserEvent, MatCalendarCellClassFunction } from './calendar-body';
 import { MatDatepickerIntl } from './datepicker-intl';
 import { MatMonthView } from './month-view';
 import { MatMultiYearView } from './multi-year-view';
 import { MatYearView } from './year-view';
+import { DateRange } from './date-selection-model';
 /**
  * Possible views for the calendar.
  * @docs-private
@@ -72,8 +73,8 @@ export declare class MatCalendar<D> implements AfterContentInit, AfterViewChecke
     /** Whether the calendar should be started in month or year view. */
     startView: MatCalendarView;
     /** The currently selected date. */
-    get selected(): D | null;
-    set selected(value: D | null);
+    get selected(): DateRange<D> | D | null;
+    set selected(value: DateRange<D> | D | null);
     private _selected;
     /** The minimum selectable date. */
     get minDate(): D | null;
@@ -86,9 +87,13 @@ export declare class MatCalendar<D> implements AfterContentInit, AfterViewChecke
     /** Function used to filter which dates are selectable. */
     dateFilter: (date: D) => boolean;
     /** Function that can be used to add custom CSS classes to dates. */
-    dateClass: (date: D) => MatCalendarCellCssClasses;
+    dateClass: MatCalendarCellClassFunction<D>;
+    /** Start of the comparison range. */
+    comparisonStart: D | null;
+    /** End of the comparison range. */
+    comparisonEnd: D | null;
     /** Emits when the currently selected date changes. */
-    readonly selectedChange: EventEmitter<D>;
+    readonly selectedChange: EventEmitter<D | null>;
     /**
      * Emits the year chosen in multiyear view.
      * This doesn't imply a change on the selected date.
@@ -99,8 +104,12 @@ export declare class MatCalendar<D> implements AfterContentInit, AfterViewChecke
      * This doesn't imply a change on the selected date.
      */
     readonly monthSelected: EventEmitter<D>;
+    /**
+     * Emits when the current view changes.
+     */
+    readonly viewChanged: EventEmitter<MatCalendarView>;
     /** Emits when any date is selected. */
-    readonly _userSelection: EventEmitter<void>;
+    readonly _userSelection: EventEmitter<MatCalendarUserEvent<D | null>>;
     /** Reference to the current month view component. */
     monthView: MatMonthView<D>;
     /** Reference to the current year view component. */
@@ -131,19 +140,13 @@ export declare class MatCalendar<D> implements AfterContentInit, AfterViewChecke
     /** Updates today's date after an update of the active date */
     updateTodaysDate(): void;
     /** Handles date selection in the month view. */
-    _dateSelected(date: D | null): void;
+    _dateSelected(event: MatCalendarUserEvent<D | null>): void;
     /** Handles year selection in the multiyear view. */
     _yearSelectedInMultiYearView(normalizedYear: D): void;
     /** Handles month selection in the year view. */
     _monthSelectedInYearView(normalizedMonth: D): void;
-    _userSelected(): void;
     /** Handles year/month selection in the multi-year/year views. */
     _goToDateInView(date: D, view: 'month' | 'year' | 'multi-year'): void;
-    /**
-     * @param obj The object to check.
-     * @returns The given object if it is both a date instance and valid, otherwise null.
-     */
-    private _getValidDateOrNull;
     /** Returns the component instance that corresponds to the current calendar view. */
     private _getCurrentViewComponent;
 }

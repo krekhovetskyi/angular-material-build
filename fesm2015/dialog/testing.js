@@ -1,5 +1,5 @@
 import { __awaiter } from 'tslib';
-import { ComponentHarness, HarnessPredicate, TestKey } from '@angular/cdk/testing';
+import { ContentContainerComponentHarness, HarnessPredicate, TestKey } from '@angular/cdk/testing';
 
 /**
  * @license
@@ -9,7 +9,7 @@ import { ComponentHarness, HarnessPredicate, TestKey } from '@angular/cdk/testin
  * found in the LICENSE file at https://angular.io/license
  */
 /** Harness for interacting with a standard `MatDialog` in tests. */
-class MatDialogHarness extends ComponentHarness {
+class MatDialogHarness extends ContentContainerComponentHarness {
     /**
      * Gets a `HarnessPredicate` that can be used to search for a `MatDialogHarness` that meets
      * certain criteria.
@@ -67,6 +67,14 @@ class MatDialogHarness extends ComponentHarness {
 // dialog. The canonical dialog parent is the "MatDialogContainer".
 /** The selector for the host element of a `MatDialog` instance. */
 MatDialogHarness.hostSelector = '.mat-dialog-container';
+
+/**
+ * @license
+ * Copyright Google LLC All Rights Reserved.
+ *
+ * Use of this source code is governed by an MIT-style license that can be
+ * found in the LICENSE file at https://angular.io/license
+ */
 
 /**
  * @license

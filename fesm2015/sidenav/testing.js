@@ -1,5 +1,5 @@
 import { __awaiter } from 'tslib';
-import { ComponentHarness, HarnessPredicate } from '@angular/cdk/testing';
+import { ContentContainerComponentHarness, HarnessPredicate } from '@angular/cdk/testing';
 
 /**
  * @license
@@ -9,7 +9,7 @@ import { ComponentHarness, HarnessPredicate } from '@angular/cdk/testing';
  * found in the LICENSE file at https://angular.io/license
  */
 /** Harness for interacting with a standard mat-drawer in tests. */
-class MatDrawerHarness extends ComponentHarness {
+class MatDrawerHarness extends ContentContainerComponentHarness {
     /**
      * Gets a `HarnessPredicate` that can be used to search for a `MatDrawerHarness` that meets
      * certain criteria.
@@ -49,6 +49,14 @@ class MatDrawerHarness extends ComponentHarness {
 }
 /** The selector for the host element of a `MatDrawer` instance. */
 MatDrawerHarness.hostSelector = '.mat-drawer';
+
+/**
+ * @license
+ * Copyright Google LLC All Rights Reserved.
+ *
+ * Use of this source code is governed by an MIT-style license that can be
+ * found in the LICENSE file at https://angular.io/license
+ */
 
 /**
  * @license

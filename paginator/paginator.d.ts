@@ -9,6 +9,7 @@ import { BooleanInput, NumberInput } from '@angular/cdk/coercion';
 import { ChangeDetectorRef, EventEmitter, OnDestroy, OnInit, InjectionToken } from '@angular/core';
 import { MatPaginatorIntl } from './paginator-intl';
 import { HasInitialized, HasInitializedCtor, ThemePalette, CanDisableCtor, CanDisable } from '@angular/material/core';
+import { MatFormFieldAppearance } from '@angular/material/form-field';
 /**
  * Change event object that is emitted when the user selects a
  * different page size or navigates to another page.
@@ -36,19 +37,25 @@ export interface MatPaginatorDefaultOptions {
     hidePageSize?: boolean;
     /** Whether to show the first/last buttons UI to the user. */
     showFirstLastButtons?: boolean;
+    /** The default form-field appearance to apply to the page size options selector. */
+    formFieldAppearance?: MatFormFieldAppearance;
 }
 /** Injection token that can be used to provide the default options for the paginator module. */
 export declare const MAT_PAGINATOR_DEFAULT_OPTIONS: InjectionToken<MatPaginatorDefaultOptions>;
 /** @docs-private */
-declare class MatPaginatorBase {
+declare class MatPaginatorMixinBase {
 }
-declare const _MatPaginatorBase: CanDisableCtor & HasInitializedCtor & typeof MatPaginatorBase;
+declare const _MatPaginatorMixinBase: CanDisableCtor & HasInitializedCtor & typeof MatPaginatorMixinBase;
 /**
- * Component to provide navigation between paged information. Displays the size of the current
- * page, user-selectable options to change that size, what items are being shown, and
- * navigational button to go to the previous or next page.
+ * Base class with all of the `MatPaginator` functionality.
+ * @docs-private
  */
-export declare class MatPaginator extends _MatPaginatorBase implements OnInit, OnDestroy, CanDisable, HasInitialized {
+export declare abstract class _MatPaginatorBase<O extends {
+    pageSize?: number;
+    pageSizeOptions?: number[];
+    hidePageSize?: boolean;
+    showFirstLastButtons?: boolean;
+}> extends _MatPaginatorMixinBase implements OnInit, OnDestroy, CanDisable, HasInitialized {
     _intl: MatPaginatorIntl;
     private _changeDetectorRef;
     private _initialized;
@@ -83,7 +90,7 @@ export declare class MatPaginator extends _MatPaginatorBase implements OnInit, O
     readonly page: EventEmitter<PageEvent>;
     /** Displayed set of page size options. Will be sorted and include current page size. */
     _displayedPageSizeOptions: number[];
-    constructor(_intl: MatPaginatorIntl, _changeDetectorRef: ChangeDetectorRef, defaults?: MatPaginatorDefaultOptions);
+    constructor(_intl: MatPaginatorIntl, _changeDetectorRef: ChangeDetectorRef, defaults?: O);
     ngOnInit(): void;
     ngOnDestroy(): void;
     /** Advances to the next page if it exists. */
@@ -126,5 +133,15 @@ export declare class MatPaginator extends _MatPaginatorBase implements OnInit, O
     static ngAcceptInputType_hidePageSize: BooleanInput;
     static ngAcceptInputType_showFirstLastButtons: BooleanInput;
     static ngAcceptInputType_disabled: BooleanInput;
+}
+/**
+ * Component to provide navigation between paged information. Displays the size of the current
+ * page, user-selectable options to change that size, what items are being shown, and
+ * navigational button to go to the previous or next page.
+ */
+export declare class MatPaginator extends _MatPaginatorBase<MatPaginatorDefaultOptions> {
+    /** If set, styles the "page size" form field with the designated style. */
+    _formFieldAppearance?: MatFormFieldAppearance;
+    constructor(intl: MatPaginatorIntl, changeDetectorRef: ChangeDetectorRef, defaults?: MatPaginatorDefaultOptions);
 }
 export {};

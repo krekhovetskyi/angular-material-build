@@ -1,5 +1,5 @@
 import { __awaiter } from 'tslib';
-import { ComponentHarness, HarnessPredicate } from '@angular/cdk/testing';
+import { ContentContainerComponentHarness, HarnessPredicate, ComponentHarness } from '@angular/cdk/testing';
 import { ɵTileCoordinator } from '@angular/material/grid-list';
 
 /**
@@ -10,11 +10,11 @@ import { ɵTileCoordinator } from '@angular/material/grid-list';
  * found in the LICENSE file at https://angular.io/license
  */
 /** Harness for interacting with a standard `MatGridTitle` in tests. */
-class MatGridTileHarness extends ComponentHarness {
+class MatGridTileHarness extends ContentContainerComponentHarness {
     constructor() {
         super(...arguments);
-        this._header = this.locatorForOptional('.mat-grid-tile-header');
-        this._footer = this.locatorForOptional('.mat-grid-tile-footer');
+        this._header = this.locatorForOptional(".mat-grid-tile-header" /* HEADER */);
+        this._footer = this.locatorForOptional(".mat-grid-tile-footer" /* FOOTER */);
         this._avatar = this.locatorForOptional('.mat-grid-avatar');
     }
     /**
@@ -153,6 +153,14 @@ class MatGridListHarness extends ComponentHarness {
 }
 /** The selector for the host element of a `MatGridList` instance. */
 MatGridListHarness.hostSelector = '.mat-grid-list';
+
+/**
+ * @license
+ * Copyright Google LLC All Rights Reserved.
+ *
+ * Use of this source code is governed by an MIT-style license that can be
+ * found in the LICENSE file at https://angular.io/license
+ */
 
 /**
  * @license

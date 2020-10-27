@@ -1,5 +1,5 @@
 import { __awaiter } from 'tslib';
-import { ComponentHarness, HarnessPredicate } from '@angular/cdk/testing';
+import { ContentContainerComponentHarness, HarnessPredicate } from '@angular/cdk/testing';
 import { coerceBooleanProperty } from '@angular/cdk/coercion';
 
 /**
@@ -10,7 +10,7 @@ import { coerceBooleanProperty } from '@angular/cdk/coercion';
  * found in the LICENSE file at https://angular.io/license
  */
 /** Harness for interacting with a standard mat-button in tests. */
-class MatButtonHarness extends ComponentHarness {
+class MatButtonHarness extends ContentContainerComponentHarness {
     /**
      * Gets a `HarnessPredicate` that can be used to search for a `MatButtonHarness` that meets
      * certain criteria.
@@ -21,10 +21,9 @@ class MatButtonHarness extends ComponentHarness {
         return new HarnessPredicate(MatButtonHarness, options)
             .addOption('text', options.text, (harness, text) => HarnessPredicate.stringMatches(harness.getText(), text));
     }
-    /** Clicks the button. */
-    click() {
+    click(...args) {
         return __awaiter(this, void 0, void 0, function* () {
-            return (yield this.host()).click();
+            return (yield this.host()).click(...args);
         });
     }
     /** Whether the button is disabled. */
@@ -52,6 +51,12 @@ class MatButtonHarness extends ComponentHarness {
             return (yield this.host()).blur();
         });
     }
+    /** Whether the button is focused. */
+    isFocused() {
+        return __awaiter(this, void 0, void 0, function* () {
+            return (yield this.host()).isFocused();
+        });
+    }
 }
 // TODO(jelbourn) use a single class, like `.mat-button-base`
 /** The selector for the host element of a `MatButton` instance. */
@@ -64,6 +69,14 @@ MatButtonHarness.hostSelector = [
     '[mat-fab]',
     '[mat-mini-fab]',
 ].join(',');
+
+/**
+ * @license
+ * Copyright Google LLC All Rights Reserved.
+ *
+ * Use of this source code is governed by an MIT-style license that can be
+ * found in the LICENSE file at https://angular.io/license
+ */
 
 /**
  * @license

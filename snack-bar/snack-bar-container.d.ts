@@ -6,33 +6,56 @@
  * found in the LICENSE file at https://angular.io/license
  */
 import { AnimationEvent } from '@angular/animations';
+import { AriaLivePoliteness } from '@angular/cdk/a11y';
+import { Platform } from '@angular/cdk/platform';
 import { BasePortalOutlet, CdkPortalOutlet, ComponentPortal, TemplatePortal, DomPortal } from '@angular/cdk/portal';
 import { ChangeDetectorRef, ComponentRef, ElementRef, EmbeddedViewRef, NgZone, OnDestroy } from '@angular/core';
 import { Observable, Subject } from 'rxjs';
 import { MatSnackBarConfig } from './snack-bar-config';
 /**
+ * Internal interface for a snack bar container.
+ * @docs-private
+ */
+export interface _SnackBarContainer {
+    snackBarConfig: MatSnackBarConfig;
+    _onAnnounce: Subject<any>;
+    _onExit: Subject<any>;
+    _onEnter: Subject<any>;
+    enter: () => void;
+    exit: () => Observable<void>;
+    attachTemplatePortal: <C>(portal: TemplatePortal<C>) => EmbeddedViewRef<C>;
+    attachComponentPortal: <T>(portal: ComponentPortal<T>) => ComponentRef<T>;
+}
+/**
  * Internal component that wraps user-provided snack bar content.
  * @docs-private
  */
-export declare class MatSnackBarContainer extends BasePortalOutlet implements OnDestroy {
+export declare class MatSnackBarContainer extends BasePortalOutlet implements OnDestroy, _SnackBarContainer {
     private _ngZone;
     private _elementRef;
     private _changeDetectorRef;
+    private _platform;
     /** The snack bar configuration. */
     snackBarConfig: MatSnackBarConfig;
+    /** The number of milliseconds to wait before announcing the snack bar's content. */
+    private readonly _announceDelay;
+    /** The timeout for announcing the snack bar's content. */
+    private _announceTimeoutId;
     /** Whether the component has been destroyed. */
     private _destroyed;
     /** The portal outlet inside of this container into which the snack bar content will be loaded. */
     _portalOutlet: CdkPortalOutlet;
+    /** Subject for notifying that the snack bar has announced to screen readers. */
+    readonly _onAnnounce: Subject<void>;
     /** Subject for notifying that the snack bar has exited from view. */
-    readonly _onExit: Subject<any>;
+    readonly _onExit: Subject<void>;
     /** Subject for notifying that the snack bar has finished entering the view. */
-    readonly _onEnter: Subject<any>;
+    readonly _onEnter: Subject<void>;
     /** The state of the snack bar animations. */
     _animationState: string;
-    /** ARIA role for the snack bar container. */
-    _role: 'alert' | 'status' | null;
-    constructor(_ngZone: NgZone, _elementRef: ElementRef<HTMLElement>, _changeDetectorRef: ChangeDetectorRef, 
+    /** aria-live value for the live region. */
+    _live: AriaLivePoliteness;
+    constructor(_ngZone: NgZone, _elementRef: ElementRef<HTMLElement>, _changeDetectorRef: ChangeDetectorRef, _platform: Platform, 
     /** The snack bar configuration. */
     snackBarConfig: MatSnackBarConfig);
     /** Attach a component portal as content to this snack bar container. */
@@ -44,7 +67,7 @@ export declare class MatSnackBarContainer extends BasePortalOutlet implements On
      * @deprecated To be turned into a method.
      * @breaking-change 10.0.0
      */
-    attachDomPortal: (portal: DomPortal<HTMLElement>) => void;
+    attachDomPortal: (portal: DomPortal) => void;
     /** Handle end of animations, updating the state of the snackbar. */
     onAnimationEnd(event: AnimationEvent): void;
     /** Begin animation of snack bar entrance into view. */
@@ -62,4 +85,9 @@ export declare class MatSnackBarContainer extends BasePortalOutlet implements On
     private _applySnackBarClasses;
     /** Asserts that no content is already attached to the container. */
     private _assertNotAttached;
+    /**
+     * Starts a timeout to move the snack bar content to the live region so screen readers will
+     * announce it.
+     */
+    private _screenReaderAnnounce;
 }

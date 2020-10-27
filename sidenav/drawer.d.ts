@@ -47,10 +47,6 @@ export declare class MatDrawer implements AfterContentInit, AfterContentChecked,
     private _platform;
     private _ngZone;
     private _doc;
-    /**
-     * @deprecated `_container` parameter to be made required.
-     * @breaking-change 10.0.0
-     */
     _container?: MatDrawerContainer | undefined;
     private _focusTrap;
     private _elementFocusedBeforeDrawerWasOpened;
@@ -94,13 +90,13 @@ export declare class MatDrawer implements AfterContentInit, AfterContentChecked,
     /** Event emitted when the drawer open state is changed. */
     readonly openedChange: EventEmitter<boolean>;
     /** Event emitted when the drawer has been opened. */
-    get _openedStream(): Observable<void>;
+    _openedStream: Observable<void>;
     /** Event emitted when the drawer has started opening. */
-    get openedStart(): Observable<void>;
+    readonly openedStart: Observable<void>;
     /** Event emitted when the drawer has been closed. */
-    get _closedStream(): Observable<void>;
+    _closedStream: Observable<void>;
     /** Event emitted when the drawer has started closing. */
-    get closedStart(): Observable<void>;
+    readonly closedStart: Observable<void>;
     /** Emits when the component is destroyed. */
     private readonly _destroyed;
     /** Event emitted when the drawer's position changes. */
@@ -110,22 +106,19 @@ export declare class MatDrawer implements AfterContentInit, AfterContentChecked,
      * to know when to when the mode changes so it can adapt the margins on the content.
      */
     readonly _modeChanged: Subject<void>;
-    constructor(_elementRef: ElementRef<HTMLElement>, _focusTrapFactory: FocusTrapFactory, _focusMonitor: FocusMonitor, _platform: Platform, _ngZone: NgZone, _doc: any, 
-    /**
-     * @deprecated `_container` parameter to be made required.
-     * @breaking-change 10.0.0
-     */
-    _container?: MatDrawerContainer | undefined);
+    constructor(_elementRef: ElementRef<HTMLElement>, _focusTrapFactory: FocusTrapFactory, _focusMonitor: FocusMonitor, _platform: Platform, _ngZone: NgZone, _doc: any, _container?: MatDrawerContainer | undefined);
     /**
      * Moves focus into the drawer. Note that this works even if
      * the focus trap is disabled in `side` mode.
      */
     private _takeFocus;
     /**
-     * If focus is currently inside the drawer, restores it to where it was before the drawer
-     * opened.
+     * Restores focus to the element that was originally focused when the drawer opened.
+     * If no element was focused at that time, the focus will be restored to the drawer.
      */
     private _restoreFocus;
+    /** Whether focus is currently within the drawer. */
+    private _isFocusWithinDrawer;
     ngAfterContentInit(): void;
     ngAfterContentChecked(): void;
     ngOnDestroy(): void;
@@ -137,6 +130,8 @@ export declare class MatDrawer implements AfterContentInit, AfterContentChecked,
     open(openedVia?: FocusOrigin): Promise<MatDrawerToggleResult>;
     /** Close the drawer. */
     close(): Promise<MatDrawerToggleResult>;
+    /** Closes the drawer with context that the backdrop was clicked. */
+    _closeViaBackdropClick(): Promise<MatDrawerToggleResult>;
     /**
      * Toggle this drawer.
      * @param isOpen Whether the drawer should be open.
@@ -144,7 +139,15 @@ export declare class MatDrawer implements AfterContentInit, AfterContentChecked,
      * Used for focus management after the sidenav is closed.
      */
     toggle(isOpen?: boolean, openedVia?: FocusOrigin): Promise<MatDrawerToggleResult>;
-    get _width(): number;
+    /**
+     * Toggles the opened state of the drawer.
+     * @param isOpen Whether the drawer should open or close.
+     * @param restoreFocus Whether focus should be restored on close.
+     * @param openedVia Focus origin that can be optionally set when opening a drawer. The
+     *   origin will be used later when focus is restored on drawer close.
+     */
+    private _setOpen;
+    _getWidth(): number;
     /** Updates the enabled state of the focus trap. */
     private _updateFocusTrapState;
     _animationStartListener(event: AnimationEvent): void;
@@ -259,7 +262,7 @@ export declare class MatDrawerContainer implements AfterContentInit, DoCheck, On
     /** Whether the container is being pushed to the side by one of the drawers. */
     private _isPushed;
     _onBackdropClicked(): void;
-    _closeModalDrawer(): void;
+    _closeModalDrawersViaBackdrop(): void;
     _isShowingBackdrop(): boolean;
     private _canHaveBackdrop;
     private _isDrawerOpen;

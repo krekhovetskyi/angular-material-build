@@ -13,7 +13,7 @@ import { BreakpointObserver, BreakpointState } from '@angular/cdk/layout';
 import { OriginConnectionPosition, Overlay, OverlayConnectionPosition, OverlayRef, ScrollStrategy } from '@angular/cdk/overlay';
 import { Platform } from '@angular/cdk/platform';
 import { ScrollDispatcher } from '@angular/cdk/scrolling';
-import { ChangeDetectorRef, ElementRef, InjectionToken, NgZone, OnDestroy, OnInit, ViewContainerRef } from '@angular/core';
+import { ChangeDetectorRef, ElementRef, InjectionToken, NgZone, OnDestroy, ViewContainerRef, AfterViewInit } from '@angular/core';
 import { Observable } from 'rxjs';
 /** Possible positions for a tooltip. */
 export declare type TooltipPosition = 'left' | 'right' | 'above' | 'below' | 'before' | 'after';
@@ -61,7 +61,7 @@ export declare function MAT_TOOLTIP_DEFAULT_OPTIONS_FACTORY(): MatTooltipDefault
  *
  * https://material.io/design/components/tooltips.html
  */
-export declare class MatTooltip implements OnDestroy, OnInit {
+export declare class MatTooltip implements OnDestroy, AfterViewInit {
     private _overlay;
     private _elementRef;
     private _scrollDispatcher;
@@ -79,7 +79,8 @@ export declare class MatTooltip implements OnDestroy, OnInit {
     private _disabled;
     private _tooltipClass;
     private _scrollStrategy;
-    private _currentPosition;
+    private _viewInitialized;
+    private _pointerExitEventsInitialized;
     /** Allows the user to define the position of the tooltip relative to the parent element */
     get position(): TooltipPosition;
     set position(value: TooltipPosition);
@@ -117,21 +118,13 @@ export declare class MatTooltip implements OnDestroy, OnInit {
         [key: string]: any;
     });
     /** Manually-bound passive event listeners. */
-    private _passiveListeners;
+    private readonly _passiveListeners;
     /** Timer started at the last `touchstart` event. */
     private _touchstartTimeout;
     /** Emits when the component is destroyed. */
     private readonly _destroyed;
-    constructor(_overlay: Overlay, _elementRef: ElementRef<HTMLElement>, _scrollDispatcher: ScrollDispatcher, _viewContainerRef: ViewContainerRef, _ngZone: NgZone, _platform: Platform, _ariaDescriber: AriaDescriber, _focusMonitor: FocusMonitor, scrollStrategy: any, _dir: Directionality, _defaultOptions: MatTooltipDefaultOptions, 
-    /**
-     * @deprecated _hammerLoader parameter to be removed.
-     * @breaking-change 9.0.0
-     */
-    _hammerLoader?: any);
-    /**
-     * Setup styling-specific things
-     */
-    ngOnInit(): void;
+    constructor(_overlay: Overlay, _elementRef: ElementRef<HTMLElement>, _scrollDispatcher: ScrollDispatcher, _viewContainerRef: ViewContainerRef, _ngZone: NgZone, _platform: Platform, _ariaDescriber: AriaDescriber, _focusMonitor: FocusMonitor, scrollStrategy: any, _dir: Directionality, _defaultOptions: MatTooltipDefaultOptions);
+    ngAfterViewInit(): void;
     /**
      * Dispose the tooltip when destroyed.
      */
@@ -174,10 +167,11 @@ export declare class MatTooltip implements OnDestroy, OnInit {
     private _setTooltipClass;
     /** Inverts an overlay position. */
     private _invertPosition;
-    /** Updates the class on the overlay panel based on the current position of the tooltip. */
-    private _updateCurrentPositionClass;
     /** Binds the pointer events to the tooltip trigger. */
-    private _setupPointerEvents;
+    private _setupPointerEnterEventsIfNeeded;
+    private _setupPointerExitEventsIfNeeded;
+    private _addListeners;
+    private _platformSupportsMouseEvents;
     /** Disables the native browser gestures, based on how the tooltip has been configured. */
     private _disableNativeGesturesIfNecessary;
     static ngAcceptInputType_disabled: BooleanInput;

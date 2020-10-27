@@ -1,5 +1,5 @@
 import { __awaiter } from 'tslib';
-import { ComponentHarness, HarnessPredicate } from '@angular/cdk/testing';
+import { ContentContainerComponentHarness, HarnessPredicate } from '@angular/cdk/testing';
 
 /**
  * @license
@@ -9,10 +9,11 @@ import { ComponentHarness, HarnessPredicate } from '@angular/cdk/testing';
  * found in the LICENSE file at https://angular.io/license
  */
 /** Harness for interacting with a standard mat-snack-bar in tests. */
-class MatSnackBarHarness extends ComponentHarness {
+class MatSnackBarHarness extends ContentContainerComponentHarness {
     constructor() {
         super(...arguments);
         this._simpleSnackBar = this.locatorForOptional('.mat-simple-snackbar');
+        this._simpleSnackBarLiveRegion = this.locatorFor('[aria-live]');
         this._simpleSnackBarMessage = this.locatorFor('.mat-simple-snackbar > span');
         this._simpleSnackBarActionButton = this.locatorForOptional('.mat-simple-snackbar-action > button');
     }
@@ -28,10 +29,21 @@ class MatSnackBarHarness extends ComponentHarness {
     /**
      * Gets the role of the snack-bar. The role of a snack-bar is determined based
      * on the ARIA politeness specified in the snack-bar config.
+     * @deprecated @breaking-change 13.0.0 Use `getAriaLive` instead.
      */
     getRole() {
         return __awaiter(this, void 0, void 0, function* () {
             return (yield this.host()).getAttribute('role');
+        });
+    }
+    /**
+     * Gets the aria-live of the snack-bar's live region. The aria-live of a snack-bar is
+     * determined based on the ARIA politeness specified in the snack-bar config.
+     */
+    getAriaLive() {
+        return __awaiter(this, void 0, void 0, function* () {
+            return (yield this._simpleSnackBarLiveRegion())
+                .getAttribute('aria-live');
         });
     }
     /**
@@ -121,6 +133,14 @@ class MatSnackBarHarness extends ComponentHarness {
 // snackbar. The canonical snack-bar parent is the "MatSnackBarContainer".
 /** The selector for the host element of a `MatSnackBar` instance. */
 MatSnackBarHarness.hostSelector = '.mat-snack-bar-container';
+
+/**
+ * @license
+ * Copyright Google LLC All Rights Reserved.
+ *
+ * Use of this source code is governed by an MIT-style license that can be
+ * found in the LICENSE file at https://angular.io/license
+ */
 
 /**
  * @license
