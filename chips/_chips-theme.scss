@@ -68,7 +68,7 @@ $mat-chip-remove-font-size: 18px;
     }
 
     &::after {
-      background: map-get($foreground, base);
+      background: map_get($foreground, base);
     }
   }
 

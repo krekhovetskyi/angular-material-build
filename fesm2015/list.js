@@ -249,17 +249,10 @@ class MatSelectionListChange {
     constructor(
     /** Reference to the selection list that emitted the event. */
     source, 
-    /**
-     * Reference to the option that has been changed.
-     * @deprecated Use `options` instead, because some events may change more than one option.
-     * @breaking-change 12.0.0
-     */
-    option, 
-    /** Reference to the options that have been changed. */
-    options) {
+    /** Reference to the option that has been changed. */
+    option) {
         this.source = source;
         this.option = option;
-        this.options = options;
     }
 }
 /**
@@ -377,7 +370,7 @@ class MatListOption extends _MatListOptionMixinBase {
         if (!this.disabled && (this.selectionList.multiple || !this.selected)) {
             this.toggle();
             // Emit a change event if the selected state of the option changed through user interaction.
-            this.selectionList._emitChangeEvent([this]);
+            this.selectionList._emitChangeEvent(this);
         }
     }
     _handleFocus() {
@@ -646,7 +639,7 @@ class MatSelectionList extends _MatSelectionListMixinBase {
                 if (keyCode === A && this.multiple && hasModifierKey(event, 'ctrlKey') &&
                     !manager.isTyping()) {
                     const shouldSelect = this.options.some(option => !option.disabled && !option.selected);
-                    this._setAllOptionsSelected(shouldSelect, true, true);
+                    this._setAllOptionsSelected(shouldSelect, true);
                     event.preventDefault();
                 }
                 else {
@@ -670,8 +663,8 @@ class MatSelectionList extends _MatSelectionListMixinBase {
         }
     }
     /** Emits a change event if the selected state of an option changed. */
-    _emitChangeEvent(options) {
-        this.selectionChange.emit(new MatSelectionListChange(this, options[0], options));
+    _emitChangeEvent(option) {
+        this.selectionChange.emit(new MatSelectionListChange(this, option));
     }
     /** Implemented as part of ControlValueAccessor. */
     writeValue(values) {
@@ -719,7 +712,7 @@ class MatSelectionList extends _MatSelectionListMixinBase {
                 focusedOption.toggle();
                 // Emit a change event because the focused option changed its state through user
                 // interaction.
-                this._emitChangeEvent([focusedOption]);
+                this._emitChangeEvent(focusedOption);
             }
         }
     }
@@ -727,20 +720,17 @@ class MatSelectionList extends _MatSelectionListMixinBase {
      * Sets the selected state on all of the options
      * and emits an event if anything changed.
      */
-    _setAllOptionsSelected(isSelected, skipDisabled, isUserInput) {
+    _setAllOptionsSelected(isSelected, skipDisabled) {
         // Keep track of whether anything changed, because we only want to
         // emit the changed event when something actually changed.
-        const changedOptions = [];
+        let hasChanged = false;
         this.options.forEach(option => {
             if ((!skipDisabled || !option.disabled) && option._setSelected(isSelected)) {
-                changedOptions.push(option);
+                hasChanged = true;
             }
         });
-        if (changedOptions.length) {
+        if (hasChanged) {
             this._reportValueChange();
-            if (isUserInput) {
-                this._emitChangeEvent(changedOptions);
-            }
         }
     }
     /**

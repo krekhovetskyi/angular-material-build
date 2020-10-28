@@ -485,9 +485,7 @@
                 var _this = this;
                 this._ariaDescriber.removeDescription(this._elementRef.nativeElement, this._message);
                 // If the message is not a string (e.g. number), convert it to a string and trim it.
-                // Must convert with `String(value)`, not `${value}`, otherwise Closure Compiler optimises
-                // away the string-conversion: https://github.com/angular/components/issues/20684
-                this._message = value != null ? String(value).trim() : '';
+                this._message = value != null ? ("" + value).trim() : '';
                 if (!this._message && this._isTooltipVisible()) {
                     this.hide(0);
                 }
@@ -608,6 +606,7 @@
                 .withViewportMargin(8)
                 .withScrollableContainers(scrollableAncestors);
             strategy.positionChanges.pipe(operators.takeUntil(this._destroyed)).subscribe(function (change) {
+                _this._updateCurrentPositionClass(change.connectionPair);
                 if (_this._tooltipInstance) {
                     if (change.scrollableViewProperties.isOverlayClipped && _this._tooltipInstance.isVisible()) {
                         // After position changes occur and the overlay is clipped by
@@ -746,6 +745,36 @@
                 }
             }
             return { x: x, y: y };
+        };
+        /** Updates the class on the overlay panel based on the current position of the tooltip. */
+        MatTooltip.prototype._updateCurrentPositionClass = function (connectionPair) {
+            var overlayY = connectionPair.overlayY, originX = connectionPair.originX, originY = connectionPair.originY;
+            var newPosition;
+            // If the overlay is in the middle along the Y axis,
+            // it means that it's either before or after.
+            if (overlayY === 'center') {
+                // Note that since this information is used for styling, we want to
+                // resolve `start` and `end` to their real values, otherwise consumers
+                // would have to remember to do it themselves on each consumption.
+                if (this._dir && this._dir.value === 'rtl') {
+                    newPosition = originX === 'end' ? 'left' : 'right';
+                }
+                else {
+                    newPosition = originX === 'start' ? 'left' : 'right';
+                }
+            }
+            else {
+                newPosition = overlayY === 'bottom' && originY === 'top' ? 'above' : 'below';
+            }
+            if (newPosition !== this._currentPosition) {
+                var overlayRef = this._overlayRef;
+                if (overlayRef) {
+                    var classPrefix = 'mat-tooltip-panel-';
+                    overlayRef.removePanelClass(classPrefix + this._currentPosition);
+                    overlayRef.addPanelClass(classPrefix + newPosition);
+                }
+                this._currentPosition = newPosition;
+            }
         };
         /** Binds the pointer events to the tooltip trigger. */
         MatTooltip.prototype._setupPointerEnterEventsIfNeeded = function () {

@@ -114,8 +114,7 @@ MatInkBar.ctorParameters = () => [
 const MAT_TAB_CONTENT = new InjectionToken('MatTabContent');
 /** Decorates the `ng-template` tags and reads out the template from it. */
 class MatTabContent {
-    constructor(
-    /** Content for the tab. */ template) {
+    constructor(template) {
         this.template = template;
     }
 }
@@ -170,7 +169,12 @@ const _MatTabMixinBase = mixinDisabled(MatTabBase);
  */
 const MAT_TAB_GROUP = new InjectionToken('MAT_TAB_GROUP');
 class MatTab extends _MatTabMixinBase {
-    constructor(_viewContainerRef, _closestTabGroup) {
+    constructor(_viewContainerRef, 
+    /**
+     * @deprecated `_closestTabGroup` parameter to become required.
+     * @breaking-change 10.0.0
+     */
+    _closestTabGroup) {
         super();
         this._viewContainerRef = _viewContainerRef;
         this._closestTabGroup = _closestTabGroup;
@@ -195,6 +199,7 @@ class MatTab extends _MatTabMixinBase {
          */
         this.isActive = false;
     }
+    // TODO: Remove cast once https://github.com/angular/angular/pull/37506 is available.
     /** Content for the tab label given by `<ng-template mat-tab-label>`. */
     get templateLabel() { return this._templateLabel; }
     set templateLabel(value) { this._setTemplateLabelInput(value); }
@@ -242,7 +247,7 @@ MatTab.decorators = [
 ];
 MatTab.ctorParameters = () => [
     { type: ViewContainerRef },
-    { type: undefined, decorators: [{ type: Inject, args: [MAT_TAB_GROUP,] }] }
+    { type: undefined, decorators: [{ type: Optional }, { type: Inject, args: [MAT_TAB_GROUP,] }] }
 ];
 MatTab.propDecorators = {
     templateLabel: [{ type: ContentChild, args: [MAT_TAB_LABEL,] }],
@@ -299,7 +304,12 @@ const matTabsAnimations = {
  * @docs-private
  */
 class MatTabBodyPortal extends CdkPortalOutlet {
-    constructor(componentFactoryResolver, viewContainerRef, _host, _document) {
+    constructor(componentFactoryResolver, viewContainerRef, _host, 
+    /**
+     * @deprecated `_document` parameter to be made required.
+     * @breaking-change 9.0.0
+     */
+    _document) {
         super(componentFactoryResolver, viewContainerRef, _document);
         this._host = _host;
         /** Subscription to events for when the tab body begins centering. */
@@ -541,6 +551,7 @@ class _MatTabGroupBase extends _MatTabGroupMixinBase {
         this._tabsSubscription = Subscription.EMPTY;
         /** Subscription to changes in the tab labels. */
         this._tabLabelSubscription = Subscription.EMPTY;
+        this._dynamicHeight = false;
         this._selectedIndex = null;
         /** Position of the tab header. */
         this.headerPosition = 'above';
@@ -557,8 +568,6 @@ class _MatTabGroupBase extends _MatTabGroupMixinBase {
             defaultConfig.animationDuration : '500ms';
         this.disablePagination = defaultConfig && defaultConfig.disablePagination != null ?
             defaultConfig.disablePagination : false;
-        this.dynamicHeight = defaultConfig && defaultConfig.dynamicHeight != null ?
-            defaultConfig.dynamicHeight : false;
     }
     /** Whether the tab group should grow to the size of the active tab. */
     get dynamicHeight() { return this._dynamicHeight; }
@@ -655,7 +664,11 @@ class _MatTabGroupBase extends _MatTabGroupMixinBase {
         this._allTabs.changes
             .pipe(startWith(this._allTabs))
             .subscribe((tabs) => {
-            this._tabs.reset(tabs.filter(tab => tab._closestTabGroup === this));
+            this._tabs.reset(tabs.filter(tab => {
+                // @breaking-change 10.0.0 Remove null check for `_closestTabGroup`
+                // once it becomes a required parameter in MatTab.
+                return !tab._closestTabGroup || tab._closestTabGroup === this;
+            }));
             this._tabs.notifyOnChanges();
         });
     }
@@ -885,7 +898,12 @@ const HEADER_SCROLL_INTERVAL = 100;
  * @docs-private
  */
 class MatPaginatedTabHeader {
-    constructor(_elementRef, _changeDetectorRef, _viewportRuler, _dir, _ngZone, _platform, _animationMode) {
+    constructor(_elementRef, _changeDetectorRef, _viewportRuler, _dir, _ngZone, 
+    /**
+     * @deprecated @breaking-change 9.0.0 `_platform` and `_animationMode`
+     * parameters to become required.
+     */
+    _platform, _animationMode) {
         this._elementRef = _elementRef;
         this._changeDetectorRef = _changeDetectorRef;
         this._viewportRuler = _viewportRuler;
@@ -962,7 +980,7 @@ class MatPaginatedTabHeader {
             .withHorizontalOrientation(this._getLayoutDirection())
             .withHomeAndEnd()
             .withWrap();
-        this._keyManager.updateActiveItem(this._selectedIndex);
+        this._keyManager.updateActiveItem(0);
         // Defer the first call in order to allow for slower browsers to lay out the elements.
         // This helps in cases where the user lands directly on a page with paginated tabs.
         typeof requestAnimationFrame !== 'undefined' ? requestAnimationFrame(realign) : realign();
@@ -1114,6 +1132,7 @@ class MatPaginatedTabHeader {
             return;
         }
         const scrollDistance = this.scrollDistance;
+        const platform = this._platform;
         const translateX = this._getLayoutDirection() === 'ltr' ? -scrollDistance : scrollDistance;
         // Don't use `translate3d` here because we don't want to create a new layer. A new layer
         // seems to cause flickering and overflow in Internet Explorer. For example, the ink bar
@@ -1126,7 +1145,8 @@ class MatPaginatedTabHeader {
         // position to be thrown off in some cases. We have to reset it ourselves to ensure that
         // it doesn't get thrown off. Note that we scope it only to IE and Edge, because messing
         // with the scroll position throws off Chrome 71+ in RTL mode (see #14689).
-        if (this._platform.TRIDENT || this._platform.EDGE) {
+        // @breaking-change 9.0.0 Remove null check for `platform` after it can no longer be undefined.
+        if (platform && (platform.TRIDENT || platform.EDGE)) {
             this._tabListContainer.nativeElement.scrollLeft = 0;
         }
     }
@@ -1333,7 +1353,9 @@ MatPaginatedTabHeader.propDecorators = {
  * @docs-private
  */
 class _MatTabHeaderBase extends MatPaginatedTabHeader {
-    constructor(elementRef, changeDetectorRef, viewportRuler, dir, ngZone, platform, animationMode) {
+    constructor(elementRef, changeDetectorRef, viewportRuler, dir, ngZone, platform, 
+    // @breaking-change 9.0.0 `_animationMode` parameter to be made required.
+    animationMode) {
         super(elementRef, changeDetectorRef, viewportRuler, dir, ngZone, platform, animationMode);
         this._disableRipple = false;
     }
@@ -1367,7 +1389,9 @@ _MatTabHeaderBase.propDecorators = {
  * @docs-private
  */
 class MatTabHeader extends _MatTabHeaderBase {
-    constructor(elementRef, changeDetectorRef, viewportRuler, dir, ngZone, platform, animationMode) {
+    constructor(elementRef, changeDetectorRef, viewportRuler, dir, ngZone, platform, 
+    // @breaking-change 9.0.0 `_animationMode` parameter to be made required.
+    animationMode) {
         super(elementRef, changeDetectorRef, viewportRuler, dir, ngZone, platform, animationMode);
     }
 }
@@ -1418,7 +1442,11 @@ MatTabHeader.propDecorators = {
  * @docs-private
  */
 class _MatTabNavBase extends MatPaginatedTabHeader {
-    constructor(elementRef, dir, ngZone, changeDetectorRef, viewportRuler, platform, animationMode) {
+    constructor(elementRef, dir, ngZone, changeDetectorRef, viewportRuler, 
+    /**
+     * @deprecated @breaking-change 9.0.0 `platform` parameter to become required.
+     */
+    platform, animationMode) {
         super(elementRef, changeDetectorRef, viewportRuler, dir, ngZone, platform, animationMode);
         this._disableRipple = false;
         /** Theme color of the nav bar. */
@@ -1448,8 +1476,11 @@ class _MatTabNavBase extends MatPaginatedTabHeader {
         });
         super.ngAfterContentInit();
     }
-    /** Notifies the component that the active link has been changed. */
-    updateActiveLink() {
+    /**
+     * Notifies the component that the active link has been changed.
+     * @breaking-change 8.0.0 `element` parameter to be removed.
+     */
+    updateActiveLink(_element) {
         if (!this._items) {
             return;
         }
@@ -1488,7 +1519,11 @@ _MatTabNavBase.propDecorators = {
  * Provides anchored navigation with animated ink bar.
  */
 class MatTabNav extends _MatTabNavBase {
-    constructor(elementRef, dir, ngZone, changeDetectorRef, viewportRuler, platform, animationMode) {
+    constructor(elementRef, dir, ngZone, changeDetectorRef, viewportRuler, 
+    /**
+     * @deprecated @breaking-change 9.0.0 `platform` parameter to become required.
+     */
+    platform, animationMode) {
         super(elementRef, dir, ngZone, changeDetectorRef, viewportRuler, platform, animationMode);
     }
 }
@@ -1535,8 +1570,7 @@ class MatTabLinkMixinBase {
 const _MatTabLinkMixinBase = mixinTabIndex(mixinDisableRipple(mixinDisabled(MatTabLinkMixinBase)));
 /** Base class with all of the `MatTabLink` functionality. */
 class _MatTabLinkBase extends _MatTabLinkMixinBase {
-    constructor(_tabNavBar, 
-    /** @docs-private */ elementRef, globalRippleOptions, tabIndex, _focusMonitor, animationMode) {
+    constructor(_tabNavBar, elementRef, globalRippleOptions, tabIndex, _focusMonitor, animationMode) {
         super();
         this._tabNavBar = _tabNavBar;
         this.elementRef = elementRef;
@@ -1552,10 +1586,9 @@ class _MatTabLinkBase extends _MatTabLinkMixinBase {
     /** Whether the link is active. */
     get active() { return this._isActive; }
     set active(value) {
-        const newValue = coerceBooleanProperty(value);
-        if (newValue !== this._isActive) {
+        if (value !== this._isActive) {
             this._isActive = value;
-            this._tabNavBar.updateActiveLink();
+            this._tabNavBar.updateActiveLink(this.elementRef);
         }
     }
     /**
@@ -1566,7 +1599,6 @@ class _MatTabLinkBase extends _MatTabLinkMixinBase {
         return this.disabled || this.disableRipple || this._tabNavBar.disableRipple ||
             !!this.rippleConfig.disabled;
     }
-    /** Focuses the tab link. */
     focus() {
         this.elementRef.nativeElement.focus();
     }

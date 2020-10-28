@@ -13,12 +13,11 @@ import { AfterViewInit, ElementRef, EventEmitter, InjectionToken, NgZone, OnDest
 import { CanColor, CanColorCtor, DateAdapter, ThemePalette } from '@angular/material/core';
 import { MatDialog } from '@angular/material/dialog';
 import { Subject, Observable } from 'rxjs';
-import { MatCalendar, MatCalendarView } from './calendar';
+import { MatCalendar } from './calendar';
 import { MatCalendarUserEvent, MatCalendarCellClassFunction } from './calendar-body';
 import { DateFilterFn } from './datepicker-input-base';
 import { ExtractDateTypeFromSelection, MatDateSelectionModel, DateRange } from './date-selection-model';
 import { MatDateRangeSelectionStrategy } from './date-range-selection-strategy';
-import { MatDatepickerIntl } from './datepicker-intl';
 /** Injection token that determines the scroll handling while the calendar is open. */
 export declare const MAT_DATEPICKER_SCROLL_STRATEGY: InjectionToken<() => ScrollStrategy>;
 /** @docs-private */
@@ -47,10 +46,15 @@ declare const _MatDatepickerContentMixinBase: CanColorCtor & typeof MatDatepicke
  * @docs-private
  */
 export declare class MatDatepickerContent<S, D = ExtractDateTypeFromSelection<S>> extends _MatDatepickerContentMixinBase implements AfterViewInit, OnDestroy, CanColor {
-    private _changeDetectorRef;
-    private _model;
-    private _dateAdapter;
-    private _rangeSelectionStrategy;
+    /**
+     * @deprecated `_changeDetectorRef`, `_model` and `_rangeSelectionStrategy`
+     * parameters to become required.
+     * @breaking-change 11.0.0
+     */
+    private _changeDetectorRef?;
+    private _model?;
+    private _dateAdapter?;
+    private _rangeSelectionStrategy?;
     private _subscriptions;
     /** Reference to the internal calendar component. */
     _calendar: MatCalendar<D>;
@@ -66,16 +70,13 @@ export declare class MatDatepickerContent<S, D = ExtractDateTypeFromSelection<S>
     _animationState: 'enter' | 'void';
     /** Emits when an animation has finished. */
     _animationDone: Subject<void>;
-    /** Text for the close button. */
-    _closeButtonText: string;
-    /** Whether the close button currently has focus. */
-    _closeButtonFocused: boolean;
-    constructor(elementRef: ElementRef, _changeDetectorRef: ChangeDetectorRef, _model: MatDateSelectionModel<S, D>, _dateAdapter: DateAdapter<D>, _rangeSelectionStrategy: MatDateRangeSelectionStrategy<D>, 
+    constructor(elementRef: ElementRef, 
     /**
-     * @deprecated `intl` argument to become required.
-     * @breaking-change 12.0.0
+     * @deprecated `_changeDetectorRef`, `_model` and `_rangeSelectionStrategy`
+     * parameters to become required.
+     * @breaking-change 11.0.0
      */
-    intl?: MatDatepickerIntl);
+    _changeDetectorRef?: ChangeDetectorRef | undefined, _model?: MatDateSelectionModel<S, D> | undefined, _dateAdapter?: DateAdapter<D> | undefined, _rangeSelectionStrategy?: MatDateRangeSelectionStrategy<D> | undefined);
     ngAfterViewInit(): void;
     ngOnDestroy(): void;
     _handleUserSelection(event: MatCalendarUserEvent<D | null>): void;
@@ -91,7 +92,7 @@ export interface MatDatepickerControl<D> {
     disabled: boolean;
     dateFilter: DateFilterFn<D>;
     getConnectedOverlayOrigin(): ElementRef;
-    stateChanges: Observable<void>;
+    _stateChanges: Observable<void>;
 }
 /** Base class for a datepicker. */
 export declare abstract class MatDatepickerBase<C extends MatDatepickerControl<D>, S, D = ExtractDateTypeFromSelection<S>> implements OnDestroy, OnChanges {
@@ -142,23 +143,14 @@ export declare abstract class MatDatepickerBase<C extends MatDatepickerControl<D
      * This doesn't imply a change on the selected date.
      */
     readonly monthSelected: EventEmitter<D>;
-    /**
-     * Emits when the current view changes.
-     */
-    readonly viewChanged: EventEmitter<MatCalendarView>;
+    /** Classes to be passed to the date picker panel. Supports the same syntax as `ngClass`. */
+    panelClass: string | string[];
     /** Function that can be used to add custom CSS classes to dates. */
     dateClass: MatCalendarCellClassFunction<D>;
     /** Emits when the datepicker has been opened. */
     openedStream: EventEmitter<void>;
     /** Emits when the datepicker has been closed. */
     closedStream: EventEmitter<void>;
-    /**
-     * Classes to be passed to the date picker panel.
-     * Supports string and string array values, similar to `ngClass`.
-     */
-    get panelClass(): string | string[];
-    set panelClass(value: string | string[]);
-    private _panelClass;
     /** Whether the calendar is open. */
     get opened(): boolean;
     set opened(value: boolean);
@@ -193,8 +185,6 @@ export declare abstract class MatDatepickerBase<C extends MatDatepickerControl<D
     _selectYear(normalizedYear: D): void;
     /** Emits selected month in year view */
     _selectMonth(normalizedMonth: D): void;
-    /** Emits changed view */
-    _viewChanged(view: MatCalendarView): void;
     /**
      * Register an input with this datepicker.
      * @param input The datepicker input to register with this datepicker.

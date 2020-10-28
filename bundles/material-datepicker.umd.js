@@ -37,8 +37,6 @@
             this.calendarLabel = 'Calendar';
             /** A label for the button used to open the calendar popup (used by screen readers). */
             this.openCalendarLabel = 'Open calendar';
-            /** Label for the button used to close the calendar popup. */
-            this.closeCalendarLabel = 'Close calendar';
             /** A label for the previous month button (used by screen readers). */
             this.prevMonthLabel = 'Previous month';
             /** A label for the next month button (used by screen readers). */
@@ -1046,7 +1044,7 @@
                     return;
                 case keycodes.ESCAPE:
                     // Abort the current range selection if the user presses escape mid-selection.
-                    if (this._previewEnd != null && !keycodes.hasModifierKey(event)) {
+                    if (this._previewEnd != null) {
                         this._previewStart = this._previewEnd = null;
                         this.selectedChange.emit(null);
                         this._userSelection.emit({ value: null, event: event });
@@ -1903,7 +1901,10 @@
             this._moveFocusOnNextTick = false;
             /** Whether the calendar should be started in month or year view. */
             this.startView = 'month';
-            /** Emits when the currently selected date changes. */
+            /**
+             * Emits when the currently selected date changes.
+             * @breaking-change 11.0.0 Emitted value to change to `D | null`.
+             */
             this.selectedChange = new i0.EventEmitter();
             /**
              * Emits the year chosen in multiyear view.
@@ -1915,10 +1916,6 @@
              * This doesn't imply a change on the selected date.
              */
             this.monthSelected = new i0.EventEmitter();
-            /**
-             * Emits when the current view changes.
-             */
-            this.viewChanged = new i0.EventEmitter(true);
             /** Emits when any date is selected. */
             this._userSelection = new i0.EventEmitter();
             /**
@@ -1997,13 +1994,9 @@
             /** Whether the calendar is in month view. */
             get: function () { return this._currentView; },
             set: function (value) {
-                var viewChangedResult = this._currentView !== value ? value : null;
                 this._currentView = value;
                 this._moveFocusOnNextTick = true;
                 this._changeDetectorRef.markForCheck();
-                if (viewChangedResult) {
-                    this.viewChanged.emit(viewChangedResult);
-                }
             },
             enumerable: false,
             configurable: true
@@ -2060,6 +2053,8 @@
             var date = event.value;
             if (this.selected instanceof DateRange ||
                 (date && !this._dateAdapter.sameDate(date, this.selected))) {
+                // @breaking-change 11.0.0 remove non-null assertion
+                // once the `selectedChange` is allowed to be null.
                 this.selectedChange.emit(date);
             }
             this._userSelection.emit(event);
@@ -2117,7 +2112,6 @@
         selectedChange: [{ type: i0.Output }],
         yearSelected: [{ type: i0.Output }],
         monthSelected: [{ type: i0.Output }],
-        viewChanged: [{ type: i0.Output }],
         _userSelection: [{ type: i0.Output }],
         monthView: [{ type: i0.ViewChild, args: [MatMonthView,] }],
         yearView: [{ type: i0.ViewChild, args: [MatYearView,] }],
@@ -2190,12 +2184,13 @@
      */
     var MatDatepickerContent = /** @class */ (function (_super) {
         __extends(MatDatepickerContent, _super);
-        function MatDatepickerContent(elementRef, _changeDetectorRef, _model, _dateAdapter, _rangeSelectionStrategy, 
+        function MatDatepickerContent(elementRef, 
         /**
-         * @deprecated `intl` argument to become required.
-         * @breaking-change 12.0.0
+         * @deprecated `_changeDetectorRef`, `_model` and `_rangeSelectionStrategy`
+         * parameters to become required.
+         * @breaking-change 11.0.0
          */
-        intl) {
+        _changeDetectorRef, _model, _dateAdapter, _rangeSelectionStrategy) {
             var _this = _super.call(this, elementRef) || this;
             _this._changeDetectorRef = _changeDetectorRef;
             _this._model = _model;
@@ -2206,15 +2201,16 @@
             _this._animationState = 'enter';
             /** Emits when an animation has finished. */
             _this._animationDone = new rxjs.Subject();
-            // @breaking-change 12.0.0 Remove fallback for `intl`.
-            _this._closeButtonText = (intl === null || intl === void 0 ? void 0 : intl.closeCalendarLabel) || 'Close calendar';
             return _this;
         }
         MatDatepickerContent.prototype.ngAfterViewInit = function () {
             var _this = this;
-            this._subscriptions.add(this.datepicker._stateChanges.subscribe(function () {
-                _this._changeDetectorRef.markForCheck();
-            }));
+            // @breaking-change 11.0.0 Remove null check for `_changeDetectorRef.
+            if (this._changeDetectorRef) {
+                this._subscriptions.add(this.datepicker._stateChanges.subscribe(function () {
+                    _this._changeDetectorRef.markForCheck();
+                }));
+            }
             this._calendar.focusActiveCell();
         };
         MatDatepickerContent.prototype.ngOnDestroy = function () {
@@ -2222,21 +2218,25 @@
             this._animationDone.complete();
         };
         MatDatepickerContent.prototype._handleUserSelection = function (event) {
-            var selection = this._model.selection;
-            var value = event.value;
-            var isRange = selection instanceof DateRange;
-            // If we're selecting a range and we have a selection strategy, always pass the value through
-            // there. Otherwise don't assign null values to the model, unless we're selecting a range.
-            // A null value when picking a range means that the user cancelled the selection (e.g. by
-            // pressing escape), whereas when selecting a single value it means that the value didn't
-            // change. This isn't very intuitive, but it's here for backwards-compatibility.
-            if (isRange && this._rangeSelectionStrategy) {
-                var newSelection = this._rangeSelectionStrategy.selectionFinished(value, selection, event.event);
-                this._model.updateSelection(newSelection, this);
-            }
-            else if (value && (isRange ||
-                !this._dateAdapter.sameDate(value, selection))) {
-                this._model.add(value);
+            // @breaking-change 11.0.0 Remove null checks for _model,
+            // _rangeSelectionStrategy and _dateAdapter.
+            if (this._model && this._dateAdapter) {
+                var selection = this._model.selection;
+                var value = event.value;
+                var isRange = selection instanceof DateRange;
+                // If we're selecting a range and we have a selection strategy, always pass the value through
+                // there. Otherwise don't assign null values to the model, unless we're selecting a range.
+                // A null value when picking a range means that the user cancelled the selection (e.g. by
+                // pressing escape), whereas when selecting a single value it means that the value didn't
+                // change. This isn't very intuitive, but it's here for backwards-compatibility.
+                if (isRange && this._rangeSelectionStrategy) {
+                    var newSelection = this._rangeSelectionStrategy.selectionFinished(value, selection, event.event);
+                    this._model.updateSelection(newSelection, this);
+                }
+                else if (value && (isRange ||
+                    !this._dateAdapter.sameDate(value, selection))) {
+                    this._model.add(value);
+                }
             }
             if (!this._model || this._model.isComplete()) {
                 this.datepicker.close();
@@ -2244,17 +2244,21 @@
         };
         MatDatepickerContent.prototype._startExitAnimation = function () {
             this._animationState = 'void';
-            this._changeDetectorRef.markForCheck();
+            // @breaking-change 11.0.0 Remove null check for `_changeDetectorRef`.
+            if (this._changeDetectorRef) {
+                this._changeDetectorRef.markForCheck();
+            }
         };
         MatDatepickerContent.prototype._getSelected = function () {
-            return this._model.selection;
+            // @breaking-change 11.0.0 Remove null check for `_model`.
+            return this._model ? this._model.selection : null;
         };
         return MatDatepickerContent;
     }(_MatDatepickerContentMixinBase));
     MatDatepickerContent.decorators = [
         { type: i0.Component, args: [{
                     selector: 'mat-datepicker-content',
-                    template: "<div cdkTrapFocus>\n  <mat-calendar\n    [id]=\"datepicker.id\"\n    [ngClass]=\"datepicker.panelClass\"\n    [startAt]=\"datepicker.startAt\"\n    [startView]=\"datepicker.startView\"\n    [minDate]=\"datepicker._getMinDate()\"\n    [maxDate]=\"datepicker._getMaxDate()\"\n    [dateFilter]=\"datepicker._getDateFilter()\"\n    [headerComponent]=\"datepicker.calendarHeaderComponent\"\n    [selected]=\"_getSelected()\"\n    [dateClass]=\"datepicker.dateClass\"\n    [comparisonStart]=\"comparisonStart\"\n    [comparisonEnd]=\"comparisonEnd\"\n    [@fadeInCalendar]=\"'enter'\"\n    (yearSelected)=\"datepicker._selectYear($event)\"\n    (monthSelected)=\"datepicker._selectMonth($event)\"\n    (viewChanged)=\"datepicker._viewChanged($event)\"\n    (_userSelection)=\"_handleUserSelection($event)\"></mat-calendar>\n\n  <!-- Invisible close button for screen reader users. -->\n  <button\n    type=\"button\"\n    mat-raised-button\n    color=\"primary\"\n    class=\"mat-datepicker-close-button\"\n    [class.cdk-visually-hidden]=\"!_closeButtonFocused\"\n    (focus)=\"_closeButtonFocused = true\"\n    (blur)=\"_closeButtonFocused = false\"\n    (click)=\"datepicker.close()\">{{ _closeButtonText }}</button>\n</div>\n",
+                    template: "<mat-calendar cdkTrapFocus\n    [id]=\"datepicker.id\"\n    [ngClass]=\"datepicker.panelClass\"\n    [startAt]=\"datepicker.startAt\"\n    [startView]=\"datepicker.startView\"\n    [minDate]=\"datepicker._getMinDate()\"\n    [maxDate]=\"datepicker._getMaxDate()\"\n    [dateFilter]=\"datepicker._getDateFilter()\"\n    [headerComponent]=\"datepicker.calendarHeaderComponent\"\n    [selected]=\"_getSelected()\"\n    [dateClass]=\"datepicker.dateClass\"\n    [comparisonStart]=\"comparisonStart\"\n    [comparisonEnd]=\"comparisonEnd\"\n    [@fadeInCalendar]=\"'enter'\"\n    (yearSelected)=\"datepicker._selectYear($event)\"\n    (monthSelected)=\"datepicker._selectMonth($event)\"\n    (_userSelection)=\"_handleUserSelection($event)\">\n</mat-calendar>\n",
                     host: {
                         'class': 'mat-datepicker-content',
                         '[@transformPanel]': '_animationState',
@@ -2269,7 +2273,7 @@
                     encapsulation: i0.ViewEncapsulation.None,
                     changeDetection: i0.ChangeDetectionStrategy.OnPush,
                     inputs: ['color'],
-                    styles: [".mat-datepicker-content{display:block;border-radius:4px}.mat-datepicker-content .mat-calendar{width:296px;height:354px}.mat-datepicker-content-touch{display:block;max-height:80vh;overflow:auto;margin:-24px}.mat-datepicker-content-touch .mat-calendar{min-width:250px;min-height:312px;max-width:750px;max-height:788px}.mat-datepicker-close-button{position:absolute;top:100%;left:0;margin-top:8px}@media all and (orientation: landscape){.mat-datepicker-content-touch .mat-calendar{width:64vh;height:80vh}}@media all and (orientation: portrait){.mat-datepicker-content-touch .mat-calendar{width:80vw;height:100vw}}\n"]
+                    styles: [".mat-datepicker-content{display:block;border-radius:4px}.mat-datepicker-content .mat-calendar{width:296px;height:354px}.mat-datepicker-content-touch{display:block;max-height:80vh;overflow:auto;margin:-24px}.mat-datepicker-content-touch .mat-calendar{min-width:250px;min-height:312px;max-width:750px;max-height:788px}@media all and (orientation: landscape){.mat-datepicker-content-touch .mat-calendar{width:64vh;height:80vh}}@media all and (orientation: portrait){.mat-datepicker-content-touch .mat-calendar{width:80vw;height:100vw}}\n"]
                 },] }
     ];
     MatDatepickerContent.ctorParameters = function () { return [
@@ -2277,8 +2281,7 @@
         { type: i0.ChangeDetectorRef },
         { type: MatDateSelectionModel },
         { type: core.DateAdapter },
-        { type: undefined, decorators: [{ type: i0.Optional }, { type: i0.Inject, args: [MAT_DATE_RANGE_SELECTION_STRATEGY,] }] },
-        { type: MatDatepickerIntl }
+        { type: undefined, decorators: [{ type: i0.Optional }, { type: i0.Inject, args: [MAT_DATE_RANGE_SELECTION_STRATEGY,] }] }
     ]; };
     MatDatepickerContent.propDecorators = {
         _calendar: [{ type: i0.ViewChild, args: [MatCalendar,] }]
@@ -2312,10 +2315,6 @@
              * This doesn't imply a change on the selected date.
              */
             this.monthSelected = new i0.EventEmitter();
-            /**
-             * Emits when the current view changes.
-             */
-            this.viewChanged = new i0.EventEmitter(true);
             /** Emits when the datepicker has been opened. */
             this.openedStream = new i0.EventEmitter();
             /** Emits when the datepicker has been closed. */
@@ -2387,18 +2386,6 @@
             enumerable: false,
             configurable: true
         });
-        Object.defineProperty(MatDatepickerBase.prototype, "panelClass", {
-            /**
-             * Classes to be passed to the date picker panel.
-             * Supports string and string array values, similar to `ngClass`.
-             */
-            get: function () { return this._panelClass; },
-            set: function (value) {
-                this._panelClass = coercion.coerceStringArray(value);
-            },
-            enumerable: false,
-            configurable: true
-        });
         Object.defineProperty(MatDatepickerBase.prototype, "opened", {
             /** Whether the calendar is open. */
             get: function () { return this._opened; },
@@ -2447,10 +2434,6 @@
         MatDatepickerBase.prototype._selectMonth = function (normalizedMonth) {
             this.monthSelected.emit(normalizedMonth);
         };
-        /** Emits changed view */
-        MatDatepickerBase.prototype._viewChanged = function (view) {
-            this.viewChanged.emit(view);
-        };
         /**
          * Register an input with this datepicker.
          * @param input The datepicker input to register with this datepicker.
@@ -2464,7 +2447,7 @@
             this._inputStateChanges.unsubscribe();
             this._datepickerInput = input;
             this._inputStateChanges =
-                input.stateChanges.subscribe(function () { return _this._stateChanges.next(undefined); });
+                input._stateChanges.subscribe(function () { return _this._stateChanges.next(undefined); });
             return this._model;
         };
         /** Open the calendar. */
@@ -2597,8 +2580,8 @@
             this._popupRef.overlayElement.setAttribute('role', 'dialog');
             rxjs.merge(this._popupRef.backdropClick(), this._popupRef.detachments(), this._popupRef.keydownEvents().pipe(operators.filter(function (event) {
                 // Closing on alt + up is only valid when there's an input associated with the datepicker.
-                return (event.keyCode === keycodes.ESCAPE && !keycodes.hasModifierKey(event)) || (_this._datepickerInput &&
-                    keycodes.hasModifierKey(event, 'altKey') && event.keyCode === keycodes.UP_ARROW);
+                return event.keyCode === keycodes.ESCAPE ||
+                    (_this._datepickerInput && event.altKey && event.keyCode === keycodes.UP_ARROW);
             }))).subscribe(function (event) {
                 if (event) {
                     event.preventDefault();
@@ -2673,11 +2656,10 @@
         yPosition: [{ type: i0.Input }],
         yearSelected: [{ type: i0.Output }],
         monthSelected: [{ type: i0.Output }],
-        viewChanged: [{ type: i0.Output }],
+        panelClass: [{ type: i0.Input }],
         dateClass: [{ type: i0.Input }],
         openedStream: [{ type: i0.Output, args: ['opened',] }],
         closedStream: [{ type: i0.Output, args: ['closed',] }],
-        panelClass: [{ type: i0.Input }],
         opened: [{ type: i0.Input }]
     };
 
@@ -2703,6 +2685,13 @@
                 },] }
     ];
 
+    /**
+     * @license
+     * Copyright Google LLC All Rights Reserved.
+     *
+     * Use of this source code is governed by an MIT-style license that can be
+     * found in the LICENSE file at https://angular.io/license
+     */
     /**
      * An event used for datepicker input and change events. We don't always have access to a native
      * input or change event because the event may have been triggered by the user clicking on the
@@ -2734,7 +2723,7 @@
             /** Emits when the value changes (either due to user input or programmatic change). */
             this._valueChange = new i0.EventEmitter();
             /** Emits when the internal state has changed */
-            this.stateChanges = new rxjs.Subject();
+            this._stateChanges = new rxjs.Subject();
             this._onTouched = function () { };
             this._validatorOnChange = function () { };
             this._cvaOnChange = function () { };
@@ -2810,7 +2799,7 @@
                 var element = this._elementRef.nativeElement;
                 if (this._disabled !== newValue) {
                     this._disabled = newValue;
-                    this.stateChanges.next(undefined);
+                    this._stateChanges.next(undefined);
                 }
                 // We need to null check the `blur` method, because it's undefined during SSR.
                 // In Ivy static bindings are invoked earlier, before the element is attached to the DOM.
@@ -2861,16 +2850,14 @@
         MatDatepickerInputBase.prototype.ngAfterViewInit = function () {
             this._isInitialized = true;
         };
-        MatDatepickerInputBase.prototype.ngOnChanges = function (changes) {
-            if (dateInputsHaveChanged(changes, this._dateAdapter)) {
-                this.stateChanges.next(undefined);
-            }
+        MatDatepickerInputBase.prototype.ngOnChanges = function () {
+            this._stateChanges.next(undefined);
         };
         MatDatepickerInputBase.prototype.ngOnDestroy = function () {
             this._valueChangesSubscription.unsubscribe();
             this._localeSubscription.unsubscribe();
             this._valueChange.complete();
-            this.stateChanges.complete();
+            this._stateChanges.complete();
         };
         /** @docs-private */
         MatDatepickerInputBase.prototype.registerOnValidatorChange = function (fn) {
@@ -2980,36 +2967,6 @@
         dateChange: [{ type: i0.Output }],
         dateInput: [{ type: i0.Output }]
     };
-    /**
-     * Checks whether the `SimpleChanges` object from an `ngOnChanges`
-     * callback has any changes, accounting for date objects.
-     */
-    function dateInputsHaveChanged(changes, adapter) {
-        var e_1, _a;
-        var keys = Object.keys(changes);
-        try {
-            for (var keys_1 = __values(keys), keys_1_1 = keys_1.next(); !keys_1_1.done; keys_1_1 = keys_1.next()) {
-                var key = keys_1_1.value;
-                var _b = changes[key], previousValue = _b.previousValue, currentValue = _b.currentValue;
-                if (adapter.isDateInstance(previousValue) && adapter.isDateInstance(currentValue)) {
-                    if (!adapter.sameDate(previousValue, currentValue)) {
-                        return true;
-                    }
-                }
-                else {
-                    return true;
-                }
-            }
-        }
-        catch (e_1_1) { e_1 = { error: e_1_1 }; }
-        finally {
-            try {
-                if (keys_1_1 && !keys_1_1.done && (_a = keys_1.return)) _a.call(keys_1);
-            }
-            finally { if (e_1) throw e_1.error; }
-        }
-        return false;
-    }
 
     /** @docs-private */
     var MAT_DATEPICKER_VALUE_ACCESSOR = {
@@ -3047,11 +3004,8 @@
             /** The minimum valid date. */
             get: function () { return this._min; },
             set: function (value) {
-                var validValue = this._dateAdapter.getValidDateOrNull(this._dateAdapter.deserialize(value));
-                if (!this._dateAdapter.sameDate(validValue, this._min)) {
-                    this._min = validValue;
-                    this._validatorOnChange();
-                }
+                this._min = this._dateAdapter.getValidDateOrNull(this._dateAdapter.deserialize(value));
+                this._validatorOnChange();
             },
             enumerable: false,
             configurable: true
@@ -3060,11 +3014,8 @@
             /** The maximum valid date. */
             get: function () { return this._max; },
             set: function (value) {
-                var validValue = this._dateAdapter.getValidDateOrNull(this._dateAdapter.deserialize(value));
-                if (!this._dateAdapter.sameDate(validValue, this._max)) {
-                    this._max = validValue;
-                    this._validatorOnChange();
-                }
+                this._max = this._dateAdapter.getValidDateOrNull(this._dateAdapter.deserialize(value));
+                this._validatorOnChange();
             },
             enumerable: false,
             configurable: true
@@ -3093,6 +3044,13 @@
         /** Gets the value at which the calendar should start. */
         MatDatepickerInput.prototype.getStartValue = function () {
             return this.value;
+        };
+        /**
+         * @deprecated
+         * @breaking-change 8.0.0 Use `getConnectedOverlayOrigin` instead
+         */
+        MatDatepickerInput.prototype.getPopupConnectionElementRef = function () {
+            return this.getConnectedOverlayOrigin();
         };
         /** Opens the associated datepicker. */
         MatDatepickerInput.prototype._openPopup = function () {
@@ -3225,7 +3183,7 @@
             var _this = this;
             var datepickerStateChanged = this.datepicker ? this.datepicker._stateChanges : rxjs.of();
             var inputStateChanged = this.datepicker && this.datepicker._datepickerInput ?
-                this.datepicker._datepickerInput.stateChanges : rxjs.of();
+                this.datepicker._datepickerInput._stateChanges : rxjs.of();
             var datepickerToggled = this.datepicker ?
                 rxjs.merge(this.datepicker.openedStream, this.datepicker.closedStream) :
                 rxjs.of();
@@ -3391,24 +3349,6 @@
             };
             return _this;
         }
-        MatStartDate.prototype.ngOnInit = function () {
-            // Normally this happens automatically, but it seems to break if not added explicitly when all
-            // of the criteria below are met:
-            // 1) The class extends a TS mixin.
-            // 2) The application is running in ViewEngine.
-            // 3) The application is being transpiled through tsickle.
-            // This can be removed once google3 is completely migrated to Ivy.
-            _super.prototype.ngOnInit.call(this);
-        };
-        MatStartDate.prototype.ngDoCheck = function () {
-            // Normally this happens automatically, but it seems to break if not added explicitly when all
-            // of the criteria below are met:
-            // 1) The class extends a TS mixin.
-            // 2) The application is running in ViewEngine.
-            // 3) The application is being transpiled through tsickle.
-            // This can be removed once google3 is completely migrated to Ivy.
-            _super.prototype.ngDoCheck.call(this);
-        };
         MatStartDate.prototype._getValueFromModel = function (modelValue) {
             return modelValue.start;
         };
@@ -3488,24 +3428,6 @@
             };
             return _this;
         }
-        MatEndDate.prototype.ngOnInit = function () {
-            // Normally this happens automatically, but it seems to break if not added explicitly when all
-            // of the criteria below are met:
-            // 1) The class extends a TS mixin.
-            // 2) The application is running in ViewEngine.
-            // 3) The application is being transpiled through tsickle.
-            // This can be removed once google3 is completely migrated to Ivy.
-            _super.prototype.ngOnInit.call(this);
-        };
-        MatEndDate.prototype.ngDoCheck = function () {
-            // Normally this happens automatically, but it seems to break if not added explicitly when all
-            // of the criteria below are met:
-            // 1) The class extends a TS mixin.
-            // 2) The application is running in ViewEngine.
-            // 3) The application is being transpiled through tsickle.
-            // This can be removed once google3 is completely migrated to Ivy.
-            _super.prototype.ngDoCheck.call(this);
-        };
         MatEndDate.prototype._getValueFromModel = function (modelValue) {
             return modelValue.end;
         };
@@ -3572,6 +3494,8 @@
             this._elementRef = _elementRef;
             this._dateAdapter = _dateAdapter;
             this._formField = _formField;
+            /** Emits when the input's state has changed. */
+            this.stateChanges = new rxjs.Subject();
             /** Unique ID for the input. */
             this.id = "mat-date-range-input-" + nextUniqueId++;
             /** Whether the control is focused. */
@@ -3587,8 +3511,8 @@
             this.comparisonStart = null;
             /** End of the comparison range that should be shown in the calendar. */
             this.comparisonEnd = null;
-            /** Emits when the input's state has changed. */
-            this.stateChanges = new rxjs.Subject();
+            /** Emits when the input's state changes. */
+            this._stateChanges = new rxjs.Subject();
             if (!_dateAdapter && (typeof ngDevMode === 'undefined' || ngDevMode)) {
                 throw createMissingDateImplError('DateAdapter');
             }
@@ -3662,11 +3586,8 @@
             /** The minimum valid date. */
             get: function () { return this._min; },
             set: function (value) {
-                var validValue = this._dateAdapter.getValidDateOrNull(this._dateAdapter.deserialize(value));
-                if (!this._dateAdapter.sameDate(validValue, this._min)) {
-                    this._min = validValue;
-                    this._revalidate();
-                }
+                this._min = this._dateAdapter.getValidDateOrNull(this._dateAdapter.deserialize(value));
+                this._revalidate();
             },
             enumerable: false,
             configurable: true
@@ -3675,11 +3596,8 @@
             /** The maximum valid date. */
             get: function () { return this._max; },
             set: function (value) {
-                var validValue = this._dateAdapter.getValidDateOrNull(this._dateAdapter.deserialize(value));
-                if (!this._dateAdapter.sameDate(validValue, this._max)) {
-                    this._max = validValue;
-                    this._revalidate();
-                }
+                this._max = this._dateAdapter.getValidDateOrNull(this._dateAdapter.deserialize(value));
+                this._revalidate();
             },
             enumerable: false,
             configurable: true
@@ -3695,7 +3613,7 @@
                 var newValue = coercion.coerceBooleanProperty(value);
                 if (newValue !== this._groupDisabled) {
                     this._groupDisabled = newValue;
-                    this.stateChanges.next(undefined);
+                    this._stateChanges.next(undefined);
                 }
             },
             enumerable: false,
@@ -3759,16 +3677,15 @@
             // We don't need to unsubscribe from this, because we
             // know that the input streams will be completed on destroy.
             rxjs.merge(this._startInput.stateChanges, this._endInput.stateChanges).subscribe(function () {
-                _this.stateChanges.next(undefined);
+                _this._stateChanges.next(undefined);
             });
         };
-        MatDateRangeInput.prototype.ngOnChanges = function (changes) {
-            if (dateInputsHaveChanged(changes, this._dateAdapter)) {
-                this.stateChanges.next(undefined);
-            }
+        MatDateRangeInput.prototype.ngOnChanges = function () {
+            this._stateChanges.next(undefined);
         };
         MatDateRangeInput.prototype.ngOnDestroy = function () {
             this.stateChanges.complete();
+            this._stateChanges.unsubscribe();
         };
         /** Gets the date at which the calendar should start. */
         MatDateRangeInput.prototype.getStartValue = function () {
@@ -3853,7 +3770,7 @@
                         { provide: formField.MatFormFieldControl, useExisting: MatDateRangeInput },
                         { provide: MAT_DATE_RANGE_INPUT_PARENT, useExisting: MatDateRangeInput },
                     ],
-                    styles: [".mat-date-range-input{display:block;width:100%}.mat-date-range-input-container{display:flex;align-items:center}.mat-date-range-input-separator{transition:opacity 400ms 133.3333333333ms cubic-bezier(0.25, 0.8, 0.25, 1);margin:0 4px}.mat-date-range-input-separator-hidden{-webkit-user-select:none;-moz-user-select:none;-ms-user-select:none;user-select:none;opacity:0;transition:none}.mat-date-range-input-inner{font:inherit;background:transparent;color:currentColor;border:none;outline:none;padding:0;margin:0;vertical-align:bottom;text-align:inherit;-webkit-appearance:none;width:100%}.mat-date-range-input-inner::-ms-clear,.mat-date-range-input-inner::-ms-reveal{display:none}.mat-date-range-input-inner:-moz-ui-invalid{box-shadow:none}.mat-date-range-input-inner::placeholder{transition:color 400ms 133.3333333333ms cubic-bezier(0.25, 0.8, 0.25, 1)}.mat-date-range-input-inner::-moz-placeholder{transition:color 400ms 133.3333333333ms cubic-bezier(0.25, 0.8, 0.25, 1)}.mat-date-range-input-inner::-webkit-input-placeholder{transition:color 400ms 133.3333333333ms cubic-bezier(0.25, 0.8, 0.25, 1)}.mat-date-range-input-inner:-ms-input-placeholder{transition:color 400ms 133.3333333333ms cubic-bezier(0.25, 0.8, 0.25, 1)}.mat-form-field-hide-placeholder .mat-date-range-input-inner::placeholder,.mat-date-range-input-hide-placeholders .mat-date-range-input-inner::placeholder{-webkit-user-select:none;-moz-user-select:none;-ms-user-select:none;user-select:none;color:transparent !important;-webkit-text-fill-color:transparent;transition:none}.mat-form-field-hide-placeholder .mat-date-range-input-inner::-moz-placeholder,.mat-date-range-input-hide-placeholders .mat-date-range-input-inner::-moz-placeholder{-webkit-user-select:none;-moz-user-select:none;-ms-user-select:none;user-select:none;color:transparent !important;-webkit-text-fill-color:transparent;transition:none}.mat-form-field-hide-placeholder .mat-date-range-input-inner::-webkit-input-placeholder,.mat-date-range-input-hide-placeholders .mat-date-range-input-inner::-webkit-input-placeholder{-webkit-user-select:none;-moz-user-select:none;-ms-user-select:none;user-select:none;color:transparent !important;-webkit-text-fill-color:transparent;transition:none}.mat-form-field-hide-placeholder .mat-date-range-input-inner:-ms-input-placeholder,.mat-date-range-input-hide-placeholders .mat-date-range-input-inner:-ms-input-placeholder{-webkit-user-select:none;-moz-user-select:none;-ms-user-select:none;user-select:none;color:transparent !important;-webkit-text-fill-color:transparent;transition:none}.mat-date-range-input-mirror{-webkit-user-select:none;-moz-user-select:none;-ms-user-select:none;user-select:none;visibility:hidden;white-space:nowrap;display:inline-block;min-width:2px}.mat-date-range-input-start-wrapper{position:relative;overflow:hidden;max-width:calc(50% - 4px)}.mat-date-range-input-start-wrapper .mat-date-range-input-inner{position:absolute;top:0;left:0}.mat-date-range-input-end-wrapper{flex-grow:1;max-width:calc(50% - 4px)}.mat-form-field-type-mat-date-range-input .mat-form-field-infix{width:200px}\n"]
+                    styles: [".mat-date-range-input{display:block;width:100%}.mat-date-range-input-container{display:flex;align-items:center}.mat-date-range-input-separator{transition:opacity 400ms 133.3333333333ms cubic-bezier(0.25, 0.8, 0.25, 1);margin:0 4px}.mat-date-range-input-separator-hidden{-webkit-user-select:none;-moz-user-select:none;-ms-user-select:none;user-select:none;opacity:0;transition:none}.mat-date-range-input-inner{font:inherit;background:transparent;color:currentColor;border:none;outline:none;padding:0;margin:0;vertical-align:bottom;text-align:inherit;-webkit-appearance:none;width:100%}.mat-date-range-input-inner::-ms-clear,.mat-date-range-input-inner::-ms-reveal{display:none}.mat-date-range-input-inner::placeholder{transition:color 400ms 133.3333333333ms cubic-bezier(0.25, 0.8, 0.25, 1)}.mat-date-range-input-inner::-moz-placeholder{transition:color 400ms 133.3333333333ms cubic-bezier(0.25, 0.8, 0.25, 1)}.mat-date-range-input-inner::-webkit-input-placeholder{transition:color 400ms 133.3333333333ms cubic-bezier(0.25, 0.8, 0.25, 1)}.mat-date-range-input-inner:-ms-input-placeholder{transition:color 400ms 133.3333333333ms cubic-bezier(0.25, 0.8, 0.25, 1)}.mat-form-field-hide-placeholder .mat-date-range-input-inner::placeholder,.mat-date-range-input-hide-placeholders .mat-date-range-input-inner::placeholder{-webkit-user-select:none;-moz-user-select:none;-ms-user-select:none;user-select:none;color:transparent !important;-webkit-text-fill-color:transparent;transition:none}.mat-form-field-hide-placeholder .mat-date-range-input-inner::-moz-placeholder,.mat-date-range-input-hide-placeholders .mat-date-range-input-inner::-moz-placeholder{-webkit-user-select:none;-moz-user-select:none;-ms-user-select:none;user-select:none;color:transparent !important;-webkit-text-fill-color:transparent;transition:none}.mat-form-field-hide-placeholder .mat-date-range-input-inner::-webkit-input-placeholder,.mat-date-range-input-hide-placeholders .mat-date-range-input-inner::-webkit-input-placeholder{-webkit-user-select:none;-moz-user-select:none;-ms-user-select:none;user-select:none;color:transparent !important;-webkit-text-fill-color:transparent;transition:none}.mat-form-field-hide-placeholder .mat-date-range-input-inner:-ms-input-placeholder,.mat-date-range-input-hide-placeholders .mat-date-range-input-inner:-ms-input-placeholder{-webkit-user-select:none;-moz-user-select:none;-ms-user-select:none;user-select:none;color:transparent !important;-webkit-text-fill-color:transparent;transition:none}.mat-date-range-input-mirror{-webkit-user-select:none;-moz-user-select:none;-ms-user-select:none;user-select:none;visibility:hidden;white-space:nowrap;display:inline-block;min-width:2px}.mat-date-range-input-start-wrapper{position:relative;overflow:hidden;max-width:calc(50% - 4px)}.mat-date-range-input-start-wrapper .mat-date-range-input-inner{position:absolute;top:0;left:0}.mat-date-range-input-end-wrapper{flex-grow:1;max-width:calc(50% - 4px)}.mat-form-field-type-mat-date-range-input .mat-form-field-infix{width:200px}\n"]
                 },] }
     ];
     MatDateRangeInput.ctorParameters = function () { return [

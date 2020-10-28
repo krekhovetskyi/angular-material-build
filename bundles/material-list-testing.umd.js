@@ -350,9 +350,9 @@
         __extends(MatListItemHarnessBase, _super);
         function MatListItemHarnessBase() {
             var _this = _super.apply(this, __spread(arguments)) || this;
-            _this._lines = _this.locatorForAll('.mat-line');
-            _this._avatar = _this.locatorForOptional('.mat-list-avatar');
-            _this._icon = _this.locatorForOptional('.mat-list-icon');
+            _this._lines = _this.locatorForAll('[mat-line], [matLine]');
+            _this._avatar = _this.locatorForOptional('[mat-list-avatar], [matListAvatar]');
+            _this._icon = _this.locatorForOptional('[mat-list-icon], [matListIcon]');
             return _this;
         }
         /** Gets the full text content of the list item (including text from any font icons). */
@@ -402,20 +402,16 @@
                 });
             });
         };
-        /**
-         * Gets a `HarnessLoader` used to get harnesses within the list item's content.
-         * @deprecated Use `getChildLoader(MatListItemSection.CONTENT)` or `getHarness` instead.
-         * @breaking-change 12.0.0
-         */
+        /** Gets a `HarnessLoader` used to get harnesses within the list item's content. */
         MatListItemHarnessBase.prototype.getHarnessLoaderForContent = function () {
             return __awaiter(this, void 0, void 0, function () {
                 return __generator(this, function (_a) {
-                    return [2 /*return*/, this.getChildLoader(".mat-list-item-content" /* CONTENT */)];
+                    return [2 /*return*/, this.locatorFactory.harnessLoaderFor('.mat-list-item-content')];
                 });
             });
         };
         return MatListItemHarnessBase;
-    }(testing.ContentContainerComponentHarness));
+    }(testing.ComponentHarness));
 
     /**
      * Shared behavior among the harnesses for the various `MatList` flavors.
@@ -650,7 +646,9 @@
         return MatActionListItemHarness;
     }(MatListItemHarnessBase));
     /** The selector for the host element of a `MatListItem` instance. */
-    MatActionListItemHarness.hostSelector = MatActionListHarness.hostSelector + " .mat-list-item";
+    MatActionListItemHarness.hostSelector = ['mat-list-item', 'a[mat-list-item]', 'button[mat-list-item]']
+        .map(function (selector) { return MatActionListHarness.hostSelector + " " + selector; })
+        .join(',');
 
     /** Harness for interacting with a standard mat-list in tests. */
     var MatListHarness = /** @class */ (function (_super) {
@@ -673,7 +671,7 @@
         return MatListHarness;
     }(MatListHarnessBase));
     /** The selector for the host element of a `MatList` instance. */
-    MatListHarness.hostSelector = '.mat-list:not(mat-action-list)';
+    MatListHarness.hostSelector = '.mat-list:not(mat-action-list):not(mat-nav-list):not(mat-selection-list)';
     /** Harness for interacting with a list item. */
     var MatListItemHarness = /** @class */ (function (_super) {
         __extends(MatListItemHarness, _super);
@@ -693,7 +691,9 @@
         return MatListItemHarness;
     }(MatListItemHarnessBase));
     /** The selector for the host element of a `MatListItem` instance. */
-    MatListItemHarness.hostSelector = MatListHarness.hostSelector + " .mat-list-item";
+    MatListItemHarness.hostSelector = ['mat-list-item', 'a[mat-list-item]', 'button[mat-list-item]']
+        .map(function (selector) { return MatListHarness.hostSelector + " " + selector; })
+        .join(',');
 
     /** Harness for interacting with a standard mat-nav-list in tests. */
     var MatNavListHarness = /** @class */ (function (_super) {
@@ -795,7 +795,9 @@
         return MatNavListItemHarness;
     }(MatListItemHarnessBase));
     /** The selector for the host element of a `MatListItem` instance. */
-    MatNavListItemHarness.hostSelector = MatNavListHarness.hostSelector + " .mat-list-item";
+    MatNavListItemHarness.hostSelector = ['mat-list-item', 'a[mat-list-item]', 'button[mat-list-item]']
+        .map(function (selector) { return MatNavListHarness.hostSelector + " " + selector; })
+        .join(',');
 
     /** Harness for interacting with a standard mat-selection-list in tests. */
     var MatSelectionListHarness = /** @class */ (function (_super) {

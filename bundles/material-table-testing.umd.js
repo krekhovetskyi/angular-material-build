@@ -676,7 +676,7 @@
             });
         };
         return MatTableHarness;
-    }(testing.ContentContainerComponentHarness));
+    }(testing.ComponentHarness));
     /** The selector for the host element of a `MatTableHarness` instance. */
     MatTableHarness.hostSelector = '.mat-table';
     /** Extracts the text of cells only under a particular column. */

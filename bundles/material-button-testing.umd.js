@@ -322,17 +322,13 @@
             return new testing.HarnessPredicate(MatButtonHarness, options)
                 .addOption('text', options.text, function (harness, text) { return testing.HarnessPredicate.stringMatches(harness.getText(), text); });
         };
+        /** Clicks the button. */
         MatButtonHarness.prototype.click = function () {
-            var args = [];
-            for (var _i = 0; _i < arguments.length; _i++) {
-                args[_i] = arguments[_i];
-            }
             return __awaiter(this, void 0, void 0, function () {
-                var _a;
-                return __generator(this, function (_b) {
-                    switch (_b.label) {
+                return __generator(this, function (_a) {
+                    switch (_a.label) {
                         case 0: return [4 /*yield*/, this.host()];
-                        case 1: return [2 /*return*/, (_a = (_b.sent())).click.apply(_a, __spread(args))];
+                        case 1: return [2 /*return*/, (_a.sent()).click()];
                     }
                 });
             });
@@ -398,7 +394,7 @@
             });
         };
         return MatButtonHarness;
-    }(testing.ContentContainerComponentHarness));
+    }(testing.ComponentHarness));
     // TODO(jelbourn) use a single class, like `.mat-button-base`
     /** The selector for the host element of a `MatButton` instance. */
     MatButtonHarness.hostSelector = [

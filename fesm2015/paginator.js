@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { ɵɵdefineInjectable, Injectable, Optional, SkipSelf, InjectionToken, EventEmitter, Directive, ChangeDetectorRef, Input, Output, Component, ChangeDetectionStrategy, ViewEncapsulation, Inject, NgModule } from '@angular/core';
+import { ɵɵdefineInjectable, Injectable, Optional, SkipSelf, InjectionToken, EventEmitter, Component, ChangeDetectionStrategy, ViewEncapsulation, ChangeDetectorRef, Inject, Input, Output, NgModule } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatSelectModule } from '@angular/material/select';
 import { MatTooltipModule } from '@angular/material/tooltip';
@@ -83,16 +83,17 @@ class PageEvent {
 }
 /** Injection token that can be used to provide the default options for the paginator module. */
 const MAT_PAGINATOR_DEFAULT_OPTIONS = new InjectionToken('MAT_PAGINATOR_DEFAULT_OPTIONS');
-// Boilerplate for applying mixins to _MatPaginatorBase.
+// Boilerplate for applying mixins to MatPaginator.
 /** @docs-private */
-class MatPaginatorMixinBase {
+class MatPaginatorBase {
 }
-const _MatPaginatorMixinBase = mixinDisabled(mixinInitialized(MatPaginatorMixinBase));
+const _MatPaginatorBase = mixinDisabled(mixinInitialized(MatPaginatorBase));
 /**
- * Base class with all of the `MatPaginator` functionality.
- * @docs-private
+ * Component to provide navigation between paged information. Displays the size of the current
+ * page, user-selectable options to change that size, what items are being shown, and
+ * navigational button to go to the previous or next page.
  */
-class _MatPaginatorBase extends _MatPaginatorMixinBase {
+class MatPaginator extends _MatPaginatorBase {
     constructor(_intl, _changeDetectorRef, defaults) {
         super();
         this._intl = _intl;
@@ -106,7 +107,7 @@ class _MatPaginatorBase extends _MatPaginatorMixinBase {
         this.page = new EventEmitter();
         this._intlChanges = _intl.changes.subscribe(() => this._changeDetectorRef.markForCheck());
         if (defaults) {
-            const { pageSize, pageSizeOptions, hidePageSize, showFirstLastButtons, } = defaults;
+            const { pageSize, pageSizeOptions, hidePageSize, showFirstLastButtons, formFieldAppearance, } = defaults;
             if (pageSize != null) {
                 this._pageSize = pageSize;
             }
@@ -118,6 +119,9 @@ class _MatPaginatorBase extends _MatPaginatorMixinBase {
             }
             if (showFirstLastButtons != null) {
                 this._showFirstLastButtons = showFirstLastButtons;
+            }
+            if (formFieldAppearance != null) {
+                this._formFieldAppearance = formFieldAppearance;
             }
         }
     }
@@ -274,37 +278,6 @@ class _MatPaginatorBase extends _MatPaginatorMixinBase {
         });
     }
 }
-_MatPaginatorBase.decorators = [
-    { type: Directive }
-];
-_MatPaginatorBase.ctorParameters = () => [
-    { type: MatPaginatorIntl },
-    { type: ChangeDetectorRef },
-    { type: undefined }
-];
-_MatPaginatorBase.propDecorators = {
-    color: [{ type: Input }],
-    pageIndex: [{ type: Input }],
-    length: [{ type: Input }],
-    pageSize: [{ type: Input }],
-    pageSizeOptions: [{ type: Input }],
-    hidePageSize: [{ type: Input }],
-    showFirstLastButtons: [{ type: Input }],
-    page: [{ type: Output }]
-};
-/**
- * Component to provide navigation between paged information. Displays the size of the current
- * page, user-selectable options to change that size, what items are being shown, and
- * navigational button to go to the previous or next page.
- */
-class MatPaginator extends _MatPaginatorBase {
-    constructor(intl, changeDetectorRef, defaults) {
-        super(intl, changeDetectorRef, defaults);
-        if (defaults && defaults.formFieldAppearance != null) {
-            this._formFieldAppearance = defaults.formFieldAppearance;
-        }
-    }
-}
 MatPaginator.decorators = [
     { type: Component, args: [{
                 selector: 'mat-paginator',
@@ -324,6 +297,16 @@ MatPaginator.ctorParameters = () => [
     { type: ChangeDetectorRef },
     { type: undefined, decorators: [{ type: Optional }, { type: Inject, args: [MAT_PAGINATOR_DEFAULT_OPTIONS,] }] }
 ];
+MatPaginator.propDecorators = {
+    color: [{ type: Input }],
+    pageIndex: [{ type: Input }],
+    length: [{ type: Input }],
+    pageSize: [{ type: Input }],
+    pageSizeOptions: [{ type: Input }],
+    hidePageSize: [{ type: Input }],
+    showFirstLastButtons: [{ type: Input }],
+    page: [{ type: Output }]
+};
 
 /**
  * @license
@@ -360,5 +343,5 @@ MatPaginatorModule.decorators = [
  * Generated bundle index. Do not edit.
  */
 
-export { MAT_PAGINATOR_DEFAULT_OPTIONS, MAT_PAGINATOR_INTL_PROVIDER, MAT_PAGINATOR_INTL_PROVIDER_FACTORY, MatPaginator, MatPaginatorIntl, MatPaginatorModule, PageEvent, _MatPaginatorBase };
+export { MAT_PAGINATOR_DEFAULT_OPTIONS, MAT_PAGINATOR_INTL_PROVIDER, MAT_PAGINATOR_INTL_PROVIDER_FACTORY, MatPaginator, MatPaginatorIntl, MatPaginatorModule, PageEvent };
 //# sourceMappingURL=paginator.js.map

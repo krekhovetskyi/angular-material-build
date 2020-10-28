@@ -92,8 +92,11 @@ export declare class MatCalendar<D> implements AfterContentInit, AfterViewChecke
     comparisonStart: D | null;
     /** End of the comparison range. */
     comparisonEnd: D | null;
-    /** Emits when the currently selected date changes. */
-    readonly selectedChange: EventEmitter<D | null>;
+    /**
+     * Emits when the currently selected date changes.
+     * @breaking-change 11.0.0 Emitted value to change to `D | null`.
+     */
+    readonly selectedChange: EventEmitter<D>;
     /**
      * Emits the year chosen in multiyear view.
      * This doesn't imply a change on the selected date.
@@ -104,10 +107,6 @@ export declare class MatCalendar<D> implements AfterContentInit, AfterViewChecke
      * This doesn't imply a change on the selected date.
      */
     readonly monthSelected: EventEmitter<D>;
-    /**
-     * Emits when the current view changes.
-     */
-    readonly viewChanged: EventEmitter<MatCalendarView>;
     /** Emits when any date is selected. */
     readonly _userSelection: EventEmitter<MatCalendarUserEvent<D | null>>;
     /** Reference to the current month view component. */

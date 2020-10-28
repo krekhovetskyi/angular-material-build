@@ -1,5 +1,5 @@
 import { __awaiter } from 'tslib';
-import { ContentContainerComponentHarness, HarnessPredicate, TestKey } from '@angular/cdk/testing';
+import { ComponentHarness, HarnessPredicate, TestKey } from '@angular/cdk/testing';
 import { coerceBooleanProperty } from '@angular/cdk/coercion';
 
 /**
@@ -10,7 +10,7 @@ import { coerceBooleanProperty } from '@angular/cdk/coercion';
  * found in the LICENSE file at https://angular.io/license
  */
 /** Harness for interacting with a standard mat-menu in tests. */
-class MatMenuHarness extends ContentContainerComponentHarness {
+class MatMenuHarness extends ComponentHarness {
     constructor() {
         super(...arguments);
         this._documentRootLocator = this.documentRootLocatorFactory();
@@ -118,12 +118,6 @@ class MatMenuHarness extends ContentContainerComponentHarness {
             return menu.clickItem(...subItemFilters);
         });
     }
-    getRootHarnessLoader() {
-        return __awaiter(this, void 0, void 0, function* () {
-            const panelId = yield this._getPanelId();
-            return this.documentRootLocatorFactory().harnessLoaderFor(`#${panelId}`);
-        });
-    }
     /** Gets the menu panel associated with this menu. */
     _getMenuPanel() {
         return __awaiter(this, void 0, void 0, function* () {
@@ -142,7 +136,7 @@ class MatMenuHarness extends ContentContainerComponentHarness {
 /** The selector for the host element of a `MatMenu` instance. */
 MatMenuHarness.hostSelector = '.mat-menu-trigger';
 /** Harness for interacting with a standard mat-menu-item in tests. */
-class MatMenuItemHarness extends ContentContainerComponentHarness {
+class MatMenuItemHarness extends ComponentHarness {
     /**
      * Gets a `HarnessPredicate` that can be used to search for a `MatMenuItemHarness` that meets
      * certain criteria.

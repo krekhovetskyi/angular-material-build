@@ -81,6 +81,7 @@ export declare class MatTooltip implements OnDestroy, AfterViewInit {
     private _scrollStrategy;
     private _viewInitialized;
     private _pointerExitEventsInitialized;
+    private _currentPosition;
     /** Allows the user to define the position of the tooltip relative to the parent element */
     get position(): TooltipPosition;
     set position(value: TooltipPosition);
@@ -167,6 +168,8 @@ export declare class MatTooltip implements OnDestroy, AfterViewInit {
     private _setTooltipClass;
     /** Inverts an overlay position. */
     private _invertPosition;
+    /** Updates the class on the overlay panel based on the current position of the tooltip. */
+    private _updateCurrentPositionClass;
     /** Binds the pointer events to the tooltip trigger. */
     private _setupPointerEnterEventsIfNeeded;
     private _setupPointerExitEventsIfNeeded;

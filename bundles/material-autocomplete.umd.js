@@ -391,8 +391,8 @@
              */
             set: function (value) {
                 if (value && value.length) {
-                    this._classList = coercion.coerceStringArray(value).reduce(function (classList, className) {
-                        classList[className] = true;
+                    this._classList = value.split(' ').reduce(function (classList, className) {
+                        classList[className.trim()] = true;
                         return classList;
                     }, {});
                 }
@@ -508,13 +508,13 @@
     /**
      * The height of each autocomplete option.
      * @deprecated No longer being used. To be removed.
-     * @breaking-change 12.0.0
+     * @breaking-change 11.0.0
      */
     var AUTOCOMPLETE_OPTION_HEIGHT = 48;
     /**
      * The total height of the autocomplete panel.
      * @deprecated No longer being used. To be removed.
-     * @breaking-change 12.0.0
+     * @breaking-change 11.0.0
      */
     var AUTOCOMPLETE_PANEL_HEIGHT = 256;
     /** Injection token that determines the scroll handling while the autocomplete panel is open. */
@@ -549,7 +549,7 @@
     }
     /** Base class with all of the `MatAutocompleteTrigger` functionality. */
     var _MatAutocompleteTriggerBase = /** @class */ (function () {
-        function _MatAutocompleteTriggerBase(_element, _overlay, _viewContainerRef, _zone, _changeDetectorRef, scrollStrategy, _dir, _formField, _document, _viewportRuler, _defaults) {
+        function _MatAutocompleteTriggerBase(_element, _overlay, _viewContainerRef, _zone, _changeDetectorRef, scrollStrategy, _dir, _formField, _document, _viewportRuler) {
             var _this = this;
             this._element = _element;
             this._overlay = _overlay;
@@ -560,7 +560,6 @@
             this._formField = _formField;
             this._document = _document;
             this._viewportRuler = _viewportRuler;
-            this._defaults = _defaults;
             this._componentDestroyed = false;
             this._autocompleteDisabled = false;
             /** Whether or not the label state is being overridden. */
@@ -767,7 +766,7 @@
             // in line with other browsers. By default, pressing escape on IE will cause it to revert
             // the input value to the one that it had on focus, however it won't dispatch any events
             // which means that the model value will be out of sync with the view.
-            if (keyCode === keycodes.ESCAPE && !keycodes.hasModifierKey(event)) {
+            if (keyCode === keycodes.ESCAPE) {
                 event.preventDefault();
             }
             if (this.activeOption && keyCode === keycodes.ENTER && this.panelOpen) {
@@ -926,7 +925,7 @@
          */
         _MatAutocompleteTriggerBase.prototype._clearPreviousSelectedOption = function (skip) {
             this.autocomplete.options.forEach(function (option) {
-                if (option !== skip && option.selected) {
+                if (option != skip && option.selected) {
                     option.deselect();
                 }
             });
@@ -951,8 +950,7 @@
                 overlayRef.keydownEvents().subscribe(function (event) {
                     // Close when pressing ESCAPE or ALT + UP_ARROW, based on the a11y guidelines.
                     // See: https://www.w3.org/TR/wai-aria-practices-1.1/#textbox-keyboard-interaction
-                    if ((event.keyCode === keycodes.ESCAPE && !keycodes.hasModifierKey(event)) ||
-                        (event.keyCode === keycodes.UP_ARROW && keycodes.hasModifierKey(event, 'altKey'))) {
+                    if (event.keyCode === keycodes.ESCAPE || (event.keyCode === keycodes.UP_ARROW && event.altKey)) {
                         _this._resetActiveItem();
                         _this._closeKeyEventStream.next();
                         // We need to stop propagation, otherwise the event will eventually
@@ -986,13 +984,11 @@
             }
         };
         _MatAutocompleteTriggerBase.prototype._getOverlayConfig = function () {
-            var _a;
             return new overlay.OverlayConfig({
                 positionStrategy: this._getOverlayPosition(),
                 scrollStrategy: this._scrollStrategy(),
                 width: this._getPanelWidth(),
-                direction: this._dir,
-                panelClass: (_a = this._defaults) === null || _a === void 0 ? void 0 : _a.overlayPanelClass,
+                direction: this._dir
             });
         };
         _MatAutocompleteTriggerBase.prototype._getOverlayPosition = function () {
@@ -1103,8 +1099,7 @@
         { type: bidi.Directionality, decorators: [{ type: core.Optional }] },
         { type: formField.MatFormField, decorators: [{ type: core.Optional }, { type: core.Inject, args: [formField.MAT_FORM_FIELD,] }, { type: core.Host }] },
         { type: undefined, decorators: [{ type: core.Optional }, { type: core.Inject, args: [common.DOCUMENT,] }] },
-        { type: scrolling.ViewportRuler },
-        { type: undefined, decorators: [{ type: core.Optional }, { type: core.Inject, args: [MAT_AUTOCOMPLETE_DEFAULT_OPTIONS,] }] }
+        { type: scrolling.ViewportRuler }
     ]; };
     _MatAutocompleteTriggerBase.propDecorators = {
         autocomplete: [{ type: core.Input, args: ['matAutocomplete',] }],
