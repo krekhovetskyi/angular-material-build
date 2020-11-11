@@ -402,20 +402,16 @@
                 });
             });
         };
-        /**
-         * Gets a `HarnessLoader` used to get harnesses within the list item's content.
-         * @deprecated Use `getChildLoader(MatListItemSection.CONTENT)` or `getHarness` instead.
-         * @breaking-change 12.0.0
-         */
+        /** Gets a `HarnessLoader` used to get harnesses within the list item's content. */
         MatListItemHarnessBase.prototype.getHarnessLoaderForContent = function () {
             return __awaiter(this, void 0, void 0, function () {
                 return __generator(this, function (_a) {
-                    return [2 /*return*/, this.getChildLoader(".mat-list-item-content" /* CONTENT */)];
+                    return [2 /*return*/, this.locatorFactory.harnessLoaderFor('.mat-list-item-content')];
                 });
             });
         };
         return MatListItemHarnessBase;
-    }(testing.ContentContainerComponentHarness));
+    }(testing.ComponentHarness));
 
     /**
      * Shared behavior among the harnesses for the various `MatList` flavors.

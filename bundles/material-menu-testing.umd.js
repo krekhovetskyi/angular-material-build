@@ -489,19 +489,6 @@
                 });
             });
         };
-        MatMenuHarness.prototype.getRootHarnessLoader = function () {
-            return __awaiter(this, void 0, void 0, function () {
-                var panelId;
-                return __generator(this, function (_a) {
-                    switch (_a.label) {
-                        case 0: return [4 /*yield*/, this._getPanelId()];
-                        case 1:
-                            panelId = _a.sent();
-                            return [2 /*return*/, this.documentRootLocatorFactory().harnessLoaderFor("#" + panelId)];
-                    }
-                });
-            });
-        };
         /** Gets the menu panel associated with this menu. */
         MatMenuHarness.prototype._getMenuPanel = function () {
             return __awaiter(this, void 0, void 0, function () {
@@ -532,7 +519,7 @@
             });
         };
         return MatMenuHarness;
-    }(testing.ContentContainerComponentHarness));
+    }(testing.ComponentHarness));
     /** The selector for the host element of a `MatMenu` instance. */
     MatMenuHarness.hostSelector = '.mat-menu-trigger';
     /** Harness for interacting with a standard mat-menu-item in tests. */
@@ -657,7 +644,7 @@
             });
         };
         return MatMenuItemHarness;
-    }(testing.ContentContainerComponentHarness));
+    }(testing.ComponentHarness));
     /** The selector for the host element of a `MatMenuItem` instance. */
     MatMenuItemHarness.hostSelector = '.mat-menu-item';
 

@@ -459,7 +459,12 @@
     var MAT_TAB_GROUP = new core.InjectionToken('MAT_TAB_GROUP');
     var MatTab = /** @class */ (function (_super) {
         __extends(MatTab, _super);
-        function MatTab(_viewContainerRef, _closestTabGroup) {
+        function MatTab(_viewContainerRef, 
+        /**
+         * @deprecated `_closestTabGroup` parameter to become required.
+         * @breaking-change 10.0.0
+         */
+        _closestTabGroup) {
             var _this = _super.call(this) || this;
             _this._viewContainerRef = _viewContainerRef;
             _this._closestTabGroup = _closestTabGroup;
@@ -541,7 +546,7 @@
     ];
     MatTab.ctorParameters = function () { return [
         { type: core.ViewContainerRef },
-        { type: undefined, decorators: [{ type: core.Inject, args: [MAT_TAB_GROUP,] }] }
+        { type: undefined, decorators: [{ type: core.Optional }, { type: core.Inject, args: [MAT_TAB_GROUP,] }] }
     ]; };
     MatTab.propDecorators = {
         templateLabel: [{ type: core.ContentChild, args: [MAT_TAB_LABEL,] }],
@@ -592,7 +597,12 @@
      */
     var MatTabBodyPortal = /** @class */ (function (_super) {
         __extends(MatTabBodyPortal, _super);
-        function MatTabBodyPortal(componentFactoryResolver, viewContainerRef, _host, _document) {
+        function MatTabBodyPortal(componentFactoryResolver, viewContainerRef, _host, 
+        /**
+         * @deprecated `_document` parameter to be made required.
+         * @breaking-change 9.0.0
+         */
+        _document) {
             var _this = _super.call(this, componentFactoryResolver, viewContainerRef, _document) || this;
             _this._host = _host;
             /** Subscription to events for when the tab body begins centering. */
@@ -844,6 +854,7 @@
             _this._tabsSubscription = rxjs.Subscription.EMPTY;
             /** Subscription to changes in the tab labels. */
             _this._tabLabelSubscription = rxjs.Subscription.EMPTY;
+            _this._dynamicHeight = false;
             _this._selectedIndex = null;
             /** Position of the tab header. */
             _this.headerPosition = 'above';
@@ -860,8 +871,6 @@
                 defaultConfig.animationDuration : '500ms';
             _this.disablePagination = defaultConfig && defaultConfig.disablePagination != null ?
                 defaultConfig.disablePagination : false;
-            _this.dynamicHeight = defaultConfig && defaultConfig.dynamicHeight != null ?
-                defaultConfig.dynamicHeight : false;
             return _this;
         }
         Object.defineProperty(_MatTabGroupBase.prototype, "dynamicHeight", {
@@ -978,7 +987,11 @@
             this._allTabs.changes
                 .pipe(operators.startWith(this._allTabs))
                 .subscribe(function (tabs) {
-                _this._tabs.reset(tabs.filter(function (tab) { return tab._closestTabGroup === _this; }));
+                _this._tabs.reset(tabs.filter(function (tab) {
+                    // @breaking-change 10.0.0 Remove null check for `_closestTabGroup`
+                    // once it becomes a required parameter in MatTab.
+                    return !tab._closestTabGroup || tab._closestTabGroup === _this;
+                }));
                 _this._tabs.notifyOnChanges();
             });
         };
@@ -1210,7 +1223,12 @@
      * @docs-private
      */
     var MatPaginatedTabHeader = /** @class */ (function () {
-        function MatPaginatedTabHeader(_elementRef, _changeDetectorRef, _viewportRuler, _dir, _ngZone, _platform, _animationMode) {
+        function MatPaginatedTabHeader(_elementRef, _changeDetectorRef, _viewportRuler, _dir, _ngZone, 
+        /**
+         * @deprecated @breaking-change 9.0.0 `_platform` and `_animationMode`
+         * parameters to become required.
+         */
+        _platform, _animationMode) {
             var _this = this;
             this._elementRef = _elementRef;
             this._changeDetectorRef = _changeDetectorRef;
@@ -1451,6 +1469,7 @@
                 return;
             }
             var scrollDistance = this.scrollDistance;
+            var platform = this._platform;
             var translateX = this._getLayoutDirection() === 'ltr' ? -scrollDistance : scrollDistance;
             // Don't use `translate3d` here because we don't want to create a new layer. A new layer
             // seems to cause flickering and overflow in Internet Explorer. For example, the ink bar
@@ -1463,7 +1482,8 @@
             // position to be thrown off in some cases. We have to reset it ourselves to ensure that
             // it doesn't get thrown off. Note that we scope it only to IE and Edge, because messing
             // with the scroll position throws off Chrome 71+ in RTL mode (see #14689).
-            if (this._platform.TRIDENT || this._platform.EDGE) {
+            // @breaking-change 9.0.0 Remove null check for `platform` after it can no longer be undefined.
+            if (platform && (platform.TRIDENT || platform.EDGE)) {
                 this._tabListContainer.nativeElement.scrollLeft = 0;
             }
         };
@@ -1670,7 +1690,9 @@
      */
     var _MatTabHeaderBase = /** @class */ (function (_super) {
         __extends(_MatTabHeaderBase, _super);
-        function _MatTabHeaderBase(elementRef, changeDetectorRef, viewportRuler, dir, ngZone, platform, animationMode) {
+        function _MatTabHeaderBase(elementRef, changeDetectorRef, viewportRuler, dir, ngZone, platform, 
+        // @breaking-change 9.0.0 `_animationMode` parameter to be made required.
+        animationMode) {
             var _this = _super.call(this, elementRef, changeDetectorRef, viewportRuler, dir, ngZone, platform, animationMode) || this;
             _this._disableRipple = false;
             return _this;
@@ -1711,7 +1733,9 @@
      */
     var MatTabHeader = /** @class */ (function (_super) {
         __extends(MatTabHeader, _super);
-        function MatTabHeader(elementRef, changeDetectorRef, viewportRuler, dir, ngZone, platform, animationMode) {
+        function MatTabHeader(elementRef, changeDetectorRef, viewportRuler, dir, ngZone, platform, 
+        // @breaking-change 9.0.0 `_animationMode` parameter to be made required.
+        animationMode) {
             return _super.call(this, elementRef, changeDetectorRef, viewportRuler, dir, ngZone, platform, animationMode) || this;
         }
         return MatTabHeader;
@@ -1757,7 +1781,11 @@
      */
     var _MatTabNavBase = /** @class */ (function (_super) {
         __extends(_MatTabNavBase, _super);
-        function _MatTabNavBase(elementRef, dir, ngZone, changeDetectorRef, viewportRuler, platform, animationMode) {
+        function _MatTabNavBase(elementRef, dir, ngZone, changeDetectorRef, viewportRuler, 
+        /**
+         * @deprecated @breaking-change 9.0.0 `platform` parameter to become required.
+         */
+        platform, animationMode) {
             var _this = _super.call(this, elementRef, changeDetectorRef, viewportRuler, dir, ngZone, platform, animationMode) || this;
             _this._disableRipple = false;
             /** Theme color of the nav bar. */
@@ -1797,8 +1825,11 @@
             });
             _super.prototype.ngAfterContentInit.call(this);
         };
-        /** Notifies the component that the active link has been changed. */
-        _MatTabNavBase.prototype.updateActiveLink = function () {
+        /**
+         * Notifies the component that the active link has been changed.
+         * @breaking-change 8.0.0 `element` parameter to be removed.
+         */
+        _MatTabNavBase.prototype.updateActiveLink = function (_element) {
             if (!this._items) {
                 return;
             }
@@ -1839,7 +1870,11 @@
      */
     var MatTabNav = /** @class */ (function (_super) {
         __extends(MatTabNav, _super);
-        function MatTabNav(elementRef, dir, ngZone, changeDetectorRef, viewportRuler, platform, animationMode) {
+        function MatTabNav(elementRef, dir, ngZone, changeDetectorRef, viewportRuler, 
+        /**
+         * @deprecated @breaking-change 9.0.0 `platform` parameter to become required.
+         */
+        platform, animationMode) {
             return _super.call(this, elementRef, dir, ngZone, changeDetectorRef, viewportRuler, platform, animationMode) || this;
         }
         return MatTabNav;
@@ -1913,7 +1948,7 @@
                 var newValue = coercion.coerceBooleanProperty(value);
                 if (newValue !== this._isActive) {
                     this._isActive = value;
-                    this._tabNavBar.updateActiveLink();
+                    this._tabNavBar.updateActiveLink(this.elementRef);
                 }
             },
             enumerable: false,

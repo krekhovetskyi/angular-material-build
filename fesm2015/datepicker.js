@@ -8,10 +8,10 @@ import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { CdkScrollableModule } from '@angular/cdk/scrolling';
 import { DateAdapter, MAT_DATE_FORMATS, mixinColor, ErrorStateMatcher, mixinErrorState } from '@angular/material/core';
 import { Subject, Subscription, merge, of } from 'rxjs';
-import { ESCAPE, hasModifierKey, SPACE, ENTER, PAGE_DOWN, PAGE_UP, END, HOME, DOWN_ARROW, UP_ARROW, RIGHT_ARROW, LEFT_ARROW, BACKSPACE } from '@angular/cdk/keycodes';
+import { ESCAPE, SPACE, ENTER, PAGE_DOWN, PAGE_UP, END, HOME, DOWN_ARROW, UP_ARROW, RIGHT_ARROW, LEFT_ARROW, BACKSPACE } from '@angular/cdk/keycodes';
 import { Directionality } from '@angular/cdk/bidi';
 import { take, startWith, filter } from 'rxjs/operators';
-import { coerceBooleanProperty, coerceStringArray } from '@angular/cdk/coercion';
+import { coerceBooleanProperty } from '@angular/cdk/coercion';
 import { trigger, state, style, transition, animate } from '@angular/animations';
 import { NG_VALUE_ACCESSOR, NG_VALIDATORS, Validators, NgControl, NgForm, FormGroupDirective, ControlContainer } from '@angular/forms';
 import { MatFormField, MAT_FORM_FIELD, MatFormFieldControl } from '@angular/material/form-field';
@@ -50,8 +50,6 @@ class MatDatepickerIntl {
         this.calendarLabel = 'Calendar';
         /** A label for the button used to open the calendar popup (used by screen readers). */
         this.openCalendarLabel = 'Open calendar';
-        /** Label for the button used to close the calendar popup. */
-        this.closeCalendarLabel = 'Close calendar';
         /** A label for the previous month button (used by screen readers). */
         this.prevMonthLabel = 'Previous month';
         /** A label for the next month button (used by screen readers). */
@@ -733,7 +731,7 @@ class MatMonthView {
                 return;
             case ESCAPE:
                 // Abort the current range selection if the user presses escape mid-selection.
-                if (this._previewEnd != null && !hasModifierKey(event)) {
+                if (this._previewEnd != null) {
                     this._previewStart = this._previewEnd = null;
                     this.selectedChange.emit(null);
                     this._userSelection.emit({ value: null, event });
@@ -1532,7 +1530,10 @@ class MatCalendar {
         this._moveFocusOnNextTick = false;
         /** Whether the calendar should be started in month or year view. */
         this.startView = 'month';
-        /** Emits when the currently selected date changes. */
+        /**
+         * Emits when the currently selected date changes.
+         * @breaking-change 11.0.0 Emitted value to change to `D | null`.
+         */
         this.selectedChange = new EventEmitter();
         /**
          * Emits the year chosen in multiyear view.
@@ -1544,10 +1545,6 @@ class MatCalendar {
          * This doesn't imply a change on the selected date.
          */
         this.monthSelected = new EventEmitter();
-        /**
-         * Emits when the current view changes.
-         */
-        this.viewChanged = new EventEmitter(true);
         /** Emits when any date is selected. */
         this._userSelection = new EventEmitter();
         /**
@@ -1605,13 +1602,9 @@ class MatCalendar {
     /** Whether the calendar is in month view. */
     get currentView() { return this._currentView; }
     set currentView(value) {
-        const viewChangedResult = this._currentView !== value ? value : null;
         this._currentView = value;
         this._moveFocusOnNextTick = true;
         this._changeDetectorRef.markForCheck();
-        if (viewChangedResult) {
-            this.viewChanged.emit(viewChangedResult);
-        }
     }
     ngAfterContentInit() {
         this._calendarHeaderPortal = new ComponentPortal(this.headerComponent || MatCalendarHeader);
@@ -1665,6 +1658,8 @@ class MatCalendar {
         const date = event.value;
         if (this.selected instanceof DateRange ||
             (date && !this._dateAdapter.sameDate(date, this.selected))) {
+            // @breaking-change 11.0.0 remove non-null assertion
+            // once the `selectedChange` is allowed to be null.
             this.selectedChange.emit(date);
         }
         this._userSelection.emit(event);
@@ -1721,7 +1716,6 @@ MatCalendar.propDecorators = {
     selectedChange: [{ type: Output }],
     yearSelected: [{ type: Output }],
     monthSelected: [{ type: Output }],
-    viewChanged: [{ type: Output }],
     _userSelection: [{ type: Output }],
     monthView: [{ type: ViewChild, args: [MatMonthView,] }],
     yearView: [{ type: ViewChild, args: [MatYearView,] }],
@@ -1799,12 +1793,13 @@ const _MatDatepickerContentMixinBase = mixinColor(MatDatepickerContentBase);
  * @docs-private
  */
 class MatDatepickerContent extends _MatDatepickerContentMixinBase {
-    constructor(elementRef, _changeDetectorRef, _model, _dateAdapter, _rangeSelectionStrategy, 
+    constructor(elementRef, 
     /**
-     * @deprecated `intl` argument to become required.
-     * @breaking-change 12.0.0
+     * @deprecated `_changeDetectorRef`, `_model` and `_rangeSelectionStrategy`
+     * parameters to become required.
+     * @breaking-change 11.0.0
      */
-    intl) {
+    _changeDetectorRef, _model, _dateAdapter, _rangeSelectionStrategy) {
         super(elementRef);
         this._changeDetectorRef = _changeDetectorRef;
         this._model = _model;
@@ -1815,13 +1810,14 @@ class MatDatepickerContent extends _MatDatepickerContentMixinBase {
         this._animationState = 'enter';
         /** Emits when an animation has finished. */
         this._animationDone = new Subject();
-        // @breaking-change 12.0.0 Remove fallback for `intl`.
-        this._closeButtonText = (intl === null || intl === void 0 ? void 0 : intl.closeCalendarLabel) || 'Close calendar';
     }
     ngAfterViewInit() {
-        this._subscriptions.add(this.datepicker._stateChanges.subscribe(() => {
-            this._changeDetectorRef.markForCheck();
-        }));
+        // @breaking-change 11.0.0 Remove null check for `_changeDetectorRef.
+        if (this._changeDetectorRef) {
+            this._subscriptions.add(this.datepicker._stateChanges.subscribe(() => {
+                this._changeDetectorRef.markForCheck();
+            }));
+        }
         this._calendar.focusActiveCell();
     }
     ngOnDestroy() {
@@ -1829,21 +1825,25 @@ class MatDatepickerContent extends _MatDatepickerContentMixinBase {
         this._animationDone.complete();
     }
     _handleUserSelection(event) {
-        const selection = this._model.selection;
-        const value = event.value;
-        const isRange = selection instanceof DateRange;
-        // If we're selecting a range and we have a selection strategy, always pass the value through
-        // there. Otherwise don't assign null values to the model, unless we're selecting a range.
-        // A null value when picking a range means that the user cancelled the selection (e.g. by
-        // pressing escape), whereas when selecting a single value it means that the value didn't
-        // change. This isn't very intuitive, but it's here for backwards-compatibility.
-        if (isRange && this._rangeSelectionStrategy) {
-            const newSelection = this._rangeSelectionStrategy.selectionFinished(value, selection, event.event);
-            this._model.updateSelection(newSelection, this);
-        }
-        else if (value && (isRange ||
-            !this._dateAdapter.sameDate(value, selection))) {
-            this._model.add(value);
+        // @breaking-change 11.0.0 Remove null checks for _model,
+        // _rangeSelectionStrategy and _dateAdapter.
+        if (this._model && this._dateAdapter) {
+            const selection = this._model.selection;
+            const value = event.value;
+            const isRange = selection instanceof DateRange;
+            // If we're selecting a range and we have a selection strategy, always pass the value through
+            // there. Otherwise don't assign null values to the model, unless we're selecting a range.
+            // A null value when picking a range means that the user cancelled the selection (e.g. by
+            // pressing escape), whereas when selecting a single value it means that the value didn't
+            // change. This isn't very intuitive, but it's here for backwards-compatibility.
+            if (isRange && this._rangeSelectionStrategy) {
+                const newSelection = this._rangeSelectionStrategy.selectionFinished(value, selection, event.event);
+                this._model.updateSelection(newSelection, this);
+            }
+            else if (value && (isRange ||
+                !this._dateAdapter.sameDate(value, selection))) {
+                this._model.add(value);
+            }
         }
         if (!this._model || this._model.isComplete()) {
             this.datepicker.close();
@@ -1851,16 +1851,20 @@ class MatDatepickerContent extends _MatDatepickerContentMixinBase {
     }
     _startExitAnimation() {
         this._animationState = 'void';
-        this._changeDetectorRef.markForCheck();
+        // @breaking-change 11.0.0 Remove null check for `_changeDetectorRef`.
+        if (this._changeDetectorRef) {
+            this._changeDetectorRef.markForCheck();
+        }
     }
     _getSelected() {
-        return this._model.selection;
+        // @breaking-change 11.0.0 Remove null check for `_model`.
+        return this._model ? this._model.selection : null;
     }
 }
 MatDatepickerContent.decorators = [
     { type: Component, args: [{
                 selector: 'mat-datepicker-content',
-                template: "<div cdkTrapFocus>\n  <mat-calendar\n    [id]=\"datepicker.id\"\n    [ngClass]=\"datepicker.panelClass\"\n    [startAt]=\"datepicker.startAt\"\n    [startView]=\"datepicker.startView\"\n    [minDate]=\"datepicker._getMinDate()\"\n    [maxDate]=\"datepicker._getMaxDate()\"\n    [dateFilter]=\"datepicker._getDateFilter()\"\n    [headerComponent]=\"datepicker.calendarHeaderComponent\"\n    [selected]=\"_getSelected()\"\n    [dateClass]=\"datepicker.dateClass\"\n    [comparisonStart]=\"comparisonStart\"\n    [comparisonEnd]=\"comparisonEnd\"\n    [@fadeInCalendar]=\"'enter'\"\n    (yearSelected)=\"datepicker._selectYear($event)\"\n    (monthSelected)=\"datepicker._selectMonth($event)\"\n    (viewChanged)=\"datepicker._viewChanged($event)\"\n    (_userSelection)=\"_handleUserSelection($event)\"></mat-calendar>\n\n  <!-- Invisible close button for screen reader users. -->\n  <button\n    type=\"button\"\n    mat-raised-button\n    color=\"primary\"\n    class=\"mat-datepicker-close-button\"\n    [class.cdk-visually-hidden]=\"!_closeButtonFocused\"\n    (focus)=\"_closeButtonFocused = true\"\n    (blur)=\"_closeButtonFocused = false\"\n    (click)=\"datepicker.close()\">{{ _closeButtonText }}</button>\n</div>\n",
+                template: "<mat-calendar cdkTrapFocus\n    [id]=\"datepicker.id\"\n    [ngClass]=\"datepicker.panelClass\"\n    [startAt]=\"datepicker.startAt\"\n    [startView]=\"datepicker.startView\"\n    [minDate]=\"datepicker._getMinDate()\"\n    [maxDate]=\"datepicker._getMaxDate()\"\n    [dateFilter]=\"datepicker._getDateFilter()\"\n    [headerComponent]=\"datepicker.calendarHeaderComponent\"\n    [selected]=\"_getSelected()\"\n    [dateClass]=\"datepicker.dateClass\"\n    [comparisonStart]=\"comparisonStart\"\n    [comparisonEnd]=\"comparisonEnd\"\n    [@fadeInCalendar]=\"'enter'\"\n    (yearSelected)=\"datepicker._selectYear($event)\"\n    (monthSelected)=\"datepicker._selectMonth($event)\"\n    (_userSelection)=\"_handleUserSelection($event)\">\n</mat-calendar>\n",
                 host: {
                     'class': 'mat-datepicker-content',
                     '[@transformPanel]': '_animationState',
@@ -1875,7 +1879,7 @@ MatDatepickerContent.decorators = [
                 encapsulation: ViewEncapsulation.None,
                 changeDetection: ChangeDetectionStrategy.OnPush,
                 inputs: ['color'],
-                styles: [".mat-datepicker-content{display:block;border-radius:4px}.mat-datepicker-content .mat-calendar{width:296px;height:354px}.mat-datepicker-content-touch{display:block;max-height:80vh;overflow:auto;margin:-24px}.mat-datepicker-content-touch .mat-calendar{min-width:250px;min-height:312px;max-width:750px;max-height:788px}.mat-datepicker-close-button{position:absolute;top:100%;left:0;margin-top:8px}@media all and (orientation: landscape){.mat-datepicker-content-touch .mat-calendar{width:64vh;height:80vh}}@media all and (orientation: portrait){.mat-datepicker-content-touch .mat-calendar{width:80vw;height:100vw}}\n"]
+                styles: [".mat-datepicker-content{display:block;border-radius:4px}.mat-datepicker-content .mat-calendar{width:296px;height:354px}.mat-datepicker-content-touch{display:block;max-height:80vh;overflow:auto;margin:-24px}.mat-datepicker-content-touch .mat-calendar{min-width:250px;min-height:312px;max-width:750px;max-height:788px}@media all and (orientation: landscape){.mat-datepicker-content-touch .mat-calendar{width:64vh;height:80vh}}@media all and (orientation: portrait){.mat-datepicker-content-touch .mat-calendar{width:80vw;height:100vw}}\n"]
             },] }
 ];
 MatDatepickerContent.ctorParameters = () => [
@@ -1883,8 +1887,7 @@ MatDatepickerContent.ctorParameters = () => [
     { type: ChangeDetectorRef },
     { type: MatDateSelectionModel },
     { type: DateAdapter },
-    { type: undefined, decorators: [{ type: Optional }, { type: Inject, args: [MAT_DATE_RANGE_SELECTION_STRATEGY,] }] },
-    { type: MatDatepickerIntl }
+    { type: undefined, decorators: [{ type: Optional }, { type: Inject, args: [MAT_DATE_RANGE_SELECTION_STRATEGY,] }] }
 ];
 MatDatepickerContent.propDecorators = {
     _calendar: [{ type: ViewChild, args: [MatCalendar,] }]
@@ -1918,10 +1921,6 @@ class MatDatepickerBase {
          * This doesn't imply a change on the selected date.
          */
         this.monthSelected = new EventEmitter();
-        /**
-         * Emits when the current view changes.
-         */
-        this.viewChanged = new EventEmitter(true);
         /** Emits when the datepicker has been opened. */
         this.openedStream = new EventEmitter();
         /** Emits when the datepicker has been closed. */
@@ -1977,14 +1976,6 @@ class MatDatepickerBase {
             this._stateChanges.next(undefined);
         }
     }
-    /**
-     * Classes to be passed to the date picker panel.
-     * Supports string and string array values, similar to `ngClass`.
-     */
-    get panelClass() { return this._panelClass; }
-    set panelClass(value) {
-        this._panelClass = coerceStringArray(value);
-    }
     /** Whether the calendar is open. */
     get opened() { return this._opened; }
     set opened(value) {
@@ -2028,10 +2019,6 @@ class MatDatepickerBase {
     /** Emits selected month in year view */
     _selectMonth(normalizedMonth) {
         this.monthSelected.emit(normalizedMonth);
-    }
-    /** Emits changed view */
-    _viewChanged(view) {
-        this.viewChanged.emit(view);
     }
     /**
      * Register an input with this datepicker.
@@ -2174,8 +2161,8 @@ class MatDatepickerBase {
         this._popupRef.overlayElement.setAttribute('role', 'dialog');
         merge(this._popupRef.backdropClick(), this._popupRef.detachments(), this._popupRef.keydownEvents().pipe(filter(event => {
             // Closing on alt + up is only valid when there's an input associated with the datepicker.
-            return (event.keyCode === ESCAPE && !hasModifierKey(event)) || (this._datepickerInput &&
-                hasModifierKey(event, 'altKey') && event.keyCode === UP_ARROW);
+            return event.keyCode === ESCAPE ||
+                (this._datepickerInput && event.altKey && event.keyCode === UP_ARROW);
         }))).subscribe(event => {
             if (event) {
                 event.preventDefault();
@@ -2249,11 +2236,10 @@ MatDatepickerBase.propDecorators = {
     yPosition: [{ type: Input }],
     yearSelected: [{ type: Output }],
     monthSelected: [{ type: Output }],
-    viewChanged: [{ type: Output }],
+    panelClass: [{ type: Input }],
     dateClass: [{ type: Input }],
     openedStream: [{ type: Output, args: ['opened',] }],
     closedStream: [{ type: Output, args: ['closed',] }],
-    panelClass: [{ type: Input }],
     opened: [{ type: Input }]
 };
 
@@ -2644,6 +2630,13 @@ class MatDatepickerInput extends MatDatepickerInputBase {
     /** Gets the value at which the calendar should start. */
     getStartValue() {
         return this.value;
+    }
+    /**
+     * @deprecated
+     * @breaking-change 8.0.0 Use `getConnectedOverlayOrigin` instead
+     */
+    getPopupConnectionElementRef() {
+        return this.getConnectedOverlayOrigin();
     }
     /** Opens the associated datepicker. */
     _openPopup() {

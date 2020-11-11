@@ -373,11 +373,7 @@
                 });
             });
         };
-        /**
-         * Whether the chip is selected.
-         * @deprecated Will be moved into separate selection-specific harness.
-         * @breaking-change 12.0.0
-         */
+        /** Whether the chip is selected. */
         MatChipHarness.prototype.isSelected = function () {
             return __awaiter(this, void 0, void 0, function () {
                 return __generator(this, function (_a) {
@@ -399,11 +395,7 @@
                 });
             });
         };
-        /**
-         * Selects the given chip. Only applies if it's selectable.
-         * @deprecated Will be moved into separate selection-specific harness.
-         * @breaking-change 12.0.0
-         */
+        /** Selects the given chip. Only applies if it's selectable. */
         MatChipHarness.prototype.select = function () {
             return __awaiter(this, void 0, void 0, function () {
                 return __generator(this, function (_a) {
@@ -420,11 +412,7 @@
                 });
             });
         };
-        /**
-         * Deselects the given chip. Only applies if it's selectable.
-         * @deprecated Will be moved into separate selection-specific harness.
-         * @breaking-change 12.0.0
-         */
+        /** Deselects the given chip. Only applies if it's selectable. */
         MatChipHarness.prototype.deselect = function () {
             return __awaiter(this, void 0, void 0, function () {
                 return __generator(this, function (_a) {
@@ -441,11 +429,7 @@
                 });
             });
         };
-        /**
-         * Toggles the selected state of the given chip. Only applies if it's selectable.
-         * @deprecated Will be moved into separate selection-specific harness.
-         * @breaking-change 12.0.0
-         */
+        /** Toggles the selected state of the given chip. Only applies if it's selectable. */
         MatChipHarness.prototype.toggle = function () {
             return __awaiter(this, void 0, void 0, function () {
                 return __generator(this, function (_a) {
@@ -745,8 +729,6 @@
          * Selects a chip inside the chip list.
          * @param filter An optional filter to apply to the child chips.
          *    All the chips matching the filter will be selected.
-         * @deprecated Will be moved into separate selection-specific harness.
-         * @breaking-change 12.0.0
          */
         MatChipListHarness.prototype.selectChips = function (filter) {
             if (filter === void 0) { filter = {}; }

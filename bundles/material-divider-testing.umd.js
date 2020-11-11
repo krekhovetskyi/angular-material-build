@@ -305,7 +305,10 @@
         return value;
     }
 
-    /** Harness for interacting with a `mat-divider`. */
+    /**
+     * Harness for interacting with a `mat-divider`.
+     * @dynamic
+     */
     var MatDividerHarness = /** @class */ (function (_super) {
         __extends(MatDividerHarness, _super);
         function MatDividerHarness() {

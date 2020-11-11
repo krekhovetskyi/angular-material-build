@@ -56,11 +56,7 @@ class MatChipHarness extends ComponentHarness {
             });
         });
     }
-    /**
-     * Whether the chip is selected.
-     * @deprecated Will be moved into separate selection-specific harness.
-     * @breaking-change 12.0.0
-     */
+    /** Whether the chip is selected. */
     isSelected() {
         return __awaiter(this, void 0, void 0, function* () {
             return (yield this.host()).hasClass('mat-chip-selected');
@@ -72,11 +68,7 @@ class MatChipHarness extends ComponentHarness {
             return (yield this.host()).hasClass('mat-chip-disabled');
         });
     }
-    /**
-     * Selects the given chip. Only applies if it's selectable.
-     * @deprecated Will be moved into separate selection-specific harness.
-     * @breaking-change 12.0.0
-     */
+    /** Selects the given chip. Only applies if it's selectable. */
     select() {
         return __awaiter(this, void 0, void 0, function* () {
             if (!(yield this.isSelected())) {
@@ -84,11 +76,7 @@ class MatChipHarness extends ComponentHarness {
             }
         });
     }
-    /**
-     * Deselects the given chip. Only applies if it's selectable.
-     * @deprecated Will be moved into separate selection-specific harness.
-     * @breaking-change 12.0.0
-     */
+    /** Deselects the given chip. Only applies if it's selectable. */
     deselect() {
         return __awaiter(this, void 0, void 0, function* () {
             if (yield this.isSelected()) {
@@ -96,11 +84,7 @@ class MatChipHarness extends ComponentHarness {
             }
         });
     }
-    /**
-     * Toggles the selected state of the given chip. Only applies if it's selectable.
-     * @deprecated Will be moved into separate selection-specific harness.
-     * @breaking-change 12.0.0
-     */
+    /** Toggles the selected state of the given chip. Only applies if it's selectable. */
     toggle() {
         return __awaiter(this, void 0, void 0, function* () {
             return (yield this.host()).sendKeys(' ');
@@ -286,8 +270,6 @@ class MatChipListHarness extends ComponentHarness {
      * Selects a chip inside the chip list.
      * @param filter An optional filter to apply to the child chips.
      *    All the chips matching the filter will be selected.
-     * @deprecated Will be moved into separate selection-specific harness.
-     * @breaking-change 12.0.0
      */
     selectChips(filter = {}) {
         return __awaiter(this, void 0, void 0, function* () {

@@ -5,7 +5,6 @@ import { InjectionToken, Component, ViewEncapsulation, ChangeDetectionStrategy, 
 import { MatCommonModule } from '@angular/material/core';
 import { MatButtonModule } from '@angular/material/button';
 import { Subject } from 'rxjs';
-import { Platform } from '@angular/cdk/platform';
 import { take, takeUntil } from 'rxjs/operators';
 import { trigger, state, style, transition, animate } from '@angular/animations';
 import { LiveAnnouncer } from '@angular/cdk/a11y';
@@ -214,21 +213,16 @@ const matSnackBarAnimations = {
  * @docs-private
  */
 class MatSnackBarContainer extends BasePortalOutlet {
-    constructor(_ngZone, _elementRef, _changeDetectorRef, _platform, 
+    constructor(_ngZone, _elementRef, _changeDetectorRef, 
     /** The snack bar configuration. */
     snackBarConfig) {
         super();
         this._ngZone = _ngZone;
         this._elementRef = _elementRef;
         this._changeDetectorRef = _changeDetectorRef;
-        this._platform = _platform;
         this.snackBarConfig = snackBarConfig;
-        /** The number of milliseconds to wait before announcing the snack bar's content. */
-        this._announceDelay = 150;
         /** Whether the component has been destroyed. */
         this._destroyed = false;
-        /** Subject for notifying that the snack bar has announced to screen readers. */
-        this._onAnnounce = new Subject();
         /** Subject for notifying that the snack bar has exited from view. */
         this._onExit = new Subject();
         /** Subject for notifying that the snack bar has finished entering the view. */
@@ -245,16 +239,16 @@ class MatSnackBarContainer extends BasePortalOutlet {
             this._applySnackBarClasses();
             return this._portalOutlet.attachDomPortal(portal);
         };
-        // Use aria-live rather than a live role like 'alert' or 'status'
-        // because NVDA and JAWS have show inconsistent behavior with live roles.
+        // Based on the ARIA spec, `alert` and `status` roles have an
+        // implicit `assertive` and `polite` politeness respectively.
         if (snackBarConfig.politeness === 'assertive' && !snackBarConfig.announcementMessage) {
-            this._live = 'assertive';
+            this._role = 'alert';
         }
         else if (snackBarConfig.politeness === 'off') {
-            this._live = 'off';
+            this._role = null;
         }
         else {
-            this._live = 'polite';
+            this._role = 'status';
         }
     }
     /** Attach a component portal as content to this snack bar container. */
@@ -290,7 +284,6 @@ class MatSnackBarContainer extends BasePortalOutlet {
         if (!this._destroyed) {
             this._animationState = 'visible';
             this._changeDetectorRef.detectChanges();
-            this._screenReaderAnnounce();
         }
     }
     /** Begin animation of the snack bar exiting from view. */
@@ -303,9 +296,6 @@ class MatSnackBarContainer extends BasePortalOutlet {
         // been dismissed and will soon be removed from the DOM. This is used by the snackbar
         // test harness.
         this._elementRef.nativeElement.setAttribute('mat-exit', '');
-        // If the snack bar hasn't been announced by the time it exits it wouldn't have been open
-        // long enough to visually read it either, so clear the timeout for announcing.
-        clearTimeout(this._announceTimeoutId);
         return this._onExit;
     }
     /** Makes sure the exit callbacks have been invoked when the element is destroyed. */
@@ -349,40 +339,11 @@ class MatSnackBarContainer extends BasePortalOutlet {
             throw Error('Attempting to attach snack bar content after content is already attached');
         }
     }
-    /**
-     * Starts a timeout to move the snack bar content to the live region so screen readers will
-     * announce it.
-     */
-    _screenReaderAnnounce() {
-        if (!this._announceTimeoutId) {
-            this._ngZone.runOutsideAngular(() => {
-                this._announceTimeoutId = setTimeout(() => {
-                    const inertElement = this._elementRef.nativeElement.querySelector('[aria-hidden]');
-                    const liveElement = this._elementRef.nativeElement.querySelector('[aria-live]');
-                    if (inertElement && liveElement) {
-                        // If an element in the snack bar content is focused before being moved
-                        // track it and restore focus after moving to the live region.
-                        let focusedElement = null;
-                        if (this._platform.isBrowser &&
-                            document.activeElement instanceof HTMLElement &&
-                            inertElement.contains(document.activeElement)) {
-                            focusedElement = document.activeElement;
-                        }
-                        inertElement.removeAttribute('aria-hidden');
-                        liveElement.appendChild(inertElement);
-                        focusedElement === null || focusedElement === void 0 ? void 0 : focusedElement.focus();
-                        this._onAnnounce.next();
-                        this._onAnnounce.complete();
-                    }
-                }, this._announceDelay);
-            });
-        }
-    }
 }
 MatSnackBarContainer.decorators = [
     { type: Component, args: [{
                 selector: 'snack-bar-container',
-                template: "<!-- Initialy holds the snack bar content, will be empty after announcing to screen readers. -->\n<div aria-hidden=\"true\">\n  <ng-template cdkPortalOutlet></ng-template>\n</div>\n\n<!-- Will receive the snack bar content from the non-live div, move will happen a short delay after opening -->\n<div [attr.aria-live]=\"_live\"></div>\n",
+                template: "<ng-template cdkPortalOutlet></ng-template>\n",
                 // In Ivy embedded views will be change detected from their declaration place, rather than
                 // where they were stamped out. This means that we can't have the snack bar container be OnPush,
                 // because it might cause snack bars that were opened from a template not to be out of date.
@@ -391,6 +352,7 @@ MatSnackBarContainer.decorators = [
                 encapsulation: ViewEncapsulation.None,
                 animations: [matSnackBarAnimations.snackBarState],
                 host: {
+                    '[attr.role]': '_role',
                     'class': 'mat-snack-bar-container',
                     '[@state]': '_animationState',
                     '(@state.done)': 'onAnimationEnd($event)'
@@ -402,7 +364,6 @@ MatSnackBarContainer.ctorParameters = () => [
     { type: NgZone },
     { type: ElementRef },
     { type: ChangeDetectorRef },
-    { type: Platform },
     { type: MatSnackBarConfig }
 ];
 MatSnackBarContainer.propDecorators = {
@@ -581,12 +542,6 @@ class MatSnackBar {
             const classList = overlayRef.overlayElement.classList;
             state.matches ? classList.add(this.handsetCssClass) : classList.remove(this.handsetCssClass);
         });
-        if (config.announcementMessage) {
-            // Wait until the snack bar contents have been announced then deliver this message.
-            container._onAnnounce.subscribe(() => {
-                this._live.announce(config.announcementMessage, config.politeness);
-            });
-        }
         this._animateSnackBar(snackBarRef, config);
         this._openedSnackBarRef = snackBarRef;
         return this._openedSnackBarRef;
@@ -618,6 +573,9 @@ class MatSnackBar {
         // If a dismiss timeout is provided, set up dismiss based on after the snackbar is opened.
         if (config.duration && config.duration > 0) {
             snackBarRef.afterOpened().subscribe(() => snackBarRef._dismissAfter(config.duration));
+        }
+        if (config.announcementMessage) {
+            this._live.announce(config.announcementMessage, config.politeness);
         }
     }
     /**

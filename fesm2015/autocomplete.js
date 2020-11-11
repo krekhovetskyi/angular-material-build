@@ -1,5 +1,5 @@
 import { ActiveDescendantKeyManager } from '@angular/cdk/a11y';
-import { coerceBooleanProperty, coerceStringArray } from '@angular/cdk/coercion';
+import { coerceBooleanProperty } from '@angular/cdk/coercion';
 import { InjectionToken, EventEmitter, Directive, ChangeDetectorRef, ElementRef, Inject, ViewChild, TemplateRef, Input, Output, Component, ViewEncapsulation, ChangeDetectionStrategy, ContentChildren, forwardRef, ViewContainerRef, NgZone, Optional, Host, NgModule } from '@angular/core';
 import { mixinDisableRipple, MAT_OPTION_PARENT_COMPONENT, MAT_OPTGROUP, MatOption, MatOptionSelectionChange, _countGroupLabelsBeforeOption, _getOptionScrollPosition, MatOptionModule, MatCommonModule } from '@angular/material/core';
 import { Subscription, Subject, defer, merge, of, fromEvent } from 'rxjs';
@@ -92,8 +92,8 @@ class _MatAutocompleteBase extends _MatAutocompleteMixinBase {
      */
     set classList(value) {
         if (value && value.length) {
-            this._classList = coerceStringArray(value).reduce((classList, className) => {
-                classList[className] = true;
+            this._classList = value.split(' ').reduce((classList, className) => {
+                classList[className.trim()] = true;
                 return classList;
             }, {});
         }
@@ -242,13 +242,13 @@ MatAutocompleteOrigin.decorators = [
 /**
  * The height of each autocomplete option.
  * @deprecated No longer being used. To be removed.
- * @breaking-change 12.0.0
+ * @breaking-change 11.0.0
  */
 const AUTOCOMPLETE_OPTION_HEIGHT = 48;
 /**
  * The total height of the autocomplete panel.
  * @deprecated No longer being used. To be removed.
- * @breaking-change 12.0.0
+ * @breaking-change 11.0.0
  */
 const AUTOCOMPLETE_PANEL_HEIGHT = 256;
 /** Injection token that determines the scroll handling while the autocomplete panel is open. */
@@ -283,7 +283,7 @@ function getMatAutocompleteMissingPanelError() {
 }
 /** Base class with all of the `MatAutocompleteTrigger` functionality. */
 class _MatAutocompleteTriggerBase {
-    constructor(_element, _overlay, _viewContainerRef, _zone, _changeDetectorRef, scrollStrategy, _dir, _formField, _document, _viewportRuler, _defaults) {
+    constructor(_element, _overlay, _viewContainerRef, _zone, _changeDetectorRef, scrollStrategy, _dir, _formField, _document, _viewportRuler) {
         this._element = _element;
         this._overlay = _overlay;
         this._viewContainerRef = _viewContainerRef;
@@ -293,7 +293,6 @@ class _MatAutocompleteTriggerBase {
         this._formField = _formField;
         this._document = _document;
         this._viewportRuler = _viewportRuler;
-        this._defaults = _defaults;
         this._componentDestroyed = false;
         this._autocompleteDisabled = false;
         /** Whether or not the label state is being overridden. */
@@ -696,13 +695,11 @@ class _MatAutocompleteTriggerBase {
         }
     }
     _getOverlayConfig() {
-        var _a;
         return new OverlayConfig({
             positionStrategy: this._getOverlayPosition(),
             scrollStrategy: this._scrollStrategy(),
             width: this._getPanelWidth(),
-            direction: this._dir,
-            panelClass: (_a = this._defaults) === null || _a === void 0 ? void 0 : _a.overlayPanelClass,
+            direction: this._dir
         });
     }
     _getOverlayPosition() {
@@ -812,8 +809,7 @@ _MatAutocompleteTriggerBase.ctorParameters = () => [
     { type: Directionality, decorators: [{ type: Optional }] },
     { type: MatFormField, decorators: [{ type: Optional }, { type: Inject, args: [MAT_FORM_FIELD,] }, { type: Host }] },
     { type: undefined, decorators: [{ type: Optional }, { type: Inject, args: [DOCUMENT,] }] },
-    { type: ViewportRuler },
-    { type: undefined, decorators: [{ type: Optional }, { type: Inject, args: [MAT_AUTOCOMPLETE_DEFAULT_OPTIONS,] }] }
+    { type: ViewportRuler }
 ];
 _MatAutocompleteTriggerBase.propDecorators = {
     autocomplete: [{ type: Input, args: ['matAutocomplete',] }],

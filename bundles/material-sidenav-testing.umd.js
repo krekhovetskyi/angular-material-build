@@ -379,7 +379,7 @@
             });
         };
         return MatDrawerHarness;
-    }(testing.ContentContainerComponentHarness));
+    }(testing.ComponentHarness));
     /** The selector for the host element of a `MatDrawer` instance. */
     MatDrawerHarness.hostSelector = '.mat-drawer';
 

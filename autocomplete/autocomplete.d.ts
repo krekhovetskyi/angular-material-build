@@ -36,8 +36,6 @@ declare const _MatAutocompleteMixinBase: CanDisableRippleCtor & typeof MatAutoco
 export interface MatAutocompleteDefaultOptions {
     /** Whether the first option should be highlighted when an autocomplete panel is opened. */
     autoActiveFirstOption?: boolean;
-    /** Class or list of classes to be applied to the autocomplete's overlay panel. */
-    overlayPanelClass?: string | string[];
 }
 /** Injection token to be used to override the default options for `mat-autocomplete`. */
 export declare const MAT_AUTOCOMPLETE_DEFAULT_OPTIONS: InjectionToken<MatAutocompleteDefaultOptions>;
@@ -93,7 +91,7 @@ export declare abstract class _MatAutocompleteBase extends _MatAutocompleteMixin
      * Takes classes set on the host mat-autocomplete element and applies them to the panel
      * inside the overlay container to allow for easy styling.
      */
-    set classList(value: string | string[]);
+    set classList(value: string);
     _classList: {
         [key: string]: boolean;
     };
